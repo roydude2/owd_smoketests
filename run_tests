@@ -26,13 +26,13 @@ export TEST_10_NUM=$ans
 # Now run tests as required.
 #
 TESTDIR="./smoketests"
-#$RUNTEST 7 "Add a contact"                          $TESTDIR/test_07.py $RESULT_FILE $ERR_FILE
-#$RUNTEST 8 "Edit a contact"                         $TESTDIR/test_08.py $RESULT_FILE $ERR_FILE
-#$RUNTEST 9 "Send SMS from contact"                  $TESTDIR/test_09.py $RESULT_FILE $ERR_FILE
-#$RUNTEST 10 "Send + receive sms"                    $TESTDIR/test_10.py $RESULT_FILE $ERR_FILE
+$RUNTEST 7 "Add a contact"                          $TESTDIR/test_07.py $RESULT_FILE $ERR_FILE
+$RUNTEST 8 "Edit a contact"                         $TESTDIR/test_08.py $RESULT_FILE $ERR_FILE
+$RUNTEST 9 "Send SMS from contact"                  $TESTDIR/test_09.py $RESULT_FILE $ERR_FILE
+$RUNTEST 10 "Send + receive sms"                    $TESTDIR/test_10.py $RESULT_FILE $ERR_FILE
 $RUNTEST 11 "Take picture"                          $TESTDIR/test_11.py $RESULT_FILE $ERR_FILE
 $RUNTEST 12 "Take video / check gallery"       	    $TESTDIR/test_12.py $RESULT_FILE $ERR_FILE
-#$RUNTEST 13 "Take video / check player"       	    $TESTDIR/test_13.py $RESULT_FILE $ERR_FILE
+$RUNTEST 13 "Take video / check player"       	    $TESTDIR/test_13.py $RESULT_FILE $ERR_FILE
 
 echo ""
 cat $ERR_FILE
