@@ -48,7 +48,7 @@ RUNNING THE TESTS:
 
 1. Plug the device in.
 
-2. In the "SMOKE_TEST" directory, type:
+2. In the "owd_smoketests" directory, type:
 
     ./run_tests
     
