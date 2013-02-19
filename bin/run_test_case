@@ -1,0 +1,38 @@
+#!/bin/bash
+export TEST_CASE="$1"
+export TEST_DESC="$2"
+export TEST_FILE="$3"
+export RESULT_FILE="$4"; export RESULT_FILE
+export ERR_FILE="$5"
+export TEMP_FILE="${RESULT_FILE}.in_progress"
+
+if [ "$TEMP_FILE" = "" ]
+then
+	echo "Syntax: $0 <test case> <description> <test file> <result file>"
+	exit 1
+fi
+
+#
+# Function to display the output to the screen, whilst updating the test file.
+#
+log(){
+	echo "$1" | tee -a $RESULT_FILE
+}
+
+log ""
+log ""
+log "TEST CASE  : $TEST_CASE"
+log "Description: $TEST_DESC"
+
+x=`(time gaiatest --address localhost:2828 $TEST_FILE > $TEMP_FILE 2>$ERR_FILE) 2>&1 | grep real | awk '{print $2}'`
+
+log "Time taken : $x"
+log "Result     : $(egrep '^__RESULT' $TEMP_FILE | sed -e 's/^__RESULT //')"
+log ""
+egrep "^__" $TEMP_FILE | grep -v "__RESULT" | sed -e "s/^__//" | while read line
+do
+	log "    $line"
+done
+log ""
+
+rm -f $TEMP_FILE

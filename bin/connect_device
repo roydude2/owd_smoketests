@@ -1,0 +1,34 @@
+#!/bin/bash
+
+# Because 'su' may not have the correct path to 'adb' ...
+cmd_adb=$(which adb)
+
+# Do nothing as 'sudo' just to get 'sudo' ready for later on.
+sudo date > /dev/null
+
+# Check to see if port is already forwarding ...
+x=$(netstat -an | grep "LISTEN " | grep 2828)
+
+if [ "$x" ]
+then
+	printf "\nLooks like you are already forwarding port 2828 with the following devices attached:\n\n"
+	printf "	"; $cmd_adb devices | grep -iv "List of devices attached" | awk '{print $1}'
+	printf "[C]ontinue with the tests, or [R]estart adb + port forwarding "
+	printf "(default = continue with tests): "
+	read ans
+
+	if [ "$ans" = "c" ] || [ "$ans" = "C" ] || [ "$ans" = "" ]
+	then
+		echo ""
+		exit
+	fi
+fi
+
+echo ""
+echo "Establishing connection to device (and forwarding the port)..."
+sudo $cmd_adb kill-server
+sudo $cmd_adb start-server
+sudo $cmd_adb forward tcp:2828 tcp:2828
+
+echo ""
+sudo $cmd_adb devices
