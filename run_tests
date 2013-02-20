@@ -18,6 +18,11 @@ echo ""
 export TEST_10_NUM=$ans
 
 
+echo "Making sure you're using the gaiatest suite loaded here (it has some necessary tweaks!) ...."
+cd gaia-ui-tests
+sudo python setup.py develop > /tmp/gaiatest_install.log 2> /tmp/gaiatest_install.log
+cd - > /dev/null 2>/dev/null
+
 # Establsh connection to device.
 ./bin/connect_device
 
@@ -34,8 +39,6 @@ $RUNTEST 11 "Take picture"                          $TESTDIR/test_11.py $RESULT_
 $RUNTEST 12 "Take video / check gallery"       	    $TESTDIR/test_12.py $RESULT_FILE $ERR_FILE
 $RUNTEST 13 "Take video / check player"       	    $TESTDIR/test_13.py $RESULT_FILE $ERR_FILE
 
-echo ""
-cat $ERR_FILE
 printf "\n\n"
 echo "*******************************************************"
 printf "\n             RESULT SUMMARY: \n\n"

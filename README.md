@@ -26,16 +26,9 @@ If you have any of these items already installed then try the tests with your in
 4. GITHUB:
 
     sudo apt-get install git
-    
-
-5. 'gaia-ui-test' (marionette seems to be 'buried' in here somewhere!):
-
-    git clone git://github.com/mozilla/gaia-ui-tests.git
-    cd gaia-ui-tests
-    sudo python setup.py develop
 
 
-6. Android Debug Bridge (adb):
+5. Android Debug Bridge (adb):
 
     sudo add-apt-repository ppa:nilarimogard/webupd8
     sudo apt-get update

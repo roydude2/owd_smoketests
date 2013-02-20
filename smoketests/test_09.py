@@ -65,12 +65,13 @@ class test_9(GaiaTestCase):
         # 'Contacts' app!).
         #
         self.testUtils.switchFrame(*DOMS.Messages.frame_locator)
+        #self.testUtils.connect_to_iframe(DOMS.Messages.iframe_location)
 
         #
         # TEST: correct name is in the header of this sms.
         #
         headerName = self.testUtils.get_element('xpath', DOMS.GLOBAL.app_head % self.contact_1['name'])
-        self.testUtils.testTrue(headerName.is_displayed(), "Contact name not in 'Send message' header")
+        self.testUtils.TEST(headerName.is_displayed(), "Contact name not in 'Send message' header")
 
         #
         # Create SMS.
@@ -95,5 +96,12 @@ class test_9(GaiaTestCase):
         #
         # TEST: The returned message is as expected.
         #
-        self.testUtils.testTrue((returnedSMS.lower() == "ok"), 
+        self.testUtils.TEST((returnedSMS.lower() == "ok"), 
             "Expected text to be 'ok' but was '" + returnedSMS + "'")
+
+        #
+        # Because of a bug, the message notifier remains in the header until you restart the
+        # messaging app, so restart it just to remove the notification.
+        #
+        self.testUtils.goHome()
+        self.messages.launch()

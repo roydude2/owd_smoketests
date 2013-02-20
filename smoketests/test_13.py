@@ -28,7 +28,8 @@ class test_13(GaiaTestCase):
         self.camera.launch()
         self.camera.recordAVideo()
         self.camera.testVideo()
-       
+
+
         #
         # Open the video player application.
         #
@@ -37,15 +38,11 @@ class test_13(GaiaTestCase):
         #
         # the first thumbnail should be our video.
         #
-        self.video.checkThumbDuration()
+        self.video.checkThumbDuration("00:05")
         self.video.clickThumb(0)
         
         #
         # Check that the video is as long as expected.
         #
-        self.video.checkPlayDuration()
+        self.video.checkPlayDuration(5, 8)
         
-        #
-        # Wait for the video to finsih before proceeding.
-        #
-        self.wait_for_element_not_displayed(*DOMS.Video.video_frame)

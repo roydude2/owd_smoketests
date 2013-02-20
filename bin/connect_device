@@ -3,32 +3,43 @@
 # Because 'su' may not have the correct path to 'adb' ...
 cmd_adb=$(which adb)
 
+# A nice marker so we know what's happening
+export X="(adb check) "
+
 # Do nothing as 'sudo' just to get 'sudo' ready for later on.
 sudo date > /dev/null
 
 # Check to see if port is already forwarding ...
-x=$(netstat -an | grep "LISTEN " | grep 2828)
+fwdPorts=$(netstat -an | grep "LISTEN " | grep 2828)
 
-if [ "$x" ]
+#
+# Function to display currentl devices ...
+#
+showDevices(){
+	echo "$X The following devices are currently connected:"
+	echo "$X"
+	$cmd_adb devices | grep -iv "List of devices attached" | awk 'X=ENVIRON["X"]{print X "          " $1}'
+}
+
+if [ "$fwdPorts" ]
 then
-	printf "\nLooks like you are already forwarding port 2828 with the following devices attached:\n\n"
-	printf "	"; $cmd_adb devices | grep -iv "List of devices attached" | awk '{print $1}'
-	printf "[C]ontinue with the tests, or [R]estart adb + port forwarding "
-	printf "(default = continue with tests): "
-	read ans
+	echo ""
+	echo "$X"
+	echo "$X Port 2828 is already being forwarded."
+	echo "$X"
+	showDevices
+else
+	echo ""
+	echo "$X "
+	echo "$X Establishing connection to device (and forwarding the port)..."
 
-	if [ "$ans" = "c" ] || [ "$ans" = "C" ] || [ "$ans" = "" ]
-	then
-		echo ""
-		exit
-	fi
+	sudo $cmd_adb kill-server > /dev/null
+	sudo $cmd_adb start-server > /dev/null
+	sudo $cmd_adb forward tcp:2828 tcp:2828 > /dev/null
+
+	echo "$X"
+	showDevices
 fi
 
-echo ""
-echo "Establishing connection to device (and forwarding the port)..."
-sudo $cmd_adb kill-server
-sudo $cmd_adb start-server
-sudo $cmd_adb forward tcp:2828 tcp:2828
-
-echo ""
-sudo $cmd_adb devices
+echo "$X Continuing with tests ..."
+echo "$X"

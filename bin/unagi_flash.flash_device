@@ -1,0 +1,53 @@
+#!/bin/bash
+#
+# Flashes connected unagi device with the latest file found in $UNAGI_FLASH
+#
+UNAGI_FLASH=~/Downloads/unagi_flash
+
+
+x=$(whoami)
+if [ "$x" != "root" ]
+then
+	echo "ERROR: This script must be run as root (or with 'sudo')!"
+	exit 1
+fi
+
+# Make sure the device is connected.
+connect_device
+
+if [ -d "$UNAGI_FLASH" ]
+then
+	cd $UNAGI_FLASH
+
+	latestFile=$(ls -lFrt *.tgz | tail -1 | awk '{print $NF}')
+
+	if [ "$latestFile" != "" ]
+	then
+		echo "Flashing with $latestFile ..."
+		# Is it more than 1 day old?
+		x=$(find . -name $latestFile -mtime -1)
+		if [ "$x" == "" ]
+		then
+			printf "\nWARNING: $latestFile is not from today!\n\n"
+			printf "	Press ENTER to continue, or CTRL+C to abort ..."
+		fi
+
+		# If we get to here then proceed.
+		echo "Unpacking $latestFile ..."
+		tar xvfz $latestFile
+		
+		REL_DIR=${latestFile%.tgz} 
+
+		if [ "$REL_DIR" != "" ]
+		then
+			cd $REL_DIR
+
+			echo "Flashing device - do not disturb! :)"
+			./flash.sh
+
+			cd $UNAGI_FLASH
+			
+			rm -rf $REL_DIR
+		fi
+	fi
+fi

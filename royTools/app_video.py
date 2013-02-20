@@ -14,16 +14,22 @@ class main():
 
     def launch(self):
         self.app = self.parent.apps.launch('Video')
+        #self.parent.wait_for_element_not_displayed(*DOMS.Video.items)
         self.parent.wait_for_element_not_displayed(*DOMS.Video.items)
         
-    def checkThumbDuration(self):
-        self.testUtils.testFalse(
-            (self.marionette.find_element(*DOMS.Video.duration_text).text == "00:00"), 
-            "Video length was 0s.")
+    def checkThumbDuration(self, p_expected):
+        self.parent.wait_for_element_present(*DOMS.Video.thumb_durations)
+        durations = self.marionette.find_elements(*DOMS.Video.thumb_durations)
+        
+        myDur = durations[0].text
+        
+        self.testUtils.TEST(myDur == p_expected, 
+            "Video length on thumbnail was %s, but should have been %s." % (myDur, p_expected))
 
     def clickThumb(self, p_num):
         #
         # Get the list of video items and click the 'p_num' one.
+        #
         self.parent.wait_for_element_displayed(*DOMS.Video.items)
         all_videos = self.marionette.find_elements(*DOMS.Video.items)
         my_video = all_videos[p_num]
@@ -36,6 +42,13 @@ class main():
         self.parent.wait_for_element_displayed(*DOMS.Video.video_frame)
         self.parent.wait_for_element_displayed(*DOMS.Video.video_loaded)
 
-    def checkPlayDuration(self):
-        # The elapsed time != 00:00 
-        self.testUtils.testFalse((self.marionette.find_element(*DOMS.Video.elapsed_text).text == "00:00"), "Video length was 0s.")
+    def checkPlayDuration(self, p_from, p_to):
+        #x = self.marionette.find_element(*DOMS.Video.video_loaded)
+        #self.marionette.tap(x)
+        start_time = time.time()
+        self.parent.wait_for_element_not_displayed(*DOMS.Video.video_loaded)
+        elapsed_time = int(time.time() - start_time)
+        
+        # Check time was between p_from and p_to.
+        x = self.testUtils.TEST((elapsed_time > p_from & elapsed_time < p_to), 
+            "Video played in %.2f seconds, when it should have been between %d and %d seconds." % (elapsed_time, p_from, p_to))

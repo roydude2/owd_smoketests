@@ -30,7 +30,11 @@ class main():
     #
     def sendSMS(self):
         sendBtn = self.testUtils.get_element(*DOMS.Messages.send_message_button)
-        self.testUtils.clickNTap(sendBtn)
+        sendBtn.click()
+        time.sleep(5)
+        self.marionette.tap(sendBtn)
+        #self.testUtils.clickNTap(sendBtn)
+        time.sleep(1)
         self.parent.wait_for_element_not_present(*DOMS.Messages.message_sending_spinner, timeout=120)
         
         # Go back to main messages screen
@@ -51,11 +55,19 @@ class main():
         self.testUtils.waitForNewStatusBarNew()
         return self.testUtils.openStatusBarNewNotif(DOMS.Messages.statusbar_new_sms_url)
         
+    #
+    # Read last message.
+    #
+    def readLastSMSInThread(self):
+        self.parent.wait_for_element_displayed(*DOMS.Messages.received_messages)
+        received_message = self.testUtils.get_elements(*DOMS.Messages.received_messages)[-1]
+        return str(received_message.text)
 
     #
     # Read and return the value of the new message.
     #
     def readNewSMS(self):
+        self.parent.wait_for_element_displayed(*DOMS.Messages.unread_message)
         unread_message = self.testUtils.get_element(*DOMS.Messages.unread_message)
         self.marionette.tap(unread_message)
 
@@ -63,8 +75,7 @@ class main():
         import time
         time.sleep(5)
         
-        received_message = self.testUtils.get_elements(*DOMS.Messages.received_messages)[-1]
-        return str(received_message.text)
+        return self.readLastSMSInThread()
 
     #
     # Create and send a new SMS.

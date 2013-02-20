@@ -32,7 +32,7 @@ class test_10(GaiaTestCase):
         #if ans != "":
             #self.Roy["tel"]["value"] = ans
         
-        self.testUtils.reportComment("Sending sms to telephone number: " + self.target_telNum)
+        self.testUtils.reportComment("Sending sms to telephone number " + self.target_telNum)
         
         
     def tearDown(self):
@@ -50,30 +50,34 @@ class test_10(GaiaTestCase):
         #
         self.messages.createAndSendSMS(self.target_telNum, "Smoke test 10 sms - please reply with the word 'ok'.")
         
-        # Cannot get this to work (pull down the notification bar WAS working ... but now it's not! ;( )
-        ##
-        ## Go to the home screen and wait for new message notification in home screen.
-        ##
-        ##x = self.messages.openNewSMS_homescreen()
-        ##self.testUtils.testTrue(x, "Could not load new message from notification in the home screen, aborting test!")
-        ##if not x:
-            ##return 1 # Cannot continue with this test.
-            
-        #self.testUtils.goHome()
-        #self.testUtils.displayStatusBar()
-        #self.testUtils.waitForStatusBarNew()
-        #self.testUtils.openStatusBarNewNotif(DOMS.Messages.statusbar_new_sms_url)
-        #self.testUtils.connect_to_iframe("app://sms.gaiamobile.org/index.html")
-        ##self.testUtils.switchFrame(*DOMS.Messages.frame_locator)
+        #
+        # Go home and wait for the notification.
+        #
+        self.testUtils.goHome()
+        
+        # There's a bug in gaia at the moment - if you switch around too quickly the 'new sms' notifier
+        # can get stuck at the top of the screen for a looooong time.
+        # To make sure we don't cause that, wait a while before trying to display the status bar.
+        import time
+        time.sleep(10)
         
         #
-        # Wait for (because I can't watch from the home screen as planned!), then read the new message.
+        # Wait for the notification to appear in the utility / noification / status bar (has too many names!).
+        # Then open the bar.
+        # Then click on the new message notification.
         #
-        self.messages.waitForNewSMS()
-        returnedSMS = self.messages.readNewSMS()
+        self.testUtils.waitForStatusBarNew()
+        self.testUtils.displayStatusBar()
+        self.testUtils.openStatusBarNewNotif(DOMS.Messages.statusbar_new_sms_url)
+
+        #
+        # Switch focus to the sms app and read the latest message.
+        #
+        self.testUtils.connect_to_iframe(DOMS.Messages.iframe_location)
+        returnedSMS = self.messages.readLastSMSInThread()
         
         #
         # TEST: The returned message is as expected.
         #
-        self.testUtils.testTrue((returnedSMS.lower() == "ok"), 
+        self.testUtils.TEST((returnedSMS.lower() == "ok"), 
             "Expected text to be 'ok' but was '" + returnedSMS + "'")

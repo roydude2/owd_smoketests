@@ -1,6 +1,7 @@
 import os
 import base64
 import time
+import sys
 from royTools import DOMS
 
 class testUtils():
@@ -15,6 +16,8 @@ class testUtils():
         self.parent         = p_parentSelf
         self.testNum        = str(p_testNum)
         self.errNum         = 0
+        self.passed         = 0
+        self.failed         = 0
     
     #
     # Switch to frame (needed if accessing an app via another app, i.e.
@@ -24,6 +27,7 @@ class testUtils():
         self.marionette.switch_to_frame()
         sms_iframe = self.marionette.find_element(*p_frame)
         self.marionette.switch_to_frame(sms_iframe)
+        
     #
     # Due to the lack of developer docs, this might help to provide a list
     # of current iframes.
@@ -32,7 +36,7 @@ class testUtils():
         iframes = self.marionette.execute_script("return document.getElementsByTagName('iframe')")
         for idx in range(0,iframes['length']):
             iframe = iframes[str(idx)]
-            print iframe.get_attribute('src')
+            self.reportComment(iframe.get_attribute('src'))
 
     #
     # Connect to an iframe.
@@ -45,8 +49,6 @@ class testUtils():
                 self.marionette.switch_to_frame(iframe)
                 return True
         
-        
-    
     #
     # Take a screenshot.
     #
@@ -65,27 +67,44 @@ class testUtils():
         fnam = "_" + self.testNum + "_err_" + str(self.errNum)
         x = self.screenShot(fnam)
         return x
+
+    #
+    # Add an error to the error array.
+    #
+    def reportError(self, p_msg, p_fnam="X"):
+        logMsg = p_msg
+        
+        if p_fnam != "X":
+            logMsg = logMsg + " [screenshot = " + p_fnam + "]"
+            
+        self._failArray.append(logMsg)
     
     #
-    # Test for true.
+    # Add a comment to the results.
     #
-    def testTrue(self, p_result, p_msg):
+    def reportComment(self, p_str):
+        self._commentArray.append(p_str)
+
+    #
+    # Test that p_result is true.
+    # The advantage to this over the standard 'assert's is that
+    # this continues past a failure if p_stop is False.
+    #
+    def TEST(self, p_result, p_msg, p_stop = False):
         if not p_result:
             fnam = self.screenShotOnErr()
-            self._failArray.append("--> " + p_msg + " [screenshot = " + fnam + "]")
-        return
-    
+            self.reportError(p_msg, fnam)
+            self.failed = self.failed + 1
+
+            if p_stop:
+                self.reportError("CANNOT CONTINUE PAST THIS ERROR - ABORTING THIS TEST!")
+                sys.exit("Fatal error, quitting this test.")
+        else:
+            self.passed = self.passed + 1
+        
     #
-    # Test for false.
-    #
-    def testFalse(self, p_result, p_msg):
-        if p_result:
-            fnam = self.screenShotOnErr()
-            self._failArray.append("--> " + p_msg + " [screenshot = " + fnam + "]")
-        return
-    
-    #
-    # Test for a match between an element and a string.
+    # Test for a match between an element and a string
+    # (found I was doing this rather a lot so it's better in a function).
     #
     def testMatch(self, p_el, p_type, p_val, p_name):
         if p_type == "value":
@@ -93,33 +112,30 @@ class testUtils():
         else:
             test_str = str(p_el.text)
             
-        self.testTrue( 
+        self.TEST( 
             (test_str == p_val), 
             "Expected " + p_name + " to be \"" + p_val + "\" but it was \"" + test_str + "\"" 
             )    
 
     #
-    # Add a comment to the results.
-    #
-    def reportComment(self, p_str):
-        self._commentArray.append("**COMMENT: " + p_str)
-
-    #
     # Report results.
     #
     def reportResults(self):
+        # Summary totals.
+        print "==PASSED " + str(self.passed)
+        print "==FAILED " + str(self.failed)
         # Deal with any assertion errors we came across.
         x = len(self._failArray)
         if x > 0:
-            print "__RESULT FAIL!"
+            print "==RESULT FAIL!"
             for i in self._failArray:
-                print "__" + i
+                print "==ERROR " + i
         else:
-            print "__RESULT All tests passed."
+            print "==RESULT All tests passed."
         
         # Display any comments.
         for i in self._commentArray:
-            print "__" + i
+            print "==COMMENT " + i
     
     #
     # Wait for an element to be displayed, then return the element.
@@ -154,7 +170,8 @@ class testUtils():
     # Unlock the screen.
     #
     def unlockScreen(self):
-        self.parent.lockscreen.unlock() # possibly not working!
+        x = 1
+        #self.parent.lockscreen.unlock() # possibly not working!
 
         #lockscreen_element = self.marionette.find_element(*DOMS.Lockscreen.id)
         ##if lockscreen_element.is_displayed():
@@ -190,16 +207,14 @@ class testUtils():
     # Displays the status / notification bar in the home screen.
     #
     def displayStatusBar(self):
-        statusBar = self.marionette.find_element(*DOMS.GLOBAL.status_bar)
-        #self.marionette.tap(statusBar)
-        statusBar.click()
-        statusBar.click()
+        self.marionette.execute_script("window.wrappedJSObject.UtilityTray.show()")
         
     #
     # Waits for a new notification in the status bar.
     #
     def waitForStatusBarNew(self):
-        self.parent.wait_for_element_present(*DOMS.GLOBAL.status_bar_notifs)
+        self.parent.wait_for_element_displayed(*DOMS.GLOBAL.status_bar_new)
+        #self.parent.wait_for_element_present(*DOMS.GLOBAL.status_bar_notifs)
         
         
     #

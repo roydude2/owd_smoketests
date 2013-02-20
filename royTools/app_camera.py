@@ -64,8 +64,8 @@ class main():
         
         timeDiff = (end_t - start_t)
         
-        self.testUtils.testTrue((timeDiff > 4.90), "5 second video is shorter than expected (finished playing in %.2f seconds)." % timeDiff)
-        self.testUtils.testTrue((timeDiff < 9.00), "5 second video is longer than expected (finished playing in %.2f seconds)." % timeDiff)
+        self.testUtils.TEST((timeDiff > 4.90), "5 second video is shorter than expected (finished playing in %.2f seconds)." % timeDiff)
+        self.testUtils.TEST((timeDiff < 9.00), "5 second video is longer than expected (finished playing in %.2f seconds)." % timeDiff)
 
     def recordAVideo(self):
         self.testUtils.reportComment("(I still need to figure out how to suppress gps question.)")
@@ -92,7 +92,7 @@ class main():
         
         # TEST: Thumbnail has not been previewed yet.
         prev_marker = self.parent.marionette.find_element(*DOMS.Camera.thumbnail_preview_marker)
-        self.testUtils.testTrue((prev_marker.get_attribute("class") == "offscreen"), "Image was previewed as soon as picture was taken.")
+        self.testUtils.TEST((prev_marker.get_attribute("class") == "offscreen"), "Image was previewed as soon as picture was taken.")
         
 
 

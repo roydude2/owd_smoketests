@@ -46,6 +46,7 @@ class Contacts():
 
 class Messages():
     frame_locator          = ('css selector', 'iframe[src="app://sms.gaiamobile.org/index.html"]')
+    iframe_location        = "app://sms.gaiamobile.org/index.html"
     statusbar_new_sms_url  = "app://sms.gaiamobile.org/manifest.webapp"
     view_all_header        = ('xpath', GLOBAL.app_head % 'Messages')
     create_new_message_btn = ('id', 'icon-add')
@@ -81,7 +82,10 @@ class Gallery():
     video_pause_button      = ('xpath', "//*[@id='frame2']/div/div/button")
 
 class Video():
-    items                   = ('css selector', 'ul#thumbnails li[data-name]')
+    #items                   = ('css selector', 'ul#thumbnails li[data-name]')
+    items                   = ('xpath', "//*[@id='thumbnails']/li/div/div[3]")
+    thumbnails              = ('id', 'thumbnails')
+    thumb_durations         = ('xpath', "//*[@id='thumbnails']/li/div/div[3]/span[13]/span")
     duration_text           = ('id', 'duration-text')
     video_name              = ('css selector', 'p.name')
     video_frame             = ('id', 'videoFrame')

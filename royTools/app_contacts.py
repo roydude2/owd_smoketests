@@ -131,7 +131,7 @@ class main():
         try:
             contact_found = self.marionette.find_element("link text", p_contact['name'])
         except:
-            self.testUtils.testTrue((1==2), "Could not find '" + p_contact['name'] + "' in the contacts list!")
+            self.testUtils.reportError("Could not find '" + p_contact['name'] + "' in the contacts list!")
             return 0 # (leave the function)
         
         #
@@ -140,7 +140,7 @@ class main():
         try: 
             self.testUtils.clickNTap(contact_found)
         except:
-            self.testUtils.testTrue((1==2), "Could not tap on '" + p_contact['name'] + "' in contacts list!")
+            self.testUtils.reportError("Could not tap on '" + p_contact['name'] + "' in contacts list!")
             return 0 # (leave the function)
         
         self.parent.wait_for_element_displayed(*DOMS.Contacts.view_details_title)
@@ -149,7 +149,7 @@ class main():
         # TEST: Correct contact name is in the page header.
         #
         headerName = self.testUtils.get_element('xpath', DOMS.GLOBAL.app_head % p_contact['name'])
-        self.testUtils.testTrue(headerName.is_displayed(), "Contact name (" + p_contact["name"] + ") not in 'view details' header")
+        self.testUtils.TEST(headerName.is_displayed(), "Contact name (" + p_contact["name"] + ") not in 'view details' header")
         
 
 
@@ -187,7 +187,7 @@ class main():
         #
         # Go to the view details screen for this contact.
         #
-        self.viewContact(p_contact)
+        self.viewContact(p_contact_curr)
                 
         #
         # Tap the Edit button to go to the edit details page.

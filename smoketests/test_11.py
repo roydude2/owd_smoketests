@@ -38,7 +38,7 @@ class test_11(GaiaTestCase):
         # TEST: Thumbnail has not been previewed yet.
         #
         prev_marker = self.marionette.find_element(*DOMS.Camera.thumbnail_preview_marker)
-        self.testUtils.testTrue((prev_marker.get_attribute("class") == "offscreen"), "Image was previewed as soon as picture was taken.")
+        self.testUtils.TEST((prev_marker.get_attribute("class") == "offscreen"), "Image was previewed as soon as picture was taken.")
         
         #
         # Click thumbnail.
@@ -50,7 +50,7 @@ class test_11(GaiaTestCase):
         #
         self.wait_for_element_displayed(*DOMS.Camera.thumbnail_preview_marker)
         prev_marker = self.testUtils.get_element(*DOMS.Camera.thumbnail_preview_marker)
-        self.testUtils.testTrue((prev_marker.get_attribute("class") == ""), "Image was not previewed when thumbnail was clicked.")
+        self.testUtils.TEST((prev_marker.get_attribute("class") == ""), "Image was not previewed when thumbnail was clicked.")
         
         #
         # Get a screenshot of the image from the camera preview thumbnail.
@@ -71,7 +71,7 @@ class test_11(GaiaTestCase):
         # TEST: Thumbnails are not visible when vieweing an image.
         #
         thumbs = self.marionette.find_element(*DOMS.Gallery.thumbnail_list_section)
-        self.testUtils.testTrue( (thumbs.get_attribute("class") == "hidden"), "Thumbnails still present when vieweing image in gallery.")
+        self.testUtils.TEST( (thumbs.get_attribute("class") == "hidden"), "Thumbnails still present when vieweing image in gallery.")
         
         #
         # TEST: Image is displayed as expected.
@@ -80,17 +80,17 @@ class test_11(GaiaTestCase):
             thisIMG = self.testUtils.get_element(*DOMS.Gallery.current_image_pic)
             try:
                 x = str(thisIMG.get_attribute('src'))
-                self.testUtils.testFalse((x == ""), "Image source is empty in gallery after clicking thumbnail.")
+                self.testUtils.TEST((x != ""), "Image source is empty in gallery after clicking thumbnail.")
             except: 
-                self.testUtils.testTrue( (1==2), "No image source in gallery after clicking thumbnail.")
-        except: self.testUtils.testTrue( (1==2), "Image not displayed as expected after clicking icon in gallery.")
+                self.testUtils.reportError("No image source in gallery after clicking thumbnail.")
+        except: self.testUtils.reportError("Image not displayed as expected after clicking icon in gallery.")
         
         #
         # Get a screenshot of the image from the galery thumbnail.
         #
         img_gallery_view = self.testUtils.screenShot("_GALLERY_VIEW")
         
-        self.testUtils.reportComment("Please verify that these are the same image: ")
+        self.testUtils.reportComment("PLEASE VERIFY THAT THESE ARE THE SAME IMAGE ... ")
         self.testUtils.reportComment("    Before the capture button was pressed   : (unavailable)")
         self.testUtils.reportComment("    Clicking the thumbnail in the camera app: " + img_thumb_view)
         self.testUtils.reportComment("    Clicking the thumbnail in the gallery   : " + img_gallery_view)

@@ -26,13 +26,40 @@ log "Description: $TEST_DESC"
 
 x=`(time gaiatest --address localhost:2828 $TEST_FILE > $TEMP_FILE 2>$ERR_FILE) 2>&1 | grep real | awk '{print $2}'`
 
-log "Time taken : $x"
-log "Result     : $(egrep '^__RESULT' $TEMP_FILE | sed -e 's/^__RESULT //')"
-log ""
-egrep "^__" $TEMP_FILE | grep -v "__RESULT" | sed -e "s/^__//" | while read line
+# Report comments (can be on more than one line).
+counter=0
+egrep '^==COMMENT' $TEMP_FILE | sed -e 's/^[^ ]* //' | while read line
 do
-	log "    $line"
+	if [ $counter -eq 0 ]
+	then
+		counter=1
+		str1="Comments   :"
+	else
+		str1="            "
+	fi
+	log "$str1 $line"
+done
+
+log "Time taken : $x"
+log "Passed     : $(egrep '^==PASSED' $TEMP_FILE | sed -e 's/^[^ ]* //')"
+log "Failed     : $(egrep '^==FAILED' $TEMP_FILE | sed -e 's/^[^ ]* //')"
+log ""
+egrep "^==ERROR " $TEMP_FILE | sed -e "s/^[^ ]* //" | while read line
+do
+	log "    ** ERROR ** $line"
 done
 log ""
+
+if [ "$(egrep 'ERROR|SyntaxError' $ERR_FILE)" ]
+then
+	log "*******************************************************"
+	log "*    NOTE: Uncaught errors were returned by Marionette! "
+	log "*"
+	cat $ERR_FILE | while read line
+	do
+		log "*    $line"
+	done
+	log "*******************************************************"
+fi
 
 rm -f $TEMP_FILE
