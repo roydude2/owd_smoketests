@@ -4,11 +4,13 @@ Instructions for setting up and running automated smoke tests.
 If you have any of these items already installed then try the tests with your installed version first.
 
 
+(For the following, type the commands in a Linux terminal ...)
+
 1. Make sure your device has been flashed with an 'eng' build (the 'user' build 
    won't allow Marionette to run and the tests won't work).
 
-
- (For the following, type the commands in a Linux terminal ...)
+    sudo bin/unagi_flash.get_file
+    sudo bin/unagi_flash.flash_device
 
 
 2. PYTHON 2.7 (check first with "python -V" from the command line):
@@ -23,12 +25,7 @@ If you have any of these items already installed then try the tests with your in
     sudo apt-get install python-setuptools
 
 
-4. GITHUB:
-
-    sudo apt-get install git
-
-
-5. Android Debug Bridge (adb):
+4. Android Debug Bridge (adb):
 
     sudo add-apt-repository ppa:nilarimogard/webupd8
     sudo apt-get update
