@@ -1,4 +1,3 @@
 *.pyc
 .bak/*
 nohup.out
-gaia-ui-tests
