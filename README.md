@@ -10,13 +10,16 @@ If you have any of these items already installed then try the tests with your in
    won't allow Marionette to run and the tests won't work).
 
     sudo bin/unagi_flash.get_file
+    
     sudo bin/unagi_flash.flash_device
 
 
 2. PYTHON 2.7 (check first with "python -V" from the command line):
 
     sudo add-apt-repository ppa:fkrull/deadsnakes
+    
     sudo apt-get update
+    
     sudo apt-get install python2.7
 
 
@@ -28,7 +31,9 @@ If you have any of these items already installed then try the tests with your in
 4. Android Debug Bridge (adb):
 
     sudo add-apt-repository ppa:nilarimogard/webupd8
+    
     sudo apt-get update
+    
     sudo apt-get install android-tools-adb android-tools-fastboot
 
 	
