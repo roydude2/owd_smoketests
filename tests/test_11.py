@@ -65,7 +65,7 @@ class test_11(GaiaTestCase):
         #
         # Open the first thumbnail (should be our video).
         #
-        self.gallery.clickThumb(0, "pic")
+        self.gallery.clickThumb(0)
         
         #
         # TEST: Thumbnails are not visible when vieweing an image.

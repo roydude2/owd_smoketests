@@ -42,7 +42,7 @@ class test_12(GaiaTestCase):
         #
         # Open the first thumbnail (should be our video).
         #
-        self.gallery.clickThumb(0, "vid")
+        self.gallery.clickThumb(0)
         self.gallery.testVideoLength(4.9, 9.0)
         
         

@@ -16,16 +16,36 @@ class main():
         self.app = self.parent.apps.launch('Gallery')
         self.parent.wait_for_element_not_displayed(*DOM.GLOBAL.loading_overlay)
 
-    def clickThumb(self, p_num, p_type):
-        self.parent.wait_for_element_displayed(*DOM.Gallery.items)
-        all_items = self.marionette.find_elements(*DOM.Gallery.items)
-        my_item = all_items[p_num]
-        self.marionette.tap(my_item)
+    def thumbCount(self):
+        self.parent.wait_for_element_present(*DOM.Gallery.thumbnail_items)
+        x = self.marionette.find_elements(*DOM.Gallery.thumbnail_items)
+        return len(x)
+
+    #
+    # Returns a list of gallery item objects.
+    #
+    def getGalleryItems(self):
+        self.parent.wait_for_element_displayed(*DOM.Gallery.thumbnail_items)
+        return self.marionette.execute_script("return window.wrappedJSObject.files;")
         
-        if p_type.lower() == "vid":
-            self.parent.wait_for_element_displayed(*DOM.Gallery.current_image_vid)
-        else:
-            self.parent.wait_for_element_displayed(*DOM.Gallery.current_image_pic)
+    def clickThumb(self, p_num):
+        gallery_items = self.getGalleryItems()
+        for index, item in enumerate(gallery_items):
+            if index == p_num:
+                my_item = self.marionette.find_elements(*DOM.Gallery.thumbnail_items)[index]
+                self.marionette.tap(my_item)
+
+                if 'video' in item['metadata']:
+                    self.parent.wait_for_element_displayed(*DOM.Gallery.current_image_vid)
+                else:
+                    self.parent.wait_for_element_displayed(*DOM.Gallery.current_image_pic)
+                break
+
+        #self.parent.wait_for_element_displayed(*DOM.Gallery.thumbnail_items)
+        #all_items = self.marionette.find_elements(*DOM.Gallery.thumbnail_items)
+        #my_item = all_items[p_num]
+        #self.marionette.tap(my_item)
+        
 
     #
     # Plays the video we've loaded (in gallery you have to click the thumbnail first,

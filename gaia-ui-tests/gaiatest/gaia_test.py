@@ -363,7 +363,8 @@ class GaiaTestCase(MarionetteTestCase):
         self.device.push_file(self.resource(filename), count, destination)
 
     def resource(self, filename):
-        return os.path.abspath(os.path.join(os.path.dirname(__file__), 'resources', filename))
+        #return os.path.abspath(os.path.join(os.path.dirname(__file__), 'resources', filename))
+        return os.path.abspath(os.path.join('tests/resources', filename))
 
     def wait_for_element_present(self, by, locator, timeout=_default_timeout):
         timeout = float(timeout) + time.time()
