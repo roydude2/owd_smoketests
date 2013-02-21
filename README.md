@@ -21,7 +21,12 @@ If you have any of these items already installed then try the tests with your in
    </pre>
 
 
-2. PYTHON 2.7 (check first with "python -V" from the command line):
+2. Make sure 'remote debugging' is *OFF* on your device:
+
+   *Settings > Device Information > More Information >  Developer > Remote debugging*
+
+
+3. PYTHON 2.7 (check first with "python -V" from the command line):
 
    <pre>
    sudo add-apt-repository ppa:fkrull/deadsnakes
@@ -30,14 +35,14 @@ If you have any of these items already installed then try the tests with your in
    </pre>
 
 
-3. Python 'setuptools':
+4. Python 'setuptools':
 
    <pre>
    sudo apt-get install python-setuptools
    </pre>
 
 
-4. Android Debug Bridge (adb):
+5. Android Debug Bridge (adb):
 
    <pre>
    sudo add-apt-repository ppa:nilarimogard/webupd8

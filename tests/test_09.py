@@ -3,10 +3,11 @@ sys.path.insert(1, "./")
 
 from tools import TestUtils
 from apps import DOM, app_contacts, app_messages
-from mock_data.contacts import MockContacts
+from tests.mock_data.contacts import MockContacts
 from gaiatest import GaiaTestCase
 
 class test_9(GaiaTestCase):
+    _Description = "Send an SMS to a contact from the contacts app."
 
     def setUp(self):
         #
@@ -28,7 +29,7 @@ class test_9(GaiaTestCase):
         # Establish which phone number to use.
         #
         import os
-        self.contact_1["tel"]["value"] = os.environ['TEST_10_NUM']
+        self.contact_1["tel"]["value"] = os.environ['TEST_SMS_NUM']
         self.testUtils.reportComment("Sending sms to telephone number: " + self.contact_1["tel"]["value"])
         
         #

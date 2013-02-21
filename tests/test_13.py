@@ -6,6 +6,7 @@ from apps import DOM, app_camera, app_video
 from gaiatest import GaiaTestCase
 
 class test_13(GaiaTestCase):
+    _Description = "Record video and view it in the video player app."
     
     def setUp(self):
         #

@@ -51,7 +51,9 @@ class main():
         # Allow for bug - if video plays without screen being tapped, then when
         # it finishes the player closes (and marionette crashes).
         #
-        self.testUtils.reportComment("BUG IN VIDEO PLAYER: Sometimes crashes after playing a video!")
+        self.testUtils.reportComment(
+            "BUG IN VIDEO PLAYER: Sometimes crashes after playing a video! " + 
+            "If you see an error dumped by Marionette here, it's probably because of that.")
         #x=self.marionette.find_element(*DOM.Video.video_loaded)
         #self.marionette.tap(x)
         

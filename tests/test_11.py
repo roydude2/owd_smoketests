@@ -6,6 +6,7 @@ from apps import DOM, app_gallery, app_camera
 from gaiatest import GaiaTestCase
 
 class test_11(GaiaTestCase):
+    _Description = "Take a photograph via the camera app."
     
     def setUp(self):
         #

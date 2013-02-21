@@ -6,6 +6,7 @@ from apps import DOM, app_messages
 from gaiatest import GaiaTestCase
 
 class test_10(GaiaTestCase):
+    _Description = "Send and receive an SMS via the messaging app."
     
     def setUp(self):
         #
@@ -28,7 +29,7 @@ class test_10(GaiaTestCase):
         # Establish which phone number to use.
         #
         import os
-        self.target_telNum = os.environ['TEST_10_NUM']
+        self.target_telNum = os.environ['TEST_SMS_NUM']
         self.testUtils.reportComment("Sending sms to telephone number " + self.target_telNum)
         
     def tearDown(self):

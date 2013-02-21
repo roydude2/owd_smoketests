@@ -5,8 +5,8 @@ from tools import TestUtils
 from apps import DOM, app_gallery, app_camera
 from gaiatest import GaiaTestCase
 
-
 class test_12(GaiaTestCase):
+    _Description = "Record a video and view it in the gallery app."
     
     def setUp(self):
         #

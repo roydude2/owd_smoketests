@@ -1,44 +1,87 @@
 #!/bin/bash
 
 mkdir /tmp/tests 2>/dev/null
+
 export RESULT_FILE="/tmp/tests/B2G_tests.$(date +%Y%m%d%H%M%S)"
 export ERR_FILE=${RESULT_FILE}.errors
 export RUNTEST="./bin/run_test_case"
 export TESTDIR="./tests"
 
+#
+# Did the caller just wat to run certain tests:
+#
+TESTS="$@"
+
+#
 # Some required input first ...
+#
 printf "\n**************************\n\n"
-printf "Some of the tests require your input (if you'd prefer the script reads an input file for this just let me know).\n\n"
 ans=""
 while [ ! "$ans" ]
 do
-    printf "Please enter a tel number I can send test sms messages to (you may need to reply to the test sms): "
+    printf "Mobile number I can send/receieve SMS with: "
     read ans
 done
 echo ""
-export TEST_10_NUM=$ans
+export TEST_SMS_NUM=$ans
 
+#
+# Setup gaiatest.
+#
+echo "Making sure THIS gaiatest will be used (it has some necessary tweaks!) + latest Marionette ...."
 
-echo "Making sure you're using the gaiatest suite loaded here (it has some necessary tweaks!) ...."
+# Move current marionette (if it's there).
+find /usr/local/lib -name "marionette_client-*.egg" | while read line
+do
+    if [ -d "$line" ]
+    then
+        [ -d $line.bak ] && sudo rm -rf $line.bak
+        sudo mv $line $line.bak
+        break
+    fi
+done
+
+# Re-install gaiatest (which will get marionette with the latest one since it's no longer there).
 cd gaia-ui-tests
 echo ""
 sudo python setup.py develop > /tmp/gaiatest_install.log 2> /tmp/gaiatest_install.log
 cd - > /dev/null 2>/dev/null
 
+#
 # Establsh connection to device.
+#
 ./bin/connect_device
-
 
 #
 # Now run tests as required.
 #
-$RUNTEST 7 "Add a contact"                          $TESTDIR/test_07.py $RESULT_FILE $ERR_FILE
-$RUNTEST 8 "Edit a contact"                         $TESTDIR/test_08.py $RESULT_FILE $ERR_FILE
-$RUNTEST 9 "Send SMS from contact"                  $TESTDIR/test_09.py $RESULT_FILE $ERR_FILE
-$RUNTEST 10 "Send + receive sms"                    $TESTDIR/test_10.py $RESULT_FILE $ERR_FILE
-$RUNTEST 11 "Take picture"                          $TESTDIR/test_11.py $RESULT_FILE $ERR_FILE
-$RUNTEST 12 "Take video / check gallery"            $TESTDIR/test_12.py $RESULT_FILE $ERR_FILE
-$RUNTEST 13 "Take video / check player"             $TESTDIR/test_13.py $RESULT_FILE $ERR_FILE
+run_test(){
+    FNAM=$1
+    DESC=$(grep "_Description" $FNAM | head -1 | sed -e "s/^[^\"]*\"\(.*\)\"/\1/")
+    DESC=${DESC:-"(no description found!)"}
+    CASE=$(echo ${FNAM%.py} | sed -e "s/^.*_//")
+    
+    $RUNTEST $CASE "$DESC" $FNAM $RESULT_FILE $ERR_FILE
+}
+
+if [ ! "$TESTS" ]
+then
+    ls ./tests/test_*.py | while read fnam
+    do
+        run_test $fnam
+    done
+else
+    file_list=""
+    
+    for i in $(echo $TESTS)
+    do
+        # Make sure the number is 2 digits (pad with 0).
+        x=$(echo $i | awk '{printf("%02d", $1)}')
+        
+        run_test ./tests/test_${x}.py
+    done
+fi
+
 
 clear
 printf "\n\n"

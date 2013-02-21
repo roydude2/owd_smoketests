@@ -3,10 +3,11 @@ sys.path.insert(1, "./")
 
 from tools import TestUtils
 from apps import DOM, app_contacts
-from mock_data.contacts import MockContacts
+from tests.mock_data.contacts import MockContacts
 from gaiatest import GaiaTestCase
 
 class test_8(GaiaTestCase):
+    _Description = "Edit a contact in the contacts app."
 
     def setUp(self):
         #

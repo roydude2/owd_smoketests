@@ -33,7 +33,7 @@ class main():
         sendBtn.click()
         time.sleep(5)
         self.marionette.tap(sendBtn)
-        #self.testUtils.clickNTap(sendBtn)
+        
         time.sleep(1)
         self.parent.wait_for_element_not_present(*DOM.Messages.message_sending_spinner, timeout=120)
         

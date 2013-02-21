@@ -177,6 +177,10 @@ class TestUtils():
     # Displays the status / notification bar in the home screen.
     #
     def displayStatusBar(self):
+        #
+        # The only reliable way I have to do this at the moment is via JS
+        # (tapping it only worked sometimes).
+        #
         self.marionette.execute_script("window.wrappedJSObject.UtilityTray.show()")
         
     #
