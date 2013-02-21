@@ -1,22 +1,22 @@
 import sys
-sys.path.append("./")
+sys.path.insert(1, "./")
 
-from royTools import RoyUtils, DOMS, app_camera, app_video
+from tools import TestUtils
+from apps import DOM, app_camera, app_video
 from gaiatest import GaiaTestCase
-import time
 
 class test_13(GaiaTestCase):
     
     def setUp(self):
+        #
+        # Set up child objects.
+        #
         GaiaTestCase.setUp(self)
-        self.testUtils = RoyUtils.testUtils(self, 13)
+        self.testUtils = TestUtils(self, 13)
         self.camera    = app_camera.main(self, self.testUtils)
         self.video     = app_video.main(self, self.testUtils)
         
         self.marionette.set_search_timeout(50)
-        
-        # Unlock the screen (if necessary)
-        self.testUtils.unlockScreen()
     
     def tearDown(self):
         self.testUtils.reportResults()
@@ -26,9 +26,8 @@ class test_13(GaiaTestCase):
         # Record a test video.
         #
         self.camera.launch()
-        self.camera.recordAVideo()
-        self.camera.testVideo()
-
+        self.camera.recordVideo("00:05")
+        self.camera.testVideoLength(0, 4.9, 9.0)
 
         #
         # Open the video player application.
@@ -38,11 +37,10 @@ class test_13(GaiaTestCase):
         #
         # the first thumbnail should be our video.
         #
-        self.video.checkThumbDuration("00:05")
-        self.video.clickThumb(0)
+        self.video.checkThumbDuration(0, "00:05")
         
         #
         # Check that the video is as long as expected.
         #
-        self.video.checkPlayDuration(5, 8)
+        self.video.testVideoLength(0, 4.9, 9.0)
         

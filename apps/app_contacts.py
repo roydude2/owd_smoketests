@@ -1,4 +1,4 @@
-from royTools import DOMS
+from apps import DOM
 import time
 
 class main():
@@ -14,7 +14,7 @@ class main():
 
     def launch(self):
         self.app = self.parent.apps.launch('Contacts')
-        self.parent.wait_for_element_not_displayed(*DOMS.GLOBAL.loading_overlay)
+        self.parent.wait_for_element_not_displayed(*DOM.GLOBAL.loading_overlay)
 
 
     #
@@ -26,15 +26,15 @@ class main():
     def getContactFields(self):
         
         return {
-        'givenName' : self.testUtils.get_element(*DOMS.Contacts.given_name_field),
-        'familyName': self.testUtils.get_element(*DOMS.Contacts.family_name_field),
-        'tel'       : self.testUtils.get_element(*DOMS.Contacts.phone_field),
-        'email'     : self.testUtils.get_element(*DOMS.Contacts.email_field),
-        'street'    : self.testUtils.get_element(*DOMS.Contacts.street_field),
-        'zip'       : self.testUtils.get_element(*DOMS.Contacts.zip_code_field),
-        'city'      : self.testUtils.get_element(*DOMS.Contacts.city_field),
-        'country'   : self.testUtils.get_element(*DOMS.Contacts.country_field),
-        'comment'   : self.testUtils.get_element(*DOMS.Contacts.comment_field)
+        'givenName' : self.testUtils.get_element(*DOM.Contacts.given_name_field),
+        'familyName': self.testUtils.get_element(*DOM.Contacts.family_name_field),
+        'tel'       : self.testUtils.get_element(*DOM.Contacts.phone_field),
+        'email'     : self.testUtils.get_element(*DOM.Contacts.email_field),
+        'street'    : self.testUtils.get_element(*DOM.Contacts.street_field),
+        'zip'       : self.testUtils.get_element(*DOM.Contacts.zip_code_field),
+        'city'      : self.testUtils.get_element(*DOM.Contacts.city_field),
+        'country'   : self.testUtils.get_element(*DOM.Contacts.country_field),
+        'comment'   : self.testUtils.get_element(*DOM.Contacts.comment_field)
         }
         
     #
@@ -91,31 +91,31 @@ class main():
         #
         # First make sure we're in the right place.
         #
-        viewAllHeader = self.marionette.find_element(*DOMS.Contacts.view_all_header)
+        viewAllHeader = self.marionette.find_element(*DOM.Contacts.view_all_header)
         if not viewAllHeader.is_displayed():
             self.launch()
             
         #
         # Click Create new contact from the view all screen.
         #
-        self.parent.wait_for_element_displayed(*DOMS.Contacts.view_all_header)
-        add_new_contact = self.testUtils.get_element(*DOMS.Contacts.add_contact_button)
+        self.parent.wait_for_element_displayed(*DOM.Contacts.view_all_header)
+        add_new_contact = self.testUtils.get_element(*DOM.Contacts.add_contact_button)
         
         self.testUtils.clickNTap(add_new_contact)
         
         #
         # Enter details for new contact.
         #
-        self.parent.wait_for_element_displayed(*DOMS.Contacts.add_contact_header)
+        self.parent.wait_for_element_displayed(*DOM.Contacts.add_contact_header)
         
         # Put the contact details into each of the fields.
         self.populateFields(p_contact)
         
         # Press the 'done' button and wait for the 'all contacts' page to load.
-        done_button = self.testUtils.get_element(*DOMS.Contacts.done_button)
+        done_button = self.testUtils.get_element(*DOM.Contacts.done_button)
         self.testUtils.clickNTap(done_button)
         
-        self.parent.wait_for_element_displayed(*DOMS.Contacts.view_all_header)
+        self.parent.wait_for_element_displayed(*DOM.Contacts.view_all_header)
         
         # For some reason the new contact doesn't always appear imediately.
         self.parent.wait_for_element_displayed("link text", p_contact['name'])
@@ -143,12 +143,12 @@ class main():
             self.testUtils.reportError("Could not tap on '" + p_contact['name'] + "' in contacts list!")
             return 0 # (leave the function)
         
-        self.parent.wait_for_element_displayed(*DOMS.Contacts.view_details_title)
+        self.parent.wait_for_element_displayed(*DOM.Contacts.view_details_title)
 
         # 
         # TEST: Correct contact name is in the page header.
         #
-        headerName = self.testUtils.get_element('xpath', DOMS.GLOBAL.app_head % p_contact['name'])
+        headerName = self.testUtils.get_element('xpath', DOM.GLOBAL.app_head % p_contact['name'])
         self.testUtils.TEST(headerName.is_displayed(), "Contact name (" + p_contact["name"] + ") not in 'view details' header")
         
 
@@ -171,9 +171,9 @@ class main():
     # Validate the details of a contact in the 'view contact' screen.
     #
     def checkEditContactDetails(self, p_contact):
-        editBTN = self.testUtils.get_element(*DOMS.Contacts.edit_details_button)
+        editBTN = self.testUtils.get_element(*DOM.Contacts.edit_details_button)
         self.testUtils.clickNTap(editBTN)
-        self.parent.wait_for_element_displayed(*DOMS.Contacts.edit_contact_header)
+        self.parent.wait_for_element_displayed(*DOM.Contacts.edit_contact_header)
 
         #
         # Correct details are in the contact fields.
@@ -192,9 +192,9 @@ class main():
         #
         # Tap the Edit button to go to the edit details page.
         #
-        editBTN = self.testUtils.get_element(*DOMS.Contacts.edit_details_button)
+        editBTN = self.testUtils.get_element(*DOM.Contacts.edit_details_button)
         self.testUtils.clickNTap(editBTN)
-        self.parent.wait_for_element_displayed(*DOMS.Contacts.edit_contact_header)
+        self.parent.wait_for_element_displayed(*DOM.Contacts.edit_contact_header)
 
         #
         # Enter the new contact details.
@@ -204,13 +204,13 @@ class main():
         #
         # Save the changes
         #
-        updateBTN = self.testUtils.get_element(*DOMS.Contacts.edit_update_button)
+        updateBTN = self.testUtils.get_element(*DOM.Contacts.edit_update_button)
         self.testUtils.clickNTap(updateBTN)
 
         #
         # Return to the contact list screen.
         #
-        backBTN = self.testUtils.get_element(*DOMS.Contacts.details_back_button)
+        backBTN = self.testUtils.get_element(*DOM.Contacts.details_back_button)
         self.testUtils.clickNTap(backBTN)
         
-        self.parent.wait_for_element_displayed(*DOMS.Contacts.view_all_header)
+        self.parent.wait_for_element_displayed(*DOM.Contacts.view_all_header)

@@ -50,7 +50,7 @@ do
 done
 log ""
 
-if [ "$(egrep 'ERROR|SyntaxError' $ERR_FILE)" ]
+if [ "$(egrep 'ERROR|Error' $ERR_FILE)" ]
 then
 	log "*******************************************************"
 	log "*    NOTE: Uncaught errors were returned by Marionette! "

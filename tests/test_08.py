@@ -1,31 +1,37 @@
 import sys
-sys.path.append("./")
+sys.path.insert(1, "./")
 
-from royTools import RoyUtils, DOMS, app_contacts
-from smoketests.mocks.mock_contact import MockContact
+from tools import TestUtils
+from apps import DOM, app_contacts
+from mock_data.contacts import MockContacts
 from gaiatest import GaiaTestCase
 
 class test_8(GaiaTestCase):
 
     def setUp(self):
+        #
         # Set up child objects...
+        #
         GaiaTestCase.setUp(self)
-        self.testUtils  = RoyUtils.testUtils(self, 8)
+        self.testUtils  = TestUtils(self, 8)
         self.contacts   = app_contacts.main(self, self.testUtils)
                 
+        #
         # Set timeout for element searches.
+        #
         self.marionette.set_search_timeout(50)
 
+        #
         # Get details of our test contacts.
-        self.Contact_1 = MockContact().Contact_1
-        self.Contact_2 = MockContact().Contact_2
+        #
+        self.Contact_1 = MockContacts().Contact_1
+        self.Contact_2 = MockContacts().Contact_2
 
+        #
         # We're not testing adding a contact, so just stick one 
         # into the database.
+        #
         self.data_layer.insert_contact(self.Contact_1)
-        
-        # Unlock the screen (if necessary)
-        self.testUtils.unlockScreen()
         
     def tearDown(self):
         self.testUtils.reportResults()

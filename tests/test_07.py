@@ -1,26 +1,30 @@
 import sys
-sys.path.append("./")
+sys.path.insert(1, "./")
 
-from royTools import RoyUtils, DOMS, app_contacts
-from smoketests.mocks.mock_contact import MockContact
+from tools import TestUtils
+from apps import DOM, app_contacts
+from mock_data.contacts import MockContacts
 from gaiatest import GaiaTestCase
 
 class test_7(GaiaTestCase):
     
     def setUp(self):
+        #
         # Set up child objects...
+        #
         GaiaTestCase.setUp(self)
-        self.testUtils = RoyUtils.testUtils(self, 7)
-        self.contacts   = app_contacts.main(self, self.testUtils)
+        self.testUtils = TestUtils(self, 7)
+        self.contacts  = app_contacts.main(self, self.testUtils)
         
+        #
         # Set the timeout for element searches.
+        #
         self.marionette.set_search_timeout(50)
 
+        #
         # Get details of our test contact.
-        self.Contact_1 = MockContact().Contact_1
-        
-        # Unlock the screen (if necessary)
-        self.testUtils.unlockScreen()
+        #
+        self.Contact_1 = MockContacts().Contact_1
         
     def tearDown(self):
         self.testUtils.reportResults()

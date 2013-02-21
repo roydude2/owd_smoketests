@@ -1,4 +1,4 @@
-from royTools import DOMS
+from apps import DOM
 import time
 
 class main():
@@ -14,14 +14,14 @@ class main():
 
     def launch(self):
         self.app = self.parent.apps.launch('Messages')
-        self.parent.wait_for_element_not_displayed(*DOMS.GLOBAL.loading_overlay)
+        self.parent.wait_for_element_not_displayed(*DOM.GLOBAL.loading_overlay)
 
     #
     # Create and send a message (assumes we are in a new 'create new message'
     # screen with the destination number filled in already).
     #
     def enterSMSMsg(self, p_msg):
-        msgArea = self.testUtils.get_element(*DOMS.Messages.input_message_area)
+        msgArea = self.testUtils.get_element(*DOM.Messages.input_message_area)
         msgArea.send_keys(p_msg)
 
     
@@ -29,23 +29,23 @@ class main():
     # Just presses the 'send' button (assumes everything else is done).
     #
     def sendSMS(self):
-        sendBtn = self.testUtils.get_element(*DOMS.Messages.send_message_button)
+        sendBtn = self.testUtils.get_element(*DOM.Messages.send_message_button)
         sendBtn.click()
         time.sleep(5)
         self.marionette.tap(sendBtn)
         #self.testUtils.clickNTap(sendBtn)
         time.sleep(1)
-        self.parent.wait_for_element_not_present(*DOMS.Messages.message_sending_spinner, timeout=120)
+        self.parent.wait_for_element_not_present(*DOM.Messages.message_sending_spinner, timeout=120)
         
         # Go back to main messages screen
-        header_back_button = self.testUtils.get_element(*DOMS.Messages.header_back_button)
+        header_back_button = self.testUtils.get_element(*DOM.Messages.header_back_button)
         self.testUtils.clickNTap(header_back_button)
        
     #
     # Wait for a new message.
     #
     def waitForNewSMS(self):
-        self.parent.wait_for_element_displayed(*DOMS.Messages.unread_message, timeout=180)
+        self.parent.wait_for_element_displayed(*DOM.Messages.unread_message, timeout=180)
 
     #
     # Wait for new message (in the home screen).
@@ -53,22 +53,22 @@ class main():
     def openNewSMS_homescreen(self):
         self.testUtils.goHome()
         self.testUtils.waitForNewStatusBarNew()
-        return self.testUtils.openStatusBarNewNotif(DOMS.Messages.statusbar_new_sms_url)
+        return self.testUtils.openStatusBarNewNotif(DOM.Messages.statusbar_new_sms_url)
         
     #
     # Read last message.
     #
     def readLastSMSInThread(self):
-        self.parent.wait_for_element_displayed(*DOMS.Messages.received_messages)
-        received_message = self.testUtils.get_elements(*DOMS.Messages.received_messages)[-1]
+        self.parent.wait_for_element_displayed(*DOM.Messages.received_messages)
+        received_message = self.testUtils.get_elements(*DOM.Messages.received_messages)[-1]
         return str(received_message.text)
 
     #
     # Read and return the value of the new message.
     #
     def readNewSMS(self):
-        self.parent.wait_for_element_displayed(*DOMS.Messages.unread_message)
-        unread_message = self.testUtils.get_element(*DOMS.Messages.unread_message)
+        self.parent.wait_for_element_displayed(*DOM.Messages.unread_message)
+        unread_message = self.testUtils.get_element(*DOM.Messages.unread_message)
         self.marionette.tap(unread_message)
 
         # (From unit tests: "TODO Due to displayed bugs I cannot find a good wait for switch btw views")
@@ -84,15 +84,15 @@ class main():
         #
         # Tap create new sms button.
         #
-        self.parent.wait_for_element_displayed(*DOMS.Messages.create_new_message_btn)
-        newMsgBtn = self.testUtils.get_element(*DOMS.Messages.create_new_message_btn)
+        self.parent.wait_for_element_displayed(*DOM.Messages.create_new_message_btn)
+        newMsgBtn = self.testUtils.get_element(*DOM.Messages.create_new_message_btn)
         self.testUtils.clickNTap(newMsgBtn)
         
         #
         # Enter the number.
         #
-        self.parent.wait_for_element_displayed(*DOMS.Messages.target_number)
-        numInput = self.testUtils.get_element(*DOMS.Messages.target_number)
+        self.parent.wait_for_element_displayed(*DOM.Messages.target_number)
+        numInput = self.testUtils.get_element(*DOM.Messages.target_number)
         numInput.send_keys(p_num)
         
         #

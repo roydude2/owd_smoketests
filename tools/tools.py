@@ -2,9 +2,9 @@ import os
 import base64
 import time
 import sys
-from royTools import DOMS
+from apps import DOM
 
-class testUtils():
+class TestUtils():
     #
     # When you create your instance of this class, include the
     # "self" object so we can access the calling class' objects.
@@ -167,36 +167,6 @@ class testUtils():
         f.write( self.marionette.page_source.encode('ascii', 'ignore') )
 
     #
-    # Unlock the screen.
-    #
-    def unlockScreen(self):
-        x = 1
-        #self.parent.lockscreen.unlock() # possibly not working!
-
-        #lockscreen_element = self.marionette.find_element(*DOMS.Lockscreen.id)
-        ##if lockscreen_element.is_displayed():
-     
-            #unlock_handle = self.marionette.find_element(*DOMS.Lockscreen.handle)
-            #unlock_handle_x_centre = int(unlock_handle.size['width'] / 2)
-            #unlock_handle_y_centre = int(unlock_handle.size['height'] / 2)
-
-            ## Get the end position from the animation
-            #lockscreen_area = self.marionette.find_element(*DOMS.Lockscreen.area)
-            #end_animation_position = lockscreen_area.size['height'] - unlock_handle.size['height']
-
-            ## Flick from unlock handle to (0, -end_animation_position) over 800ms duration
-            #self.marionette.flick(unlock_handle, unlock_handle_x_centre, unlock_handle_y_centre, 0, 0 - end_animation_position, 800)
-
-            ## Wait for the svg to animate and handle to disappear
-            #self.wait_for_condition(lambda m: not unlock_handle.is_displayed())
-
-            #unlock_button = self.marionette.find_element(*DOMS.unlock_button)
-            #unlock_button.click()
-
-            #lockscreen_element = self.marionette.find_element(*DOMS.Lockscreen.id)
-            #self.wait_for_condition(lambda m: not lockscreen_element.is_displayed())
-
-    #
     # Return to the home screen.
     #
     def goHome(self):
@@ -213,9 +183,7 @@ class testUtils():
     # Waits for a new notification in the status bar.
     #
     def waitForStatusBarNew(self):
-        self.parent.wait_for_element_displayed(*DOMS.GLOBAL.status_bar_new)
-        #self.parent.wait_for_element_present(*DOMS.GLOBAL.status_bar_notifs)
-        
+        self.parent.wait_for_element_displayed(*DOM.GLOBAL.status_bar_new)        
         
     #
     # Clicks the first notification in the home status bar that matches
@@ -223,7 +191,7 @@ class testUtils():
     #
     def openStatusBarNewNotif(self, p_url):
         
-        x = self.marionette.find_elements(*DOMS.GLOBAL.status_bar_notifs)
+        x = self.marionette.find_elements(*DOM.GLOBAL.status_bar_notifs)
 
         returnVar = False
         for i in x:
