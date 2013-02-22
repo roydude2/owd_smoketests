@@ -41,5 +41,5 @@ else
 	showDevices
 fi
 
-echo "$X Continuing with tests ..."
+echo "$X DONE."
 echo "$X"

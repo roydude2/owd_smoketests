@@ -45,7 +45,7 @@ class test_14(GaiaTestCase):
         #
         # Takes a few seconds for the thumbs to appear...
         #
-        time.sleep(5)
+        time.sleep(8)
         
         #
         # Open each picture ...
