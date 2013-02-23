@@ -1,16 +1,32 @@
 #!/bin/bash
-export TEST_CASE="$1"
-export TEST_DESC="$2"
-export TEST_FILE="$3"
-export RESULT_FILE="$4"; export RESULT_FILE
-export ERR_FILE="$5"
-export TEMP_FILE="${RESULT_FILE}.in_progress"
 
-if [ "$TEMP_FILE" = "" ]
+#
+# Make sure we have all the input we need.
+#
+while getopts "t:d:f:r:e:" option
+do
+        case "$option" in
+        t) export TEST_CASE="$OPTARG";;
+        d) export TEST_DESC="$OPTARG";;
+        f) export TEST_FILE="$OPTARG";;
+        r) export RESULT_FILE="$OPTARG";;
+        e) export ERR_FILE="$OPTARG";;
+        esac
+done
+
+if 	[ ! "$TEST_CASE" ]   || \
+	[ ! "$TEST_DESC" ]   || \
+	[ ! "$TEST_FILE" ]   || \
+	[ ! "$RESULT_FILE" ] || \
+	[ ! "$ERR_FILE" ] 
 then
-	echo "Syntax: $0 <test case> <description> <test file> <result file>"
+	echo "Syntax: $0 -t <test case> -d <description> -f <test file> -r <result file> -e <error file>"
 	exit 1
 fi
+
+export TEMP_FILE="${RESULT_FILE}.in_progress"
+
+
 
 #
 # Function to display the output to the screen, whilst updating the test file.
@@ -18,6 +34,7 @@ fi
 log(){
 	echo "$1" | tee -a $RESULT_FILE
 }
+
 
 log ""
 log ""

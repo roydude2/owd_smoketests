@@ -1,32 +1,19 @@
 class GLOBAL():
     loading_overlay  = ('id', 'loading-overlay')
-    app_head         = "//h1[text()='%s']"
-    homescreen_frame = ('css selector', 'div.homescreen iframe')
+    app_head_specific= "//h1[text()='%s']"
+    app_head         = ('xpath', "//h1")
     status_bar       = ('id', 'statusbar')
-    status_bar_open  = ('xpath', "//*[@id='desktop-notifications-container']")
     status_bar_new   = ('xpath', "//*[@id='statusbar-notification'][@data-unread='true']")
-    status_bar_notifs= ('xpath', "//*[@id='desktop-notifications-container']/div")
+    status_bar_count = ('xpath', "//*[@id='desktop-notifications-container']/div")
 
-class Lockscreen():
-    id            = ('id', 'lockscreen')
-    area          = ('id', 'lockscreen-area')
-    handle        = ('id', 'lockscreen-area-handle')
-    unlock_button = ('id', 'lockscreen-area-unlock')
-
-class Settings():
-    main_header     = ('xpath', GLOBAL.app_head % 'Settings')
-    sound_header    = ('xpath', GLOBAL.app_head % 'Sound')
-    sound           = ('id', 'menuItem-sound')
-    vibrate         = ('name', 'vibration.enabled')
-    
 class Browser():
     frame_locator          = ('css selector', 'iframe[src="app://browser.gaiamobile.org/index.html"]')
 
 class Contacts():
     frame_locator          = ('css selector', 'iframe[src="app://communications.gaiamobile.org/index.html"]')
-    view_all_header        = ('xpath', GLOBAL.app_head % 'Contacts')
-    add_contact_header     = ('xpath', GLOBAL.app_head % 'Add contact')
-    edit_contact_header    = ('xpath', GLOBAL.app_head % 'Edit contact')
+    view_all_header        = ('xpath', GLOBAL.app_head_specific % 'Contacts')
+    add_contact_header     = ('xpath', GLOBAL.app_head_specific % 'Add contact')
+    edit_contact_header    = ('xpath', GLOBAL.app_head_specific % 'Edit contact')
     view_details_title     = ('id', 'contact-form-title')
     add_contact_button     = ('id', 'add-contact-button')
     edit_details_button    = ('id', 'edit-contact-button')
@@ -46,22 +33,17 @@ class Contacts():
 
 class Messages():
     frame_locator          = ('css selector', 'iframe[src="app://sms.gaiamobile.org/index.html"]')
-    iframe_location        = "app://sms.gaiamobile.org/index.html"
-    statusbar_new_sms_url  = "app://sms.gaiamobile.org/manifest.webapp"
-    view_all_header        = ('xpath', GLOBAL.app_head % 'Messages')
+    statusbar_new_sms      = ('xpath', '//div[@class="notification"]/div[text()="%s"]')
+    statusbar_all_notifs   = ".//*[@id='desktop-notifications-container']/div[%s]"
     create_new_message_btn = ('id', 'icon-add')
     target_number          = ('id', 'receiver-input')
     input_message_area     = ('id', 'message-to-send')
     send_message_button    = ('id', 'send-message')
     header_back_button     = ('xpath', '//header/a[1]')
     unread_message         = ('css selector', 'li > a.unread')
-    all_messages           = ('css selector', 'li.bubble')
+    unread_messages        = ('class name', 'unread')
     message_sending_spinner= ('css selector', "img[src='style/images/spinningwheel_small_animation.gif']")
     received_messages      = ('xpath', "//li[@class='bubble'][a[@class='received']]")
-    edit_threads_button    = ('id', 'icon-edit-threads')
-    select_all_threads     = ('id', 'select-all-threads')
-    delete_threads_button  = ('id', 'threads-delete-button')
-    del_ok_button          = ('id', 'threads-ok-button')
 
 class Camera():
     capture_button           = ('id', 'capture-button')
@@ -83,15 +65,11 @@ class Gallery():
     fullscreen_back_button  = ('id', 'fullscreen-back-button')
 
 class Video():
-    #items                   = ('css selector', 'ul#thumbnails li[data-name]')
     items                   = ('xpath', "//*[@id='thumbnails']/li/div/div[3]")
-    thumbnails              = ('id', 'thumbnails')
+    #thumbnails              = ('id', 'thumbnails')
     thumb_durations         = ('xpath', "//*[@id='thumbnails']/li/div/div[3]/span[13]/span")
-    duration_text           = ('id', 'duration-text')
-    video_name              = ('css selector', 'p.name')
     video_frame             = ('id', 'videoFrame')
     video_loaded            = ('css selector', 'video[style]')
-    elapsed_text            = ('id', 'elapsed-text')
 
 class Phone():
     frame_locator          = ('css selector', 'iframe[src="app://communications.gaiamobile.org/index.html"]')

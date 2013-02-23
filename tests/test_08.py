@@ -21,6 +21,7 @@ class test_8(GaiaTestCase):
         # Set timeout for element searches.
         #
         self.marionette.set_search_timeout(50)
+        self.lockscreen.unlock()
 
         #
         # Get details of our test contacts.

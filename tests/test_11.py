@@ -18,6 +18,7 @@ class test_11(GaiaTestCase):
         self.camera    = app_camera.main(self, self.testUtils)
 
         self.marionette.set_search_timeout(50)
+        self.lockscreen.unlock()
             
     def tearDown(self):
         self.testUtils.reportResults()

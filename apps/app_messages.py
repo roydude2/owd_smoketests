@@ -40,21 +40,85 @@ class main():
         # Go back to main messages screen
         header_back_button = self.testUtils.get_element(*DOM.Messages.header_back_button)
         self.testUtils.clickNTap(header_back_button)
-       
+    
     #
-    # Wait for a new message.
+    # Get the element of the new SMS from the status bar notification.
     #
-    def waitForNewSMS(self):
-        self.parent.wait_for_element_displayed(*DOM.Messages.unread_message, timeout=180)
-
-    #
-    # Wait for new message (in the home screen).
-    #
-    def openNewSMS_homescreen(self):
-        self.testUtils.goHome()
-        self.testUtils.waitForNewStatusBarNew()
-        return self.testUtils.openStatusBarNewNotif(DOM.Messages.statusbar_new_sms_url)
+    def waitForSMSNotifier(self, p_num, p_timeout):
+        #
+        # Now switch to the 'home' frame to watch for the status bar notification
+        # (just to be sure we're in the correct frame!).
+        #
+        self.marionette.switch_to_frame()
         
+        #
+        # Bit complicated - first we need to create the string to wait for.
+        #
+        x=( DOM.Messages.statusbar_new_sms[0],
+            DOM.Messages.statusbar_new_sms[1] % p_num)
+        
+        #
+        # Wait for the notification to be present for this number (3 minute timeout)
+        # in the popup messages (this way we make sure it's coming from our number,
+        # as opposed to just containing our number in the notification).
+        #
+        x = self.testUtils.waitForStatusBarNew(x, p_timeout)
+        
+        if not x:
+            self.testUtils.reportError("Failed to locate new sms before timeout!")
+            errmsg = "(NOTE: If you asked the device to message itself, the return message may have just returned "
+            errmsg = errmsg + "too quickly to be detected - try using the number of a different device.)"
+            self.testUtils.reportError(errmsg)
+            return False
+        else:
+            return True
+    
+    #
+    # Click new sms in the home page status bar notificaiton.
+    #
+    def clickSMSNotifier(self, p_num):
+        #
+        # Switch to the 'home' frame to click the notifier.
+        #
+        self.marionette.switch_to_frame()
+        
+        #
+        # The popup vanishes too quickly to be reliably clicked, so we
+        # need to loop through the elements in the drop down notif bar
+        # and click the relevant link there instead.
+        #
+        self.testUtils.displayStatusBar()
+
+        x = self.marionette.find_elements(*DOM.GLOBAL.status_bar_count)
+        
+        for i in range(0, len(x)):
+            #
+            # Very tricky - the 'tappable' part is actually the parent div :(
+            #
+            #   elParent: this is what has to be clicked to 'action' sms app.
+            #   elChild : this is where the number is stored (so match on this).
+            #
+            # (there MUST be an easier way to do this - took me hours
+            #  of trial-and-error to figure it out! ;[ )
+            #
+            elParent = DOM.Messages.statusbar_all_notifs % (i+1)
+            elChild  = DOM.Messages.statusbar_all_notifs % (i+1) + "/div[1]"
+            
+            elC = self.marionette.find_element('xpath', elChild)
+            if p_num == elC.text:
+                #
+                # Match - get the parent div and click it.
+                # 
+                elP = self.marionette.find_element('xpath', elParent)
+                self.marionette.tap(elP)
+                break
+
+        #
+        # Switch back to the messaging app.
+        #
+        self.testUtils.switchFrame(*DOM.Messages.frame_locator)
+        
+
     #
     # Read last message.
     #
@@ -64,18 +128,24 @@ class main():
         return str(received_message.text)
 
     #
-    # Read and return the value of the new message.
+    # Read and return the value of the new message received from p_num.
     #
-    def readNewSMS(self):
-        self.parent.wait_for_element_displayed(*DOM.Messages.unread_message)
-        unread_message = self.testUtils.get_element(*DOM.Messages.unread_message)
-        self.marionette.tap(unread_message)
-
-        # (From unit tests: "TODO Due to displayed bugs I cannot find a good wait for switch btw views")
-        import time
-        time.sleep(5)
-        
-        return self.readLastSMSInThread()
+    def readNewSMS(self, p_FromNum):
+        self.parent.wait_for_element_displayed(*DOM.Messages.unread_messages)
+        new_messages = self.marionette.find_elements(*DOM.Messages.unread_messages)
+        for i in new_messages:
+            href_attr = i.get_attribute("href")
+            if p_FromNum in href_attr:
+                self.marionette.tap(i)
+                
+                # (From gaiatest: "TODO Due to displayed bugs I cannot find a good wait for switch btw views")
+                import time
+                time.sleep(5)
+                
+                #
+                # Return the last comment in this thread.
+                #
+                return self.readLastSMSInThread()
 
     #
     # Create and send a new SMS.

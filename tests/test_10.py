@@ -7,6 +7,7 @@ from gaiatest import GaiaTestCase
 
 class test_10(GaiaTestCase):
     _Description = "Send and receive an SMS via the messaging app."
+    _TestMsg     = "Smoke test 10 sms - reply with this same message."
     
     def setUp(self):
         #
@@ -17,6 +18,7 @@ class test_10(GaiaTestCase):
         self.messages   = app_messages.main(self, self.testUtils)
         
         self.marionette.set_search_timeout(50)
+        self.lockscreen.unlock()
         
         #
         # Change the settings to vibration only (backdoor method since
@@ -45,7 +47,7 @@ class test_10(GaiaTestCase):
         #
         # Create and send a new test message.
         #
-        self.messages.createAndSendSMS(self.target_telNum, "Smoke test 10 sms - please reply with the word 'ok'.")
+        self.messages.createAndSendSMS(self.target_telNum, self._TestMsg)
         
         #
         # Go home and wait for the notification.
@@ -53,30 +55,21 @@ class test_10(GaiaTestCase):
         self.testUtils.goHome()
         
         #
-        # There's a bug in gaia at the moment - if you switch around too quickly the 'new sms' notifier
-        # can get stuck at the top of the screen for a looooong time.
-        # To make sure we don't cause that, wait a while before trying to display the status bar.
+        # Wait 3 mins for the notification to appear in the utility / noification / status bar (has too many names!).
+        # Then open the bar and click on the new message notification.
         #
-        import time
-        time.sleep(10)
-        
-        #
-        # Wait for the notification to appear in the utility / noification / status bar (has too many names!).
-        # Then open the bar.
-        # Then click on the new message notification.
-        #
-        self.testUtils.waitForStatusBarNew()
-        self.testUtils.displayStatusBar()
-        self.testUtils.openStatusBarNewNotif(DOM.Messages.statusbar_new_sms_url)
+        x = self.messages.waitForSMSNotifier(self.target_telNum, 180)
+        self.testUtils.TEST(x, "Failed to find new msg - aborting:", True)
+
+        self.messages.clickSMSNotifier(self.target_telNum)
 
         #
         # Switch focus to the sms app and read the latest message.
         #
-        self.testUtils.connect_to_iframe(DOM.Messages.iframe_location)
         returnedSMS = self.messages.readLastSMSInThread()
         
         #
         # TEST: The returned message is as expected.
         #
-        self.testUtils.TEST((returnedSMS.lower() == "ok"), 
-            "Expected text to be 'ok' but was '" + returnedSMS + "'")
+        self.testUtils.TEST((returnedSMS.lower() == self._TestMsg.lower()), 
+            "Expected text to be '" + self._TestMsg + "' but was '" + returnedSMS + "'")

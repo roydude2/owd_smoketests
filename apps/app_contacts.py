@@ -148,8 +148,8 @@ class main():
         # 
         # TEST: Correct contact name is in the page header.
         #
-        headerName = self.testUtils.get_element('xpath', DOM.GLOBAL.app_head % p_contact['name'])
-        self.testUtils.TEST(headerName.is_displayed(), "Contact name (" + p_contact["name"] + ") not in 'view details' header")
+        self.testUtils.TEST(self.testUtils.headerFound(p_contact['name']), 
+            "'View contact' screen header was not '" + p_contact["name"] + "'.")
         
 
 

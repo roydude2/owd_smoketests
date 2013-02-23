@@ -3,7 +3,6 @@
 mkdir /tmp/tests 2>/dev/null
 
 export RESULT_FILE="/tmp/tests/B2G_tests.$(date +%Y%m%d%H%M%S)"
-export ERR_FILE=${RESULT_FILE}.errors
 export RUNTEST="./bin/run_test_case"
 export TESTDIR="./tests"
 
@@ -26,26 +25,33 @@ echo ""
 export TEST_SMS_NUM=$ans
 
 #
-# Setup gaiatest.
+# If DEBUG_SMOKETEST is set to Y, then just skip past the setup.
 #
-echo "Making sure THIS gaiatest will be used (it has some necessary tweaks!) + latest Marionette ...."
+if [ "$DEBUG_SMOKETEST" == "Y" ]
+then
+	printf "\nWARNING: \"DEBUG_SMOKETEST\" is set to 'Y' - skipping gaiatest+marionete setup ...\n\n"
+else
+	#
+	# Setup gaiatest and Marionette.
+	#
+	printf "Making sure THIS gaiatest will be used (it has some necessary tweaks!) + latest Marionette ....\n\n"
 
-# Move current marionette (if it's there).
-find /usr/local/lib -name "marionette_client-*.egg" | while read line
-do
-    if [ -d "$line" ]
-    then
-        [ -d $line.bak ] && sudo rm -rf $line.bak
-        sudo mv $line $line.bak
-        break
-    fi
-done
+	find /usr/local/lib -name "marionette_client-*.egg" | while read line
+	do
+	    if [ -d "$line" ]
+	    then
+		[ -d $line.bak ] && sudo rm -rf $line.bak
+		sudo mv $line $line.bak
+		break
+	    fi
+	done
 
-# Re-install gaiatest (which will get marionette with the latest one since it's no longer there).
-cd gaia-ui-tests
-echo ""
-sudo python setup.py develop > /tmp/gaiatest_install.log 2> /tmp/gaiatest_install.log
-cd - > /dev/null 2>/dev/null
+	# Re-install gaiatest (which will get marionette with the latest one since it's no longer there).
+	cd gaia-ui-tests
+	echo ""
+	sudo python setup.py develop > /tmp/gaiatest_install.log 2> /tmp/gaiatest_install.log
+	cd - > /dev/null 2>/dev/null
+fi
 
 #
 # Establsh connection to device.
@@ -61,7 +67,7 @@ run_test(){
     DESC=${DESC:-"(no description found!)"}
     CASE=$(echo ${FNAM%.py} | sed -e "s/^.*_//")
     
-    $RUNTEST $CASE "$DESC" $FNAM $RESULT_FILE $ERR_FILE
+    $RUNTEST -t $CASE -d "$DESC" -f $FNAM -r $RESULT_FILE -e ${RESULT_FILE}.err
 }
 
 if [ ! "$TESTS" ]
@@ -83,7 +89,7 @@ else
 fi
 
 
-clear
+#clear
 printf "\n\n"
 echo "*******************************************************"
 printf "\n             RESULT SUMMARY: \n\n"

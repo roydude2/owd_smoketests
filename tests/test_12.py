@@ -21,6 +21,7 @@ class test_12(GaiaTestCase):
         # Default timeout for finding elements on the screen.
         #
         self.marionette.set_search_timeout(50)
+        self.lockscreen.unlock()
     
     def tearDown(self):
         self.testUtils.reportResults()

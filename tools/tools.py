@@ -24,7 +24,11 @@ class TestUtils():
     # launching Messages from Contacts).
     #
     def switchFrame(self, *p_frame):
+        #
+        # For some obscure reason you have to go 'home' before anywhere else.
+        #
         self.marionette.switch_to_frame()
+
         sms_iframe = self.marionette.find_element(*p_frame)
         self.marionette.switch_to_frame(sms_iframe)
         
@@ -35,6 +39,7 @@ class TestUtils():
     def list_iframes(self):
         iframes = self.marionette.execute_script("return document.getElementsByTagName('iframe')")
         for idx in range(0,iframes['length']):
+        #for idx in iframes:
             iframe = iframes[str(idx)]
             self.reportComment(iframe.get_attribute('src'))
 
@@ -45,9 +50,11 @@ class TestUtils():
         iframes = self.marionette.execute_script("return document.getElementsByTagName('iframe')")
         for idx in range(0,iframes['length']):
             iframe = iframes[str(idx)]
-            if iframe.get_attribute('src') == p_name:
+            if p_name == iframe.get_attribute('src'):
                 self.marionette.switch_to_frame(iframe)
                 return True
+        return False
+        
         
     #
     # Take a screenshot.
@@ -167,6 +174,18 @@ class TestUtils():
         f.write( self.marionette.page_source.encode('ascii', 'ignore') )
 
     #
+    # Returns the header that matches a string.
+    # NOTE: ALL headers in this frame are true for ".is_displayed()"!
+    #
+    def headerFound(self, p_str):
+        headerName = self.get_elements(*DOM.GLOBAL.app_head)
+        for i in headerName:
+            if i.text == p_str:
+                return True
+                
+        return False
+        
+    #
     # Return to the home screen.
     #
     def goHome(self):
@@ -184,23 +203,12 @@ class TestUtils():
         self.marionette.execute_script("window.wrappedJSObject.UtilityTray.show()")
         
     #
-    # Waits for a new notification in the status bar.
+    # Waits for a new notification in the status bar (20s timeout by default).
     #
-    def waitForStatusBarNew(self):
-        self.parent.wait_for_element_displayed(*DOM.GLOBAL.status_bar_new)        
-        
-    #
-    # Clicks the first notification in the home status bar that matches
-    # the passed in url.
-    #
-    def openStatusBarNewNotif(self, p_url):
-        
-        x = self.marionette.find_elements(*DOM.GLOBAL.status_bar_notifs)
+    def waitForStatusBarNew(self, p_dom=DOM.GLOBAL.status_bar_new, p_time=20):
+        try: 
+            self.parent.wait_for_element_present(*p_dom, timeout=p_time)
+            return True
+        except:
+            return False
 
-        returnVar = False
-        for i in x:
-            if i.get_attribute("data-manifest-u-r-l") == p_url:
-                returnVar = True
-                self.marionette.tap(i)
-        
-        return returnVar
