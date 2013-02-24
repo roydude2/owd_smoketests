@@ -65,7 +65,7 @@ Run
 RUNNING THE TESTS:
 ==================
 
-1. Plug the device in.
+1. Plug the device in. 
 
 2. Type:
 
