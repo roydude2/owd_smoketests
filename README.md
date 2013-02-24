@@ -57,7 +57,7 @@ BEFORE YOU BEGIN:
 
 Run 
 
-    <pre>./setup</pre>
+    ./setup
 
 ... to install and tweak gaiatest (some adjustments need to be made to it before running tests).
 
