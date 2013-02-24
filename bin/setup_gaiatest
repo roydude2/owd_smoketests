@@ -5,6 +5,9 @@ git clone https://github.com/mozilla/gaia-ui-tests.git
 # Make necessary adjustments
 ./bin/tweak_gaiatest
 
+# Install setuptools.
+sudo apt-get install python-setuptools
+
 # Install gaiatest.
 cd gaia-ui-tests
 sudo python setup.py develop

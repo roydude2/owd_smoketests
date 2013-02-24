@@ -99,35 +99,16 @@ done
 
 
 #
-# If ./.gaiatest_installed is present, then just skip past the setup.
+# If gaiatest is not detected, then install it + make necessary tweaks.
 #
-if [ ! -f "./.gaiatest_installed" ]
+if [ ! -d "./gaia-ui-tests" ]
 then
 	#
 	# Setup gaiatest and Marionette.
 	#
-	printf "Making sure THIS gaiatest will be used (it has some necessary tweaks!) + latest Marionette ....\n\n"
+	printf "Setting up gaiatest and Marionette ...\n\n"
 
-	find /usr/local/lib -name "marionette_client-*.egg" | while read line
-	do
-	    if [ -d "$line" ]
-	    then
-		[ -d $line.bak ] && sudo rm -rf $line.bak
-		sudo mv $line $line.bak
-		break
-	    fi
-	done
-
-	# Re-install gaiatest (which will get marionette with the latest one since it's no longer there).
-	cd gaia-ui-tests
-	echo ""
-	sudo python setup.py develop > /tmp/gaiatest_install.log 2> /tmp/gaiatest_install.log
-	cd - > /dev/null 2>/dev/null
-
-	#
-	# Shouldn't need to do this every time, so put this file here to remember we did it.
-	#
-	touch .gaiatest_installed
+	./bin/setup_gaiatest
 fi
 
 #
