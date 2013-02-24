@@ -55,7 +55,7 @@ If you have any of these items already installed then try the tests with your in
 BEFORE YOU BEGIN:
 =================
 
-Type "setup" to install and tweak gaiatest (some adjustments need to be made to it before running tests).
+Run "./setup" to install and tweak gaiatest (some adjustments need to be made to it before running tests).
 
 
 RUNNING THE TESTS:
