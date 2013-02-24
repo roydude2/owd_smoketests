@@ -1,3 +1,5 @@
 *.pyc
 .bak/*
 nohup.out
+.gaiatest_installed
+gaia-ui-tests

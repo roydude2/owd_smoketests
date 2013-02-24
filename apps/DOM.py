@@ -12,14 +12,16 @@ class Browser():
 class Contacts():
     frame_locator          = ('css selector', 'iframe[src="app://communications.gaiamobile.org/index.html"]')
     view_all_header        = ('xpath', GLOBAL.app_head_specific % 'Contacts')
-    add_contact_header     = ('xpath', GLOBAL.app_head_specific % 'Add contact')
-    edit_contact_header    = ('xpath', GLOBAL.app_head_specific % 'Edit contact')
-    view_details_title     = ('id', 'contact-form-title')
     add_contact_button     = ('id', 'add-contact-button')
+    add_contact_header     = ('xpath', GLOBAL.app_head_specific % 'Add contact')
+    view_details_title     = ('id', 'contact-form-title')
+    details_back_button    = ('id', 'details-back')
+
+    edit_contact_header    = ('xpath', GLOBAL.app_head_specific % 'Edit contact')
+    edit_update_button     = ('id', 'save-button')
     edit_details_button    = ('id', 'edit-contact-button')
     done_button            = ('id', 'save-button')
-    edit_update_button     = ('id', 'save-button')
-    details_back_button    = ('id', 'details-back')
+
     given_name_field       = ('id', 'givenName')
     family_name_field      = ('id', 'familyName')
     email_field            = ('id', "email_0")
@@ -39,10 +41,10 @@ class Messages():
     target_number          = ('id', 'receiver-input')
     input_message_area     = ('id', 'message-to-send')
     send_message_button    = ('id', 'send-message')
+    message_sending_spinner= ('css selector', "img[src='style/images/spinningwheel_small_animation.gif']")
     header_back_button     = ('xpath', '//header/a[1]')
     unread_message         = ('css selector', 'li > a.unread')
     unread_messages        = ('class name', 'unread')
-    message_sending_spinner= ('css selector', "img[src='style/images/spinningwheel_small_animation.gif']")
     received_messages      = ('xpath', "//li[@class='bubble'][a[@class='received']]")
 
 class Camera():
@@ -66,7 +68,6 @@ class Gallery():
 
 class Video():
     items                   = ('xpath', "//*[@id='thumbnails']/li/div/div[3]")
-    #thumbnails              = ('id', 'thumbnails')
     thumb_durations         = ('xpath', "//*[@id='thumbnails']/li/div/div[3]/span[13]/span")
     video_frame             = ('id', 'videoFrame')
     video_loaded            = ('css selector', 'video[style]')
@@ -74,3 +75,27 @@ class Video():
 class Phone():
     frame_locator          = ('css selector', 'iframe[src="app://communications.gaiamobile.org/index.html"]')
     
+class Settings():
+    settings_header        = ('xpath', GLOBAL.app_head_specific % 'Settings')
+
+    app_permissions        = ('id', "menuItem-appPermissions")
+    app_permissions_header = ('xpath', GLOBAL.app_head_specific % 'App permissions')
+    app_perm_camera        = ('xpath', './/*[@id="appPermissions"]//a[text()="Camera"]')
+    app_perm_camera_geo    = ('xpath', './/*[@id="appPermissions-details"]//span[text()="Geolocation"]/select') 
+
+    wifi                   = ('id', 'menuItem-wifi')
+    wifi_header            = ('xpath', GLOBAL.app_head_specific % 'Wi-Fi')
+    wifi_enabled           = ('xpath', ".//*[@id='wifi-enabled']/label")
+    wifi_available_networks= ('xpath', ".//*[@id='wifi-availableNetworks']/li")
+    wifi_available_status  = ".//*[@id='wifi-availableNetworks']/li[%s]//small"
+    wifi_available_name    = ".//*[@id='wifi-availableNetworks']/li[%s]//a"
+    wifi_name_xpath        = './/*[@id="wifi-availableNetworks"]/li//a[text()="%s"]'
+    wifi_connected         = ('xpath', './/*[text()="Connected"]')
+
+class Browser():
+    url_input               = ('id', 'url-input')
+    url_go_button           = ('id', 'url-button')
+    throbber                = ("id", "throbber")
+    
+    browser_page_frame      = ('css selector', 'iframe[mozbrowser]')
+    page_title              = ('xpath', ".//*[@id='results']/ul//h5[text()='Problemloadingpage']")

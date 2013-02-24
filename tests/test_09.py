@@ -8,6 +8,7 @@ from gaiatest import GaiaTestCase
 
 class test_9(GaiaTestCase):
     _Description = "Send an SMS to a contact from the contacts app."
+    
     _TestMsg     = "Smoke test 9 sms - reply with this same message."
 
     def setUp(self):
@@ -22,6 +23,9 @@ class test_9(GaiaTestCase):
         self.marionette.set_search_timeout(50)
         self.lockscreen.unlock()
 
+        self.data_layer.set_setting("vibration.enabled", True)
+        self.data_layer.set_setting("audio.volume.notification", 0)
+
         #
         # Prepare the contact we're going to insert.
         #
@@ -30,8 +34,7 @@ class test_9(GaiaTestCase):
         #
         # Establish which phone number to use.
         #
-        import os
-        self.contact_1["tel"]["value"] = os.environ['TEST_SMS_NUM']
+        self.contact_1["tel"]["value"] = self.testUtils.get_os_variable("TEST_SMS_NUM", "Mobile number for SMS tests (test 9)")
         self.testUtils.reportComment("Using target telephone number " + self.contact_1["tel"]["value"])
         
         #

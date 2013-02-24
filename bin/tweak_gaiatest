@@ -1,0 +1,18 @@
+#!/bin/bash
+
+sed -e "s/\(self.device.restart_b2g\)/#\1/" gaia-ui-tests/gaiatest/gaia_test.py > /tmp/t
+
+if [ $? -eq 0 ]
+then
+	mv /tmp/t gaia-ui-tests/gaiatest/gaia_test.py
+else
+	echo "Problem adjusting 'gaia_test.py'!"
+	exit 1
+fi
+
+cp -f tests/resources/* gaia-ui-tests/gaiatest/resources
+if [ $? -ne 0 ]
+then
+	echo "Problem copying resources!"
+	exit 1
+fi

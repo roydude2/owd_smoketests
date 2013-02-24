@@ -64,7 +64,7 @@ class test_14(GaiaTestCase):
                 # Check the size of the screenshot.
                 img_size = os.path.getsize(imgnam)
                 self.testUtils.TEST((img_size == self._img_sizes[i]),
-                    "Expected image " + str (i) + " to be " + str(self._img_sizes[i]) + " but was " + str(img_size))
+                    "Expected image " + str (i) + " to be " + str(self._img_sizes[i]) + " bytes, but was " + str(img_size))
                 
                 # Wait a second (or this test is done too quickly to see!)
                 time.sleep(0.5)

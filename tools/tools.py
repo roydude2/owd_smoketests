@@ -20,6 +20,12 @@ class TestUtils():
         self.failed         = 0
     
     #
+    # Get a variable from the OS.
+    #
+    def get_os_variable(self, p_name, p_msg):
+        return os.environ[p_name]
+    
+    #
     # Switch to frame (needed if accessing an app via another app, i.e.
     # launching Messages from Contacts).
     #
@@ -39,7 +45,6 @@ class TestUtils():
     def list_iframes(self):
         iframes = self.marionette.execute_script("return document.getElementsByTagName('iframe')")
         for idx in range(0,iframes['length']):
-        #for idx in iframes:
             iframe = iframes[str(idx)]
             self.reportComment(iframe.get_attribute('src'))
 
@@ -93,6 +98,13 @@ class TestUtils():
         self._commentArray.append(p_str)
 
     #
+    # Quit this test suite.
+    #
+    def quitTest(self):
+        self.reportError("CANNOT CONTINUE PAST THIS ERROR - ABORTING THIS TEST!")
+        sys.exit("Fatal error, quitting this test.")
+
+    #
     # Test that p_result is true.
     # The advantage to this over the standard 'assert's is that
     # this continues past a failure if p_stop is False.
@@ -104,8 +116,7 @@ class TestUtils():
             self.failed = self.failed + 1
 
             if p_stop:
-                self.reportError("CANNOT CONTINUE PAST THIS ERROR - ABORTING THIS TEST!")
-                sys.exit("Fatal error, quitting this test.")
+                self.quitTest()
         else:
             self.passed = self.passed + 1
         

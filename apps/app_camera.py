@@ -11,6 +11,11 @@ class main():
         self.testUtils  = p_testUtils
         self.marionette = p_parentSelf.marionette
         self.parent     = p_parentSelf
+        
+        #
+        # Default to not prompting for geolocation.
+        #
+        self.parent.apps.set_permission('Camera', 'geolocation', 'deny')
 
     def launch(self):
         self.app = self.parent.apps.launch('Camera')
@@ -71,8 +76,6 @@ class main():
     # NOTE: p_length needs to be in the format "mm:ss"
     #
     def recordVideo(self, p_length_str_MMSS):
-        self.testUtils.reportComment("(Need to automatically suppress gps question in camera app.)")
-
         #
         # Switch to video.
         #

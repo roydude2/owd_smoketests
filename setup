@@ -1,0 +1,10 @@
+#!/bin/bash
+
+git clone https://github.com/mozilla/gaia-ui-tests.git
+
+# Make necessary adjustments
+./bin/tweak_gaiatest
+
+# Install gaiatest.
+cd gaia-ui-tests
+sudo python setup.py develop

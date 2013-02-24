@@ -7,30 +7,102 @@ export RUNTEST="./bin/run_test_case"
 export TESTDIR="./tests"
 
 #
-# Did the caller just wat to run certain tests:
+# Load default environment variables.
+#
+. ./tests_parameters/parameters
+
+#
+# Did the caller just want to run certain tests:
 #
 TESTS="$@"
+
+# Default to all tests.
+if [ ! "$TESTS" ]
+then
+	while read line
+	do
+		TESTS="$TESTS $line"
+	done <<EOF
+	$(ls ./tests/test_[0-9][0-9].py | grep -v "test_00" | sed -e "s/^.*test_//" | sed -e "s/\..*//")
+EOF
+fi
+
+
+# Pad the number with 0's ...
+f_pad(){
+        # Make sure the number is 2 digits (pad with 0).
+        echo $1 | awk '{printf("%02d", $1)}'
+}
+
+# Run the test as required ...
+run_test(){
+    FNAM=$1
+    DESC=$(grep "_Description" $FNAM | head -1 | sed -e "s/^[^\"]*\"\(.*\)\"/\1/")
+    DESC=${DESC:-"(no description found!)"}
+    CASE=$(echo ${FNAM%.py} | sed -e "s/^.*_//")
+    
+    $RUNTEST -t $CASE -d "$DESC" -f $FNAM -r $RESULT_FILE -e ${RESULT_FILE}.err
+}
+
+
 
 #
 # Some required input first ...
 #
 printf "\n**************************\n\n"
-ans=""
-while [ ! "$ans" ]
+
+for i in $(echo $TESTS)
 do
-    printf "Mobile number I can send/receieve SMS with: "
-    read ans
+	x=$(f_pad $i)
+	while read line
+	do
+		VARNAM=$(echo $line | sed -e "s/^.*(\"//" | sed -e "s/\".*//")
+		VARSTR=$(echo $line | sed -e "s/^.*, *\"//" | sed -e "s/\".*//")
+
+		#
+		# Make sure it's not already set.
+		#
+		env_set=$(eval echo $`echo $VARNAM`)
+		if [ ! "$env_set" ]
+		then
+			QUESTION=("${QUESTION[@]}" "$VARSTR")
+			VARIABLE=("${VARIABLE[@]}" "$VARNAM")
+		fi
+
+	done << EOF
+	$(grep -i "testUtils.get_os_variable" tests/test_${x}.py )
+EOF
 done
-echo ""
-export TEST_SMS_NUM=$ans
+
+for ((i=0; i<=${#QUESTION[@]}; ++i))
+do
+	if [ "${QUESTION[$i]}" ]
+	then
+		if [ ! "$gotParams" ]
+		then
+			gotParams="Y"
+			printf "\nSome of the tests you have chosen require input ...\n\n"
+		fi
+
+		Q="${QUESTION[$i]}"
+		V="${VARIABLE[$i]}"
+
+		printf "$Q [$V]: "
+		read ans
+
+		eval export $V="$ans"
+
+	fi
+done 
+
+[ "$gotParams" ] && printf "\n\n"
+
 
 #
-# If DEBUG_SMOKETEST is set to Y, then just skip past the setup.
+# If ./.gaiatest_installed is present, then just skip past the setup.
 #
-if [ "$DEBUG_SMOKETEST" == "Y" ]
+if [ ! -f "./.gaiatest_installed" ]
 then
-	printf "\nWARNING: \"DEBUG_SMOKETEST\" is set to 'Y' - skipping gaiatest+marionete setup ...\n\n"
-else
 	#
 	# Setup gaiatest and Marionette.
 	#
@@ -51,6 +123,11 @@ else
 	echo ""
 	sudo python setup.py develop > /tmp/gaiatest_install.log 2> /tmp/gaiatest_install.log
 	cd - > /dev/null 2>/dev/null
+
+	#
+	# Shouldn't need to do this every time, so put this file here to remember we did it.
+	#
+	touch .gaiatest_installed
 fi
 
 #
@@ -61,15 +138,6 @@ fi
 #
 # Now run tests as required.
 #
-run_test(){
-    FNAM=$1
-    DESC=$(grep "_Description" $FNAM | head -1 | sed -e "s/^[^\"]*\"\(.*\)\"/\1/")
-    DESC=${DESC:-"(no description found!)"}
-    CASE=$(echo ${FNAM%.py} | sed -e "s/^.*_//")
-    
-    $RUNTEST -t $CASE -d "$DESC" -f $FNAM -r $RESULT_FILE -e ${RESULT_FILE}.err
-}
-
 if [ ! "$TESTS" ]
 then
     ls ./tests/test_*.py | while read fnam
@@ -81,15 +149,14 @@ else
     
     for i in $(echo $TESTS)
     do
-        # Make sure the number is 2 digits (pad with 0).
-        x=$(echo $i | awk '{printf("%02d", $1)}')
+	x=$(f_pad $i)
         
         run_test ./tests/test_${x}.py
     done
 fi
 
 
-#clear
+clear
 printf "\n\n"
 echo "*******************************************************"
 printf "\n             RESULT SUMMARY: \n\n"
