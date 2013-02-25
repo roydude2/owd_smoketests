@@ -1,4 +1,2 @@
-#!/bin/bash
-
-export TEST_SMS_NUM=
-
+# Enter parameter names and values in here, i.e. ...
+export MYPARAM=MYVAL

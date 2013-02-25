@@ -60,7 +60,7 @@ class test_10(GaiaTestCase):
         #
         x = self.messages.waitForSMSNotifier(self.target_telNum, 180)
         self.testUtils.TEST(x, "Failed to find new msg - aborting:", True)
-
+        
         self.messages.clickSMSNotifier(self.target_telNum)
 
         #

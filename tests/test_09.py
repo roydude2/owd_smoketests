@@ -2,7 +2,7 @@ import sys
 sys.path.insert(1, "./")
 
 from tools import TestUtils
-from apps import DOM, app_contacts, app_messages, app_lockscreen
+from apps import DOM, app_contacts, app_messages
 from tests.mock_data.contacts import MockContacts
 from gaiatest import GaiaTestCase
 
@@ -95,9 +95,9 @@ class test_9(GaiaTestCase):
         time.sleep(10)
         
         #
-        # Wait 3 mins for return message (to confirm communication).
+        # Wait 3 mins for return message (to confirm communication) - uses the contacts name if it matches one, not the number.
         #
-        x = self.messages.waitForSMSNotifier(self.contact_1["tel"]["value"], 180)
+        x = self.messages.waitForSMSNotifier(self.contact_1["name"], 180)
         
         self.testUtils.TEST(x, "Failed to find new msg - aborting:", True)
         
@@ -108,7 +108,7 @@ class test_9(GaiaTestCase):
         
         #
         # Read the new message.
-        #
+        # (For this you need the number).
         #
         returnedSMS = self.messages.readNewSMS(self.contact_1["tel"]["value"])
         

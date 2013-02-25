@@ -105,7 +105,8 @@ class main():
             elChild  = DOM.Messages.statusbar_all_notifs % (i+1) + "/div[1]"
             
             elC = self.marionette.find_element('xpath', elChild)
-            if p_num == elC.text:
+
+            if p_num in elC.text:
                 #
                 # Match - get the parent div and click it.
                 # 
@@ -128,24 +129,20 @@ class main():
         return str(received_message.text)
 
     #
-    # Read and return the value of the new message received from p_num.
+    # Read and return the value of the new message received from number.
     #
     def readNewSMS(self, p_FromNum):
-        self.parent.wait_for_element_displayed(*DOM.Messages.unread_messages)
-        new_messages = self.marionette.find_elements(*DOM.Messages.unread_messages)
-        for i in new_messages:
-            href_attr = i.get_attribute("href")
-            if p_FromNum in href_attr:
-                self.marionette.tap(i)
-                
-                # (From gaiatest: "TODO Due to displayed bugs I cannot find a good wait for switch btw views")
-                import time
-                time.sleep(5)
-                
-                #
-                # Return the last comment in this thread.
-                #
-                return self.readLastSMSInThread()
+        x = self.marionette.find_element("xpath", DOM.Messages.messages_from_num % p_FromNum)
+
+        self.marionette.tap(x)
+        
+        # (From gaiatest: "TODO Due to displayed bugs I cannot find a good wait for switch btw views")
+        time.sleep(5)
+        
+        #
+        # Return the last comment in this thread.
+        #
+        return self.readLastSMSInThread()
 
     #
     # Create and send a new SMS.

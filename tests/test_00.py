@@ -2,7 +2,7 @@ import sys
 sys.path.insert(1, "./")
 
 from tools import TestUtils
-from apps import DOM, app_gallery
+from apps import DOM, app_messages
 from gaiatest import GaiaTestCase
 import os, time
 
@@ -13,7 +13,7 @@ class test_00(GaiaTestCase):
         # Set up child objects...
         GaiaTestCase.setUp(self)
         self.testUtils = TestUtils(self, 00)
-        self.MYAPP   = app_gallery.main(self, self.testUtils)
+        self.MYAPP   = app_messages.main(self, self.testUtils)
 
         self.marionette.set_search_timeout(50)
             
@@ -25,41 +25,17 @@ class test_00(GaiaTestCase):
         #
         # Open the gallery application.
         #
-        self.MYAPP.launch()
+        z = './/*[@id="desktop-notifications-container"]//div[contains(text(), "628842372")]'
         
-        self.testUtils.reportComment("RESOURCE: " + self.resource("kjkhkhjkgk"))
-        
-        return
+        x=(DOM.Messages.statusbar_new_sms[0], z)
         
         #
-        # Tap App permissions.
+        # Wait for the notification to be present for this number (3 minute timeout)
+        # in the popup messages (this way we make sure it's coming from our number,
+        # as opposed to just containing our number in the notification).
         #
-        x = self.marionette.find_element(*DOM.Settings.app_permissions)
-        self.marionette.tap(x)
+        x = self.testUtils.waitForStatusBarNew(x, 2)
         
-        #
-        # Tap Camera.
-        #
-        self.wait_for_element_displayed(*DOM.Settings.app_perm_camera)
-        x = self.marionette.find_element(*DOM.Settings.app_perm_camera)
-        self.marionette.tap(x)
-        
-        #
-        # Tap Geolocation.
-        #
-        self.wait_for_element_displayed(*DOM.Settings.app_perm_camera_geo)
-        x = self.marionette.find_element(*DOM.Settings.app_perm_camera_geo)
-        self.marionette.tap(x)
-
-        time.sleep(5)
-        self.marionette.switch_to_frame()
-        self.testUtils.reportComment("Listing frames from 1 ...")
-        self.testUtils.list_iframes()
-        self.testUtils.reportComment("Listing frames from 2 ...")
-        self.testUtils.list_iframes()
-        self.testUtils.reportComment("Listing window handlers ... :" + self.marionette.current_window_handle)
-        now_available = self.marionette.window_handles
-        for win in now_available:
-            self.testUtils.reportComment("")
-            self.testUtils.reportComment(str(win))
         self.testUtils.savePageHTML("/tmp/roy1.html")
+        
+        self.testUtils.TEST(x, "BOO!")

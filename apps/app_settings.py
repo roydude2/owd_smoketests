@@ -64,10 +64,9 @@ class main():
     # Select a network.
     #
     def tap_wifi_network_name(self, p_wifi_name):
-        self.testUtils.reportComment("ROY FIX THIS")
-        #wifi_name_element = DOM.Settings.wifi_name_xpath % p_wifi_name
-        #x= self.testUtils.get_element('xpath', wifi_name_element)
-        #self.marionette.tap(x)
+        wifi_name_element = DOM.Settings.wifi_name_xpath % p_wifi_name
+        x= self.testUtils.get_element('xpath', wifi_name_element)
+        self.marionette.tap(x)
         
         #
         # Wait for 'anything' to be Connected.

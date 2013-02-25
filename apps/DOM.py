@@ -35,7 +35,7 @@ class Contacts():
 
 class Messages():
     frame_locator          = ('css selector', 'iframe[src="app://sms.gaiamobile.org/index.html"]')
-    statusbar_new_sms      = ('xpath', '//div[@class="notification"]/div[text()="%s"]')
+    statusbar_new_sms      = ('xpath', './/*[@id="desktop-notifications-container"]//div[contains(text(), "%s")]')
     statusbar_all_notifs   = ".//*[@id='desktop-notifications-container']/div[%s]"
     create_new_message_btn = ('id', 'icon-add')
     target_number          = ('id', 'receiver-input')
@@ -44,7 +44,7 @@ class Messages():
     message_sending_spinner= ('css selector', "img[src='style/images/spinningwheel_small_animation.gif']")
     header_back_button     = ('xpath', '//header/a[1]')
     unread_message         = ('css selector', 'li > a.unread')
-    unread_messages        = ('class name', 'unread')
+    messages_from_num      = "//*[contains(@id, '%s')]"
     received_messages      = ('xpath', "//li[@class='bubble'][a[@class='received']]")
 
 class Camera():
