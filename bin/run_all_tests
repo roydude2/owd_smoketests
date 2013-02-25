@@ -56,6 +56,10 @@ do
 	x=$(f_pad $i)
 	while read line
 	do
+		# If it's commented out ignore it.
+		ISCOMMENTED=$(echo $line | awk '{print $1}' | egrep "^#")
+		[ "$ISCOMMENTED" ] && continue
+
 		VARNAM=$(echo $line | sed -e "s/^.*(\"//" | sed -e "s/\".*//")
 		VARSTR=$(echo $line | sed -e "s/^.*, *\"//" | sed -e "s/\".*//")
 

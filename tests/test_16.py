@@ -46,14 +46,9 @@ class test_16(GaiaTestCase):
         #
         # Tap specific wifi network (if it's not already connected).
         #
-        self.testUtils.reportComment("Using network \"" + self.wifi_name + "\".")
-        if self.Settings.checkWifiConnected(self.wifi_name):
-            self.testUtils.reportComment("\"" + self.wifi_name + "\" is already connected.")
-        else:
-            self.Settings.tap_wifi_network_name(self.wifi_name)
-            self.testUtils.TEST(
-                self.Settings.checkWifiConnected(self.wifi_name),
-                "Unable to connect to '" + self.wifi_name + "'", True)
+        self.testUtils.TEST(
+                self.Settings.checkWifiLisetedAsConnected(self.wifi_name),
+                "Wifi '" + self.wifi_name + "' not listed as 'connected' in wifi settings.", True)
             
         #
         # Open the browser app.

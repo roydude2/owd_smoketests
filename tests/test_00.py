@@ -2,7 +2,7 @@ import sys
 sys.path.insert(1, "./")
 
 from tools import TestUtils
-from apps import DOM, app_messages
+from apps import DOM, app_settings
 from gaiatest import GaiaTestCase
 import os, time
 
@@ -13,29 +13,34 @@ class test_00(GaiaTestCase):
         # Set up child objects...
         GaiaTestCase.setUp(self)
         self.testUtils = TestUtils(self, 00)
-        self.MYAPP   = app_messages.main(self, self.testUtils)
+        self.Settings  = app_settings.main(self, self.testUtils)
+        self.testWIFI  = self.testUtils.get_os_variable("ROYWANTSYOURWIFI", "Enter the wifi network name (case sensitive)")
 
         self.marionette.set_search_timeout(50)
             
     def tearDown(self):
         self.testUtils.reportResults()
+
         
     def test_run(self):
-        
+        self.Settings.launch()
+
         #
-        # Open the gallery application.
+        # Tap Wi-Fi.
         #
-        z = './/*[@id="desktop-notifications-container"]//div[contains(text(), "628842372")]'
-        
-        x=(DOM.Messages.statusbar_new_sms[0], z)
-        
+        self.Settings.wifi()
+
         #
-        # Wait for the notification to be present for this number (3 minute timeout)
-        # in the popup messages (this way we make sure it's coming from our number,
-        # as opposed to just containing our number in the notification).
+        # Make sure wifi is set to 'on'.
         #
-        x = self.testUtils.waitForStatusBarNew(x, 2)
+        self.Settings.turn_wifi_on()
+
+        #
+        # Tap the name to go to the wifi setup.
+        wifi_name_element = DOM.Settings.wifi_name_xpath % self.testWIFI
+        x= self.testUtils.get_element('xpath', wifi_name_element)
+        self.marionette.tap(x)
         
-        self.testUtils.savePageHTML("/tmp/roy1.html")
+        sleep(2)
         
-        self.testUtils.TEST(x, "BOO!")
+        self.testUtils.savePageHTML("/tmp/roy.html")

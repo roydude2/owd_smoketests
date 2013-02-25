@@ -9,9 +9,7 @@ from apps import DOM, app_??
 from gaiatest import GaiaTestCase
 
 class test_?(GaiaTestCase):
-    _Description = "Send and receive an SMS via the messaging app."
-    
-    _TestMsg     = "Smoke test 10 sms - reply with this same message."
+    _Description = "?????"
     
     def setUp(self):
         #

@@ -1,10 +1,16 @@
 class GLOBAL():
-    loading_overlay  = ('id', 'loading-overlay')
-    app_head_specific= "//h1[text()='%s']"
-    app_head         = ('xpath', "//h1")
-    status_bar       = ('id', 'statusbar')
-    status_bar_new   = ('xpath', "//*[@id='statusbar-notification'][@data-unread='true']")
-    status_bar_count = ('xpath', "//*[@id='desktop-notifications-container']/div")
+    loading_overlay      = ('id', 'loading-overlay')
+    app_head_specific    = "//h1[text()='%s']"
+    app_head             = ('xpath', "//h1")
+    status_bar           = ('id', 'statusbar')
+    status_bar_new       = ('xpath', "//*[@id='statusbar-notification'][@data-unread='true']")
+    status_bar_count     = ('xpath', "//*[@id='desktop-notifications-container']/div")
+    homescreen_app_icons = "//li[@class='icon']//span[text()='%s']"
+    homescreen_iframe    = ('css selector', 'div.homescreen iframe')
+
+class Statusbar():
+    wifi            = ('id', 'statusbar-wifi')
+    dataConn        = ('id', 'statusbar-data')
 
 class Browser():
     frame_locator          = ('css selector', 'iframe[src="app://browser.gaiamobile.org/index.html"]')
@@ -76,6 +82,7 @@ class Phone():
     frame_locator          = ('css selector', 'iframe[src="app://communications.gaiamobile.org/index.html"]')
     
 class Settings():
+    frame_locator          = ('css selector', 'iframe[src="app://settings.gaiamobile.org/index.html#root"]')
     settings_header        = ('xpath', GLOBAL.app_head_specific % 'Settings')
 
     app_permissions        = ('id', "menuItem-appPermissions")
@@ -91,6 +98,11 @@ class Settings():
     wifi_available_name    = ".//*[@id='wifi-availableNetworks']/li[%s]//a"
     wifi_name_xpath        = './/*[@id="wifi-availableNetworks"]/li//a[text()="%s"]'
     wifi_connected         = ('xpath', './/*[text()="Connected"]')
+    
+    cellData               = ('id', 'menuItem-cellularAndData')
+    celldata_header        = ('xpath', GLOBAL.app_head_specific % 'Cellular & Data')
+    celldata_DataConn      = ('xpath', ".//*[@id='carrier']/ul[2]/li[1]/label")
+    celldata_DataConn_ON   = ('id', 'dataConnection-expl')
 
 class Browser():
     url_input               = ('id', 'url-input')
@@ -99,3 +111,18 @@ class Browser():
     
     browser_page_frame      = ('css selector', 'iframe[mozbrowser]')
     page_title              = ('xpath', ".//*[@id='results']/ul//h5[text()='Problemloadingpage']")
+
+class Market():
+    search_query            = ('id', 'search-q')
+    featured_apps           = ('xpath', ".//*[@id='featured-home']/ul/li/a/canvas")
+    install_button          = ('css selector', '.button.product.install')
+    app_details_header      = ('xpath', '//h3')
+    confirm_install_button  = ('id', 'app-install-install-button')
+    
+    
+    
+    
+    
+    
+    
+    

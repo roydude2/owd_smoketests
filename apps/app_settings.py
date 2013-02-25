@@ -25,17 +25,60 @@ class main():
         self.parent.wait_for_element_displayed(*DOM.Settings.wifi_header)
 
     #
+    # Open cellular and data settings.
+    #
+    def cellular_and_data(self):
+        x = self.testUtils.get_element(*DOM.Settings.cellData)
+        self.marionette.tap(x)
+        self.parent.wait_for_element_displayed(*DOM.Settings.celldata_header)
+
+    #
+    # Click slider to turn data connection on.
+    #
+    def turn_dataConn_on(self, p_wifiOFF=False):
+        if p_wifiOFF:
+            if self.parent.data_layer.get_setting("wifi.enabled"):
+                self.parent.data_layer.disable_wifi()
+            
+        if not self.parent.data_layer.get_setting("ril.data.enabled"):
+            self.testUtils.savePageHTML("/tmp/roy1.html")
+            x = self.testUtils.get_element(*DOM.Settings.celldata_DataConn)
+            self.marionette.tap(x)
+            
+            #
+            # If we get prompted for action, say 'Turn ON'.
+            #
+            time.sleep(1)
+            x = self.marionette.find_element(*DOM.Settings.celldata_DataConn_ON)
+            if x.is_displayed():
+                self.marionette.tap(x)
+                
+        #
+        # Give the statusbar icon time to appear, then check for it.
+        #
+        time.sleep(3)
+        x = self.testUtils.check_statusbar_for_icon(DOM.Statusbar.dataConn, DOM.Settings.frame_locator)
+        self.testUtils.TEST(x, "Data connection icon not detected in status bar.")
+
+    #
     # Click slider to turn wifi on.
     #
     def turn_wifi_on(self):
         if not self.parent.data_layer.get_setting("wifi.enabled"):
             x = self.testUtils.get_element(*DOM.Settings.wifi_enabled)
             self.marionette.tap(x)
-
+        
+        #
+        # Give the statusbar icon time to appear, then check for it.
+        #
+        time.sleep(3)
+        x = self.testUtils.check_statusbar_for_icon(DOM.Statusbar.wifi, DOM.Settings.frame_locator)
+        self.testUtils.TEST(x, "Wifi icon not detected in status bar.")
+        
     #
-    # Verify the expected network is connected.
+    # Verify the expected network is listed as connected in 'available networks'.
     #
-    def checkWifiConnected(self, p_name):
+    def checkWifiLisetedAsConnected(self, p_name):
         # 
         # Wait a little time to be sure the networks are all listed.
         #

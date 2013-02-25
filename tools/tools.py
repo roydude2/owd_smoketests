@@ -60,6 +60,20 @@ class TestUtils():
                 return True
         return False
         
+    #
+    # Wait for a statusbar setting to be displayed, then return to the
+    # given frame.
+    #
+    def check_statusbar_for_icon(self, p_dom, p_returnFrame=""):
+        self.marionette.switch_to_frame()
+        x = self.marionette.find_element(*p_dom)
+        isThere = x.is_displayed()
+        
+        if p_returnFrame != "":
+            prev_frame = self.marionette.find_element(*p_returnFrame)
+            self.marionette.switch_to_frame(prev_frame)
+        
+        return isThere
         
     #
     # Take a screenshot.
