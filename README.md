@@ -26,4 +26,6 @@ RUNNING THE TESTS:
 
 ... and hopefully that's all you need to do. The device should run through some tests, at the end you'll get a response in the terminal for the test results.
 
-*NOTE:* The first time you run this, it will install the latest Python 2.7 / ADB / Gaiatest and Marionette suites (plus make a few adjustments to them). This can take a few minutes, but should only happen the first time you run "run_tests" after cloning the repo each time.
+NOTE:
+-----
+The first time you run this, it will install the latest Python 2.7 / ADB / Gaiatest and Marionette suites (plus make a few adjustments to them). This can take a few minutes, but should only happen the first time you run "run_tests" after cloning the repo each time.
