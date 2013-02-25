@@ -4,7 +4,7 @@ Instructions for setting up and running automated smoke tests.
 1. Make sure your device has been flashed with an 'eng' build (the 'user' build won't allow Marionette to run and the tests won't work).
 
    <pre>
-   sudo bin/flash_device
+   sudo ./bin/flash_device
    </pre>
 
 
