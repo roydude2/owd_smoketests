@@ -99,16 +99,36 @@ done
 
 
 #
-# If gaiatest is not detected, then install it + make necessary tweaks.
+# If gaiatest is not detected, then install 'everything' + make necessary tweaks.
 #
+runSetup(){
+	#
+	# Run whatever script is passed in.
+	#
+	$1
+
+	#
+	# Check if it exitied correctly.
+	#
+	if [ $? -ne 0 ]
+	then
+		printf "\nProblem setting up pre-requisites - please investigate!\n\n"
+		exit 1
+	fi
+}
 if [ ! -d "./gaia-ui-tests" ]
 then
 	#
+	# Setup pre-requisites.
+	#
+	runSetup ./bin/setup_python27
+
+	runSetup ./bin/setup_adb
+
+	#
 	# Setup gaiatest and Marionette.
 	#
-	printf "Setting up gaiatest and Marionette ...\n\n"
-
-	./bin/setup_gaiatest
+	runSetup ./bin/setup_gaiatest
 fi
 
 #
