@@ -41,6 +41,6 @@ class test_00(GaiaTestCase):
         x= self.testUtils.get_element('xpath', wifi_name_element)
         self.marionette.tap(x)
         
-        sleep(2)
+        time.sleep(2)
         
         self.testUtils.savePageHTML("/tmp/roy.html")

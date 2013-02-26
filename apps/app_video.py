@@ -19,14 +19,35 @@ class main():
     #
     # NOTE: p_length_str_MMSS needs to be in the format "MM:SS"
     #
-    def checkThumbDuration(self, p_thumb_num, p_length_str_MMSS):
+    def checkThumbDuration(self, p_thumb_num, p_length_str_MMSS, p_errorMargin_SS):
         self.parent.wait_for_element_present(*DOM.Video.thumb_durations)
         durations = self.marionette.find_elements(*DOM.Video.thumb_durations)
         
         myDur = durations[p_thumb_num].text
         
-        self.testUtils.TEST(myDur == p_length_str_MMSS, 
-            "Expected video length on thumbnail to be %s, but it was %s." % (p_length_str_MMSS, myDur))
+        if myDur == p_length_str_MMSS:
+            self.testUtils.TEST(1==1, "Just a marker to show we tested here.")
+        else:
+            #
+            # Video length didn't match exactly, but is it within the acceptable error margin?
+            #
+            from datetime import datetime, timedelta
+            
+            x_t = datetime.strptime(myDur, '%M:%S')
+            y_t = datetime.strptime(p_length_str_MMSS, '%M:%S')
+            
+            in_errorMargin = False
+            
+            # Less than?
+            if y_t == (x_t - timedelta(seconds=p_errorMargin_SS)):
+                in_errorMargin = True
+
+            # More than?
+            if y_t == (x_t + timedelta(seconds=p_errorMargin_SS)):
+                in_errorMargin = True
+            
+        self.testUtils.TEST(in_errorMargin, 
+            "Expected video length on thumbnail to be %s (within %s seconds), but it was %s." % (p_length_str_MMSS, p_errorMargin_SS, myDur))
 
     #
     # Clicks the thumbnail to start the video.

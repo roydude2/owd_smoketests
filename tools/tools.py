@@ -46,7 +46,7 @@ class TestUtils():
         iframes = self.marionette.execute_script("return document.getElementsByTagName('iframe')")
         for idx in range(0,iframes['length']):
             iframe = iframes[str(idx)]
-            self.reportComment(iframe.get_attribute('src'))
+            self.reportComment("iFrame - " + iframe.get_attribute('src'))
 
     #
     # Connect to an iframe.

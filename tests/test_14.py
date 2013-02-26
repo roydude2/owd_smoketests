@@ -62,9 +62,17 @@ class test_14(GaiaTestCase):
                 self.testUtils.reportComment("-> " + imgnam)
                 
                 # Check the size of the screenshot.
-                img_size = os.path.getsize(imgnam)
-                self.testUtils.TEST((img_size == self._img_sizes[i]),
-                    "Expected image " + str (i) + " to be " + str(self._img_sizes[i]) + " bytes, but was " + str(img_size))
+                # (because we can't guarentee the order, or match the filenames, we have to just loop through our
+                # known sizes to see if this one's in there.
+                img_size     = os.path.getsize(imgnam)
+                size_matched = False
+                for this_size in self._img_sizes:
+                    if img_size == this_size:
+                        size_matched = True
+                        break
+                        
+                self.testUtils.TEST(size_matched,
+                    "Unexpected image size (" + str(self._img_sizes[i]) + " bytes). please visually check the screenshots.")
                 
                 # Wait a second (or this test is done too quickly to see!)
                 time.sleep(0.5)

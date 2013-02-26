@@ -41,7 +41,6 @@ class main():
                 self.parent.data_layer.disable_wifi()
             
         if not self.parent.data_layer.get_setting("ril.data.enabled"):
-            self.testUtils.savePageHTML("/tmp/roy1.html")
             x = self.testUtils.get_element(*DOM.Settings.celldata_DataConn)
             self.marionette.tap(x)
             
@@ -106,10 +105,23 @@ class main():
     #
     # Select a network.
     #
-    def tap_wifi_network_name(self, p_wifi_name):
+    def tap_wifi_network_name(self, p_wifi_name, p_user, p_pass):
         wifi_name_element = DOM.Settings.wifi_name_xpath % p_wifi_name
         x= self.testUtils.get_element('xpath', wifi_name_element)
         self.marionette.tap(x)
+        
+        #
+        # In case we are asked for a username and password ...
+        #
+        time.sleep(2)
+        wifi_login_user = self.marionette.find_element(*DOM.Settings.wifi_login_user)
+        wifi_login_pass = self.marionette.find_element(*DOM.Settings.wifi_login_pass)
+        wifi_login_ok   = self.marionette.find_element(*DOM.Settings.wifi_login_ok)
+        if wifi_login_user.is_displayed():
+            wifi_login_user.send_keys(p_user)
+            wifi_login_pass.send_keys(p_pass)
+            self.testUtils.clickNTap(wifi_login_ok)
+            
         
         #
         # Wait for 'anything' to be Connected.

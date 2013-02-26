@@ -5,7 +5,7 @@ import sys
 sys.path.insert(1, "./")
 
 from tools import TestUtils
-from apps import DOM, app_??
+from apps import DOM, app_email
 from gaiatest import GaiaTestCase
 
 class test_?(GaiaTestCase):

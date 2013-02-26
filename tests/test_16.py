@@ -16,6 +16,8 @@ class test_16(GaiaTestCase):
         self.Browser    = app_browser.main(self, self.testUtils)
         self.wifi_name  = self.testUtils.get_os_variable("WIFI_TEST_16", "Name of wifi to connect to (case sensitive!)")
         self.testURL    = self.testUtils.get_os_variable("URL_TEST_16", "URL to test wifi with")
+        self.wifi_user  = self.testUtils.get_os_variable("USERNAME_16", "Wifi username")
+        self.wifi_pass  = self.testUtils.get_os_variable("PASSWORD_16", "Wifi password")
 
         self.marionette.set_search_timeout(50)
         
@@ -42,6 +44,11 @@ class test_16(GaiaTestCase):
         # Make sure wifi is set to 'on'.
         #
         self.Settings.turn_wifi_on()
+        
+        #
+        # Connect to the wifi.
+        #
+        self.Settings.tap_wifi_network_name(self.wifi_name, self.wifi_user, self.wifi_pass)
         
         #
         # Tap specific wifi network (if it's not already connected).
