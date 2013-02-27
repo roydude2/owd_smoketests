@@ -11,6 +11,8 @@ from gaiatest import GaiaTestCase
 class test_?(GaiaTestCase):
     _Description = "?????"
     
+    _boolCheck   = True
+    
     def setUp(self):
         #
         # Set up child objects...

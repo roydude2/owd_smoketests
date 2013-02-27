@@ -29,7 +29,7 @@ class test_13(GaiaTestCase):
         #
         self.camera.launch()
         self.camera.recordVideo("00:05")
-        self.camera.testVideoLength(0, 4.9, 9.0)
+        self.camera.testVideoLength(0, 4.9, 9.1)
 
         #
         # Open the video player application.
@@ -44,5 +44,5 @@ class test_13(GaiaTestCase):
         #
         # Check that the video is as long as expected.
         #
-        self.video.testVideoLength(0, 4.9, 9.0)
+        self.video.testVideoLength(0, 4.9, 9.1)
         

@@ -25,29 +25,26 @@ class main():
         
         myDur = durations[p_thumb_num].text
         
-        if myDur == p_length_str_MMSS:
-            self.testUtils.TEST(1==1, "Just a marker to show we tested here.")
-        else:
-            #
-            # Video length didn't match exactly, but is it within the acceptable error margin?
-            #
-            from datetime import datetime, timedelta
+        #
+        # Video length didn't match exactly, but is it within the acceptable error margin?
+        #
+        from datetime import datetime, timedelta
+        
+        actual_time = datetime.strptime(myDur, '%M:%S')
+        expect_time = datetime.strptime(p_length_str_MMSS, '%M:%S')
+        margin_time = timedelta(seconds=p_errorMargin_SS)
+        
+        diff_time   = actual_time - expect_time
+        
+        in_errorMargin = False
             
-            x_t = datetime.strptime(myDur, '%M:%S')
-            y_t = datetime.strptime(p_length_str_MMSS, '%M:%S')
-            
-            in_errorMargin = False
-            
-            # Less than?
-            if y_t == (x_t - timedelta(seconds=p_errorMargin_SS)):
-                in_errorMargin = True
-
-            # More than?
-            if y_t == (x_t + timedelta(seconds=p_errorMargin_SS)):
-                in_errorMargin = True
+        # Less than expected, but within the error margin?
+        if margin_time >= diff_time:
+            in_errorMargin = True
             
         self.testUtils.TEST(in_errorMargin, 
-            "Expected video length on thumbnail to be %s (within %s seconds), but it was %s." % (p_length_str_MMSS, p_errorMargin_SS, myDur))
+            "Expected video length on thumbnail to be %s (within %s seconds), but it was %s." % 
+                (p_length_str_MMSS, p_errorMargin_SS, myDur))
 
     #
     # Clicks the thumbnail to start the video.

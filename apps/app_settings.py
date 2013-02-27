@@ -41,6 +41,12 @@ class main():
                 self.parent.data_layer.disable_wifi()
             
         if not self.parent.data_layer.get_setting("ril.data.enabled"):
+            #
+            # If we disabled the wifi we'll be in the wrong frame here, so just make sure ...
+            #
+            self.marionette.switch_to_frame()
+            self.testUtils.switchFrame(*DOM.Settings.frame_locator)
+            
             x = self.testUtils.get_element(*DOM.Settings.celldata_DataConn)
             self.marionette.tap(x)
             
@@ -51,13 +57,24 @@ class main():
             x = self.marionette.find_element(*DOM.Settings.celldata_DataConn_ON)
             if x.is_displayed():
                 self.marionette.tap(x)
-                
+
+        #
+        # Give it time to start up.
+        #
+        time.sleep(5)
+        
+        #
+        # Check to see if data conn is now enabled (it may be, even if the icon doesn't appear).
+        #
+        self.testUtils.TEST(
+            self.parent.data_layer.get_setting("ril.data.enabled"),    
+            "Data connection is not enabled after trying to enable it.", True)
+        
         #
         # Give the statusbar icon time to appear, then check for it.
         #
-        time.sleep(3)
         x = self.testUtils.check_statusbar_for_icon(DOM.Statusbar.dataConn, DOM.Settings.frame_locator)
-        self.testUtils.TEST(x, "Data connection icon not detected in status bar.")
+        self.testUtils.TEST(x, "Data connection is enabled, but the icon is not present in the status bar.", False)
 
     #
     # Click slider to turn wifi on.
@@ -68,11 +85,10 @@ class main():
             self.marionette.tap(x)
         
         #
-        # Give the statusbar icon time to appear, then check for it.
+        # Nothing to check for yet, because the network may require login etc...,
+        # so just wait a little while before proceeding ...
         #
         time.sleep(3)
-        x = self.testUtils.check_statusbar_for_icon(DOM.Statusbar.wifi, DOM.Settings.frame_locator)
-        self.testUtils.TEST(x, "Wifi icon not detected in status bar.")
         
     #
     # Verify the expected network is listed as connected in 'available networks'.
@@ -116,20 +132,30 @@ class main():
         time.sleep(2)
         wifi_login_user = self.marionette.find_element(*DOM.Settings.wifi_login_user)
         wifi_login_pass = self.marionette.find_element(*DOM.Settings.wifi_login_pass)
-        wifi_login_ok   = self.marionette.find_element(*DOM.Settings.wifi_login_ok)
+        wifi_login_ok   = self.marionette.find_element(*DOM.Settings.wifi_login_ok_btn)
         if wifi_login_user.is_displayed():
             wifi_login_user.send_keys(p_user)
             wifi_login_pass.send_keys(p_pass)
-            self.testUtils.clickNTap(wifi_login_ok)
-            
+            self.marionette.tap(wifi_login_ok)
+        else:
+            #
+            # We were not asked, so go back to the list.
+            #
+            backBTN = self.marionette.find_element(*DOM.Settings.back_button)
+            self.marionette.tap(backBTN)
+            self.parent.wait_for_element_displayed('xpath', DOM.GLOBAL.app_head_specific % "Wi-Fi")
         
         #
-        # Wait for 'anything' to be Connected.
+        # A couple of checks to wait for 'anything' to be Connected.
         #
-        try: 
-            self.parent.wait_for_element_displayed(*DOM.Settings.wifi_connected)
-
+        conBool = False
+        x = ('xpath', '//small[text()="Connected"]')
+        try:
+            self.parent.wait_for_element_displayed(*x)
+            conBool = True
         except:
-            self.testUtils.reportError("Connected to '" + p_wifi_name + "' not established before timeout.")
-            self.testUtils.quitTest()       
-
+            conBool = False
+        self.testUtils.TEST(conBool, "Timeout waiting for wifi to be marked as 'Connected' in the list.")
+        
+        self.testUtils.TEST(self.parent.data_layer.get_setting("wifi.enabled"),
+            "Wifi connection to '" + p_wifi_name + "' not established.", True)

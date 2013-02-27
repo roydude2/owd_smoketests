@@ -5,15 +5,16 @@ class GLOBAL():
     status_bar           = ('id', 'statusbar')
     status_bar_new       = ('xpath', "//*[@id='statusbar-notification'][@data-unread='true']")
     status_bar_count     = ('xpath', "//*[@id='desktop-notifications-container']/div")
-    homescreen_app_icons = "//li[@class='icon']//span[text()='%s']"
+   #homescreen_app_icons = "//li[@class='icon']//span[text()='%s']"
     homescreen_iframe    = ('css selector', 'div.homescreen iframe')
+    home_frame_locator   = ('css selector', 'iframe[src="app://homescreen.gaiamobile.org/index.html#root"]')
+    app_icon_str         = '//li[@aria-label="%s"]'
+    app_delete_icon      = ('css selector', 'span.options')
+    app_confirm_delete   = ('id', 'confirm-dialog-confirm-button')
 
 class Statusbar():
     wifi            = ('id', 'statusbar-wifi')
     dataConn        = ('id', 'statusbar-data')
-
-class Browser():
-    frame_locator          = ('css selector', 'iframe[src="app://browser.gaiamobile.org/index.html"]')
 
 class Contacts():
     frame_locator          = ('css selector', 'iframe[src="app://communications.gaiamobile.org/index.html"]')
@@ -84,6 +85,7 @@ class Phone():
 class Settings():
     frame_locator          = ('css selector', 'iframe[src="app://settings.gaiamobile.org/index.html#root"]')
     settings_header        = ('xpath', GLOBAL.app_head_specific % 'Settings')
+    back_button            = ('class name', 'icon icon-back')
 
     app_permissions        = ('id', "menuItem-appPermissions")
     app_permissions_header = ('xpath', GLOBAL.app_head_specific % 'App permissions')
@@ -108,6 +110,7 @@ class Settings():
     celldata_DataConn_ON   = ('id', 'dataConnection-expl')
 
 class Browser():
+    frame_locator           = ('css selector', 'iframe[src="app://browser.gaiamobile.org/index.html"]')
     url_input               = ('id', 'url-input')
     url_go_button           = ('id', 'url-button')
     throbber                = ("id", "throbber")
@@ -160,5 +163,35 @@ class Email():
     open_email_to           = ('xpath', "//*[@id='cards']/div[3]/div[1]/div[1]/div[3]/div[1]/div/span")
     open_email_subject      = ('class name', 'msg-envelope-subject')
     
-    
-    
+class Calculator():
+    display         = ('id', 'display')
+    button_mutiply  = ('id', 'multiply')
+    button_divide   = ('id', 'divide')
+    button_add      = ('id', 'add')
+    button_subtract = ('id', 'subtract')
+    button_cancel   = ('xpath', "//input[@value='C']")
+    button_equals   = ('xpath', "//input[@value='=']")
+    button_1        = ('xpath', "//input[@value='1']")
+    button_2        = ('xpath', "//input[@value='2']")
+    button_3        = ('xpath', "//input[@value='3']")
+    button_4        = ('xpath', "//input[@value='4']")
+    button_5        = ('xpath', "//input[@value='5']")
+    button_6        = ('xpath', "//input[@value='6']")
+    button_7        = ('xpath', "//input[@value='7']")
+    button_8        = ('xpath', "//input[@value='8']")
+    button_9        = ('xpath', "//input[@value='9']")
+    button_0        = ('xpath', "//input[@value='0']")
+    button_point    = ('xpath', "//input[@value='.']")
+
+class FTU():
+    language_list       = ('id', 'languages')
+    language_Sel_xpath  = '//li[ starts-with( descendant-or-self::*/text(),"%s" ) ]'
+    next_button         = ('id', 'forward')
+    section_cell_data   = ('id', 'data_3g')
+    #data_connection     = ('id', 'data-connection-switch')
+    dataconn_switch     = ('xpath', '//li/aside[ starts-with( descendant-or-self::*/@id,"data-connection-switch" ) ]')
+    wifi_networks_list  = ('css selector', 'ul#networks li')
+    wifi_login_user     = ('id', 'wifi_user')
+    wifi_login_pass     = ('id', 'wifi_password')
+    wifi_login_join     = ('id', 'wifi-join-button')
+    timezone_continent  = ('id', 'tz-region')

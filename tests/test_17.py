@@ -43,10 +43,6 @@ class test_17(GaiaTestCase):
         #
         self.Settings.turn_dataConn_on(True)
         
-        self.testUtils.TEST(
-            self.data_layer.get_setting("ril.data.enabled"),    
-            "Data connection is OFF! Please run this again (I currently cannot force it to be off before I toggle it).", True)
-        
         #
         # Open the browser app.
         #

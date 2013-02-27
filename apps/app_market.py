@@ -50,16 +50,9 @@ class main():
     #
     def verify_app_installed(self, p_app):            
         #
-        # Not sure why, but this is different to "self.marionette.switch_to_frame()".
+        # Go back to the home page and check the app is installed.
         #
-        homescreen_frame = self.marionette.find_element(*DOM.GLOBAL.homescreen_iframe)
-        self.marionette.switch_to_frame(homescreen_frame)
+        self.testUtils.TEST(self.testUtils.isAppInstalled(p_app), "App icon not found in homescreen.")
         
-        app_icon_locator = ('xpath', DOM.GLOBAL.homescreen_app_icons % p_app)
-        try:
-            self.parent.wait_for_element_present(*app_icon_locator)
-        except:
-            self.testUtils.TEST(1==2, "Could not find app icon on the home screen after install!", True)
-            
-        self.testUtils.TEST(1==1, "Just a marker to show we tested for this!")
+        
     

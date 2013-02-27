@@ -36,23 +36,26 @@ class test_20(GaiaTestCase):
         
     def test_run(self):
         
-        #
-        # Launch market app.
-        #
-        self.Market.launch()
+        ##
+        ## Launch market app.
+        ##
+        #self.Market.launch()
+        
+        ##
+        ## Install app.
+        ##
+        #self.Market.install_app(self.APP_NAME)
+
+        ##
+        ## Verify installation.
+        ##
+        #self.Market.verify_app_installed(self.APP_NAME)
         
         #
-        # Install app.
+        # Find the app icon (a nice touch! :o).
         #
-        self.Market.install_app(self.APP_NAME)
+        app_xpath = ('xpath', DOM.GLOBAL.app_icon_str % self.APP_NAME)
+        app_icon = self.marionette.find_element(*app_xpath)
+        self.testUtils.TEST(self.testUtils.findAppIcon(app_icon),
+            "Could not find the app icon on the homescreen.", True)
 
-
-        #
-        # Verify installation.
-        #
-        self.Market.verify_app_installed(self.APP_NAME)
-        
-        #
-        # Go home to finish.
-        #
-        self.testUtils.goHome()

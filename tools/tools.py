@@ -18,6 +18,19 @@ class TestUtils():
         self.errNum         = 0
         self.passed         = 0
         self.failed         = 0
+        
+        #
+        # Check we have some sort of network connection if possible.
+        #
+        networkConn = False
+        
+        if not self.parent.data_layer.get_setting("ril.data.enabled"):
+            # No data enabled.
+            if not  self.parent.data_layer.get_setting("wifi.enabled"):
+                # No wifi either, so chose one (data is best because it
+                # doesn't require login credentials.
+                self.reportComment("No network conection found, so data connection was established automatically.")
+                self.parent.data_layer.enable_cell_data()
     
     #
     # Get a variable from the OS.
@@ -211,11 +224,78 @@ class TestUtils():
         return False
         
     #
+    # Scroll to next page (right).
+    # Should change this to use marionette.flick() when it works.
+    #
+    def scrollHomescreenRight(self):
+        self.marionette.execute_script('window.wrappedJSObject.GridManager.goToNextPage()')
+    
+    #
+    # Scroll around the homescreen until we find our app icon.
+    #
+    def findAppIcon(self, p_appElement):
+        while not p_appElement.is_displayed():
+            self.scrollHomescreenRight()
+        
+        return p_appElement.is_displayed()
+        ## Is the app on page 1?
+        #foundApp = True
+        #if not p_appElement.is_displayed():
+            ## Is the app on page 2?
+            #self.scrollHomescreenRight()
+            #time.sleep(1)
+            #if not p_appElement.is_displayed():
+                ## Is the app on page 3?
+                #self.scrollHomescreenRight()
+                #time.sleep(1)
+                #if not p_appElement.is_displayed():
+                    ##
+                    ## Failed to find the app icon.
+                    ##
+                    #foundApp = False
+            #else:
+                #self.reportComment("THERE IT ... ISN'T!")
+        #return foundApp
+    
+    #
+    # Touch the home button (sometimes does something different to going home).
+    #
+    def touchHomeButton(self):
+        self.marionette.switch_to_frame()
+        self.marionette.execute_script("window.wrappedJSObject.dispatchEvent(new Event('home'));")
+    
+    #
     # Return to the home screen.
     #
     def goHome(self):
         self.homescreen = self.parent.apps.launch('Homescreen')
         self.marionette.switch_to_frame()
+
+    #
+    # Activate edit mode in the homescreen.
+    # ASSUMES YOU ARE ALREADY IN THE HOMESCREEN + CORRECT FRAME., i.e.
+    #
+    #    self.goHome()
+    #    self.switchFrame(*DOM.GLOBAL.home_frame_locator)
+    #
+    # ... before you execute this!
+    #
+    def activateHomeEditMode(self):
+        self.marionette.execute_script("window.wrappedJSObject.Homescreen.setMode('edit')")
+
+    #
+    # Return whether an app is present on the homescreen (i.e. 'installed').
+    #
+    def isAppInstalled(self, p_appName):
+        self.goHome()
+        self.switchFrame(*DOM.GLOBAL.home_frame_locator)
+        x = ('xpath', DOM.GLOBAL.app_icon_str % p_appName)
+        try:
+            self.parent.wait_for_element_present(*x)
+            return True
+        except:
+            return False
+
 
     #
     # Displays the status / notification bar in the home screen.
