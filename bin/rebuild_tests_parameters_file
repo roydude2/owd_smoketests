@@ -13,6 +13,8 @@ echo "##########################################################################
 # This is the parameters file for your tests. If any of these are left blank,
 # you will be prompted for a value when you run that test.
 #
+# There must be no space between the "=" and your value.
+#
 # It is advisable to make a copy of this file once you have put your values
 # into it (if you pull this repository from GitHub again, your changes
 # will be lost).
@@ -34,10 +36,10 @@ do
 
 		if [ "$VARNAME" ]
 		then
-			EXT_VARS="${EXT_VARS}export $VARNAME=\"\"\t\t# $VARDESC\n"
+			EXT_VARS="${EXT_VARS}export $VARNAME=\t\t# $VARDESC\n"
 		fi
 	done << EOF
-	$(grep "self.testUtils.get_os_variable" $testfile | sed -e "s/^[ ]*//" | egrep -v "#")
+	$(grep ".get_os_variable" $testfile | sed -e "s/^[ ]*//" | egrep -v "#")
 EOF
 
 	if [ "$EXT_VARS" ]

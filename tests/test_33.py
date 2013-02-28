@@ -18,14 +18,14 @@ class test_33(GaiaTestCase):
         # Set up child objects...
         #
         GaiaTestCase.setUp(self)
-        self.testUtils  = TestUtils(self, 33)
-        self.Calc   = app_calculator.main(self, self.testUtils)
+        self.UTILS  = TestUtils(self, 33)
+        self.Calc   = app_calculator.main(self, self.UTILS)
         
         self.marionette.set_search_timeout(50)
         self.lockscreen.unlock()
         
     def tearDown(self):
-        self.testUtils.reportResults()
+        self.UTILS.reportResults()
         
     def test_run(self):
         
@@ -34,19 +34,19 @@ class test_33(GaiaTestCase):
         #
         self.Calc.launch()
 
-        btn3 = self.testUtils.get_element(*DOM.Calculator.button_3)
+        btn3 = self.UTILS.get_element(*DOM.Calculator.button_3)
         self.marionette.tap(btn3)
         
-        btnX = self.testUtils.get_element(*DOM.Calculator.button_mutiply)
+        btnX = self.UTILS.get_element(*DOM.Calculator.button_mutiply)
         self.marionette.tap(btnX)
         
-        btn5 = self.testUtils.get_element(*DOM.Calculator.button_5)
+        btn5 = self.UTILS.get_element(*DOM.Calculator.button_5)
         self.marionette.tap(btn5)
         
-        btnEQ = self.testUtils.get_element(*DOM.Calculator.button_equals)
+        btnEQ = self.UTILS.get_element(*DOM.Calculator.button_equals)
         self.marionette.tap(btnEQ)
         
-        Answer = self.testUtils.get_element(*DOM.Calculator.display)
+        Answer = self.UTILS.get_element(*DOM.Calculator.display)
         
-        self.testUtils.TEST(Answer.text == "15", "Expected answer to be 15, but it was " + Answer.text + ".")
+        self.UTILS.TEST(Answer.text == "15", "Expected answer to be 15, but it was " + Answer.text + ".")
         

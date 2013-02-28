@@ -18,19 +18,6 @@ class TestUtils():
         self.errNum         = 0
         self.passed         = 0
         self.failed         = 0
-        
-        #
-        # Check we have some sort of network connection if possible.
-        #
-        networkConn = False
-        
-        if not self.parent.data_layer.get_setting("ril.data.enabled"):
-            # No data enabled.
-            if not  self.parent.data_layer.get_setting("wifi.enabled"):
-                # No wifi either, so chose one (data is best because it
-                # doesn't require login credentials.
-                self.reportComment("No network conection found, so data connection was established automatically.")
-                self.parent.data_layer.enable_cell_data()
     
     #
     # Get a variable from the OS.
@@ -194,15 +181,6 @@ class TestUtils():
         self.parent.wait_for_element_displayed(*p_elements)
         els = self.marionette.find_elements(*p_elements)
         return els
-    
-    #
-    # Click (to highlight), then tap (to 'action') an element such as a
-    # button or a link etc...
-    #
-    def clickNTap(self, p_element):
-        p_element.click()
-        self.marionette.tap(p_element)
-        return
     
     #
     # Save the HTML of the current page to the specified file.

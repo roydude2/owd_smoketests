@@ -16,9 +16,9 @@ class test_9(GaiaTestCase):
         # Set up child objects...
         #
         GaiaTestCase.setUp(self)
-        self.testUtils  = TestUtils(self, 8)
-        self.contacts   = app_contacts.main(self, self.testUtils)
-        self.messages   = app_messages.main(self, self.testUtils)
+        self.UTILS  = TestUtils(self, 8)
+        self.contacts   = app_contacts.main(self, self.UTILS)
+        self.messages   = app_messages.main(self, self.UTILS)
         
         self.marionette.set_search_timeout(50)
         self.lockscreen.unlock()
@@ -34,8 +34,8 @@ class test_9(GaiaTestCase):
         #
         # Establish which phone number to use.
         #
-        self.contact_1["tel"]["value"] = self.testUtils.get_os_variable("TEST_SMS_NUM", "Mobile number for SMS tests (test 9)")
-        self.testUtils.reportComment("Using target telephone number " + self.contact_1["tel"]["value"])
+        self.contact_1["tel"]["value"] = self.UTILS.get_os_variable("TEST_SMS_NUM", "Mobile number for SMS tests (test 9)")
+        self.UTILS.reportComment("Using target telephone number " + self.contact_1["tel"]["value"])
         
         #
         # Add this contact (quick'n'dirty method - we're just testing sms, no adding a contact).
@@ -43,7 +43,7 @@ class test_9(GaiaTestCase):
         self.data_layer.insert_contact(self.contact_1)
             
     def tearDown(self):
-        self.testUtils.reportResults()
+        self.UTILS.reportResults()
         
     def test_run(self):
         #
@@ -54,26 +54,26 @@ class test_9(GaiaTestCase):
         #
         # View the details of our contact.
         #
-        self.testUtils.reportComment("0")
+        self.UTILS.reportComment("0")
         self.contacts.viewContact(self.contact_1)
         
         #
         # Tap the sms button in the view details screen to go to the sms page.
         #
         self.wait_for_element_displayed(*DOM.Contacts.sms_button)
-        smsBTN = self.testUtils.get_element(*DOM.Contacts.sms_button)
-        self.testUtils.clickNTap(smsBTN)
+        smsBTN = self.UTILS.get_element(*DOM.Contacts.sms_button)
+        self.marionette.tap(smsBTN)
 
         #
         # Switch to the 'Messages' app frame (or marionette will still be watching the
         # 'Contacts' app!).
         #
-        self.testUtils.switchFrame(*DOM.Messages.frame_locator)
+        self.UTILS.switchFrame(*DOM.Messages.frame_locator)
 
         #
         # TEST: correct name is in the header of this sms.
         #
-        self.testUtils.TEST(self.testUtils.headerFound(self.contact_1['name']), 
+        self.UTILS.TEST(self.UTILS.headerFound(self.contact_1['name']), 
             "'Send message' header was not '" + self.contact_1['name'] + "'.")
 
         #
@@ -99,12 +99,12 @@ class test_9(GaiaTestCase):
         #
         x = self.messages.waitForSMSNotifier(self.contact_1["name"], 180)
         
-        self.testUtils.TEST(x, "Failed to find new msg - aborting:", True)
+        self.UTILS.TEST(x, "Failed to find new msg - aborting:", True)
         
         #
         # Switch back to the sms app. (if we managed to click).
         #
-        self.testUtils.switchFrame(*DOM.Messages.frame_locator)
+        self.UTILS.switchFrame(*DOM.Messages.frame_locator)
         
         #
         # Read the new message.
@@ -115,12 +115,12 @@ class test_9(GaiaTestCase):
         #
         # TEST: The returned message is as expected (caseless in case user typed it manually).
         #
-        self.testUtils.TEST((returnedSMS.lower() == self._TestMsg.lower()), 
+        self.UTILS.TEST((returnedSMS.lower() == self._TestMsg.lower()), 
             "Expected text to be '" + self._TestMsg + "' but was '" + returnedSMS + "'")
 
         #
         # Because of a bug, the message notifier remains in the header until you restart the
         # messaging app, so restart it just to remove the notification.
         #
-        self.testUtils.goHome()
+        self.UTILS.goHome()
         self.messages.launch()

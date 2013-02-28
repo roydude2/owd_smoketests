@@ -8,7 +8,7 @@ class main():
     # "self" object so we can access the calling class' objects.
     #
     def __init__(self, p_parentSelf, p_testUtils):
-        self.testUtils  = p_testUtils
+        self.UTILS  = p_testUtils
         self.marionette = p_parentSelf.marionette
         self.parent     = p_parentSelf
         
@@ -22,7 +22,7 @@ class main():
         self.parent.wait_for_element_not_displayed(*DOM.GLOBAL.loading_overlay)
         
     def switchSource(self):
-        switchBTN = self.testUtils.get_element(*DOM.Camera.switch_source_btn)
+        switchBTN = self.UTILS.get_element(*DOM.Camera.switch_source_btn)
         self.marionette.tap(switchBTN)        
         self.parent.wait_for_element_present(*DOM.Camera.capture_button_enabled)
 
@@ -30,7 +30,7 @@ class main():
     # Take a picture.
     #
     def takePicture(self):
-        x = self.testUtils.get_element(*DOM.Camera.capture_button)
+        x = self.UTILS.get_element(*DOM.Camera.capture_button)
         self.marionette.tap(x)
         self.parent.wait_for_element_displayed(*DOM.Camera.thumbnail)
         
@@ -57,7 +57,7 @@ class main():
         # 5 and 9 seconds to complete (to allow time delay in element
         # loading).
         #
-        playBTN = self.testUtils.get_element(*DOM.Camera.video_play_button)
+        playBTN = self.UTILS.get_element(*DOM.Camera.video_play_button)
         self.marionette.tap(playBTN)
 
         # Start the timer when the pause button is visible.
@@ -69,8 +69,8 @@ class main():
         
         elapsed_time = int(time.time() - start_time)
         
-        self.testUtils.TEST((elapsed_time > p_from_SS), "Video is shorter than expected (played for %.2f seconds)." % elapsed_time)
-        self.testUtils.TEST((elapsed_time < p_to_SS), "Video is longer than expected (played for %.2f seconds)." % elapsed_time)
+        self.UTILS.TEST((elapsed_time > p_from_SS), "Video is shorter than expected (played for %.2f seconds)." % elapsed_time)
+        self.UTILS.TEST((elapsed_time < p_to_SS), "Video is longer than expected (played for %.2f seconds)." % elapsed_time)
 
     #
     # NOTE: p_length needs to be in the format "mm:ss"
@@ -84,7 +84,7 @@ class main():
         #
         # Record a video and click the thumbnail to play it.
         #
-        captureBTN = self.testUtils.get_element(*DOM.Camera.capture_button)
+        captureBTN = self.UTILS.get_element(*DOM.Camera.capture_button)
         self.marionette.tap(captureBTN)
         
         # Record for 5 seconds
@@ -98,7 +98,7 @@ class main():
         
         # TEST: Thumbnail has not been previewed yet.
         prev_marker = self.parent.marionette.find_element(*DOM.Camera.thumbnail_preview_marker)
-        self.testUtils.TEST((prev_marker.get_attribute("class") == "offscreen"), "Image was previewed as soon as picture was taken.")
+        self.UTILS.TEST((prev_marker.get_attribute("class") == "offscreen"), "Image was previewed as soon as picture was taken.")
         
 
 

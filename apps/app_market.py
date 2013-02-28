@@ -8,7 +8,7 @@ class main():
     # "self" object so we can access the calling class' objects.
     #
     def __init__(self, p_parentSelf, p_testUtils):
-        self.testUtils  = p_testUtils
+        self.UTILS  = p_testUtils
         self.marionette = p_parentSelf.marionette
         self.parent     = p_parentSelf
 
@@ -24,14 +24,14 @@ class main():
         # Because of the change to the search (and the fact that I can't get Marionette 'flick()' to work!)
         # just grab the first app on the screen.
         #
-        x = self.testUtils.get_elements(*DOM.Market.featured_apps)
+        x = self.UTILS.get_elements(*DOM.Market.featured_apps)
 
         self.marionette.tap(x[0])   
         
-        x = self.testUtils.get_element(*DOM.Market.app_details_header)
-        self.testUtils.TEST(x.text == p_app, "Expected title in app details to be '" + p_app + "', but was '" + x.text + "'.")
+        x = self.UTILS.get_element(*DOM.Market.app_details_header)
+        self.UTILS.TEST(x.text == p_app, "Expected title in app details to be '" + p_app + "', but was '" + x.text + "'.")
         
-        x = self.testUtils.get_element(*DOM.Market.install_button)
+        x = self.UTILS.get_element(*DOM.Market.install_button)
         self.marionette.tap(x)
 
         #
@@ -52,7 +52,7 @@ class main():
         #
         # Go back to the home page and check the app is installed.
         #
-        self.testUtils.TEST(self.testUtils.isAppInstalled(p_app), "App icon not found in homescreen.")
+        self.UTILS.TEST(self.UTILS.isAppInstalled(p_app), "App icon not found in homescreen.")
         
         
     

@@ -18,8 +18,8 @@ class test_?(GaiaTestCase):
         # Set up child objects...
         #
         GaiaTestCase.setUp(self)
-        self.testUtils  = TestUtils(self, ?)
-        self.??   = app_??.main(self, self.testUtils)
+        self.UTILS  = TestUtils(self, ?)
+        self.??     = app_??.main(self, self.UTILS)
         
         self.marionette.set_search_timeout(50)
         self.lockscreen.unlock()
@@ -27,11 +27,11 @@ class test_?(GaiaTestCase):
         #
         # Establish parameters.
         #
-        self.MYVAR = self.testUtils.get_os_variable("MY_VAR", "Something about MY_VAR")
-        self.testUtils.reportComment("Using " + self.MYVAR)
+        self.MYVAR = self.UTILS.get_os_variable("MY_VAR", "Something about MY_VAR")
+        self.UTILS.reportComment("Using " + self.MYVAR)
         
     def tearDown(self):
-        self.testUtils.reportResults()
+        self.UTILS.reportResults()
         
     def test_run(self):
         

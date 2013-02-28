@@ -17,15 +17,15 @@ import time
 # the subject line I generated (and guarantee 100% that 24 ran before 25).
 #
 class test_22(GaiaTestCase):
-    _Description = "Combination of 24 and 25 Send and receive an email between gmail accounts (will pause for 30s between tests)."
+    _Description = "Combination of 24 and 25 Send and receive an email between gmail accounts (will pause for 60s between tests)."
     
     def setUp(self):
         #
         # Set up child objects...
         #
         GaiaTestCase.setUp(self)
-        self.testUtils  = TestUtils(self, 24)
-        self.Email      = app_email.main(self, self.testUtils)
+        self.UTILS  = TestUtils(self, 24)
+        self.Email      = app_email.main(self, self.UTILS)
         
         self.marionette.set_search_timeout(50)
         self.lockscreen.unlock()
@@ -35,22 +35,22 @@ class test_22(GaiaTestCase):
         #
         self.subject = "Test 24 - " + str(time.time())
         self.body    = "This is the test email body."
-        self.USER1  = self.testUtils.get_os_variable("GMAIL_1_USER"  , "Gmail 1 username")
-        self.EMAIL1 = self.testUtils.get_os_variable("GMAIL_1_EMAIL" , "Gmail 1 email")
-        self.PASS1  = self.testUtils.get_os_variable("GMAIL_1_PASS"  , "Gmail 1 password")
-        self.USER2  = self.testUtils.get_os_variable("GMAIL_2_USER"  , "Gmail 2 username")
-        self.EMAIL2 = self.testUtils.get_os_variable("GMAIL_2_EMAIL" , "Gmail 2 email")
-        self.PASS2  = self.testUtils.get_os_variable("GMAIL_2_PASS"  , "Gmail 2 password")
-        self.testUtils.reportComment("Using username 1 '" + self.USER1 + "'")
-        self.testUtils.reportComment("Using password 1 '" + self.PASS1 + "'")
-        self.testUtils.reportComment("Using email    1 '" + self.EMAIL1 + "'")
-        self.testUtils.reportComment("Using username 2 '" + self.USER2 + "'")
-        self.testUtils.reportComment("Using password 2 '" + self.PASS2 + "'")
-        self.testUtils.reportComment("Using email    2 '" + self.EMAIL2 + "'")
-        self.testUtils.reportComment("Using subject    '" + self.subject + "'")
+        self.USER1  = self.UTILS.get_os_variable("GMAIL_1_USER"  , "Gmail 1 username")
+        self.EMAIL1 = self.UTILS.get_os_variable("GMAIL_1_EMAIL" , "Gmail 1 email")
+        self.PASS1  = self.UTILS.get_os_variable("GMAIL_1_PASS"  , "Gmail 1 password")
+        self.USER2  = self.UTILS.get_os_variable("GMAIL_2_USER"  , "Gmail 2 username")
+        self.EMAIL2 = self.UTILS.get_os_variable("GMAIL_2_EMAIL" , "Gmail 2 email")
+        self.PASS2  = self.UTILS.get_os_variable("GMAIL_2_PASS"  , "Gmail 2 password")
+        self.UTILS.reportComment("Using username 1 '" + self.USER1 + "'")
+        self.UTILS.reportComment("Using password 1 '" + self.PASS1 + "'")
+        self.UTILS.reportComment("Using email    1 '" + self.EMAIL1 + "'")
+        self.UTILS.reportComment("Using username 2 '" + self.USER2 + "'")
+        self.UTILS.reportComment("Using password 2 '" + self.PASS2 + "'")
+        self.UTILS.reportComment("Using email    2 '" + self.EMAIL2 + "'")
+        self.UTILS.reportComment("Using subject    '" + self.subject + "'")
         
     def tearDown(self):
-        self.testUtils.reportResults()
+        self.UTILS.reportResults()
         
     def test_run(self):
         
@@ -86,19 +86,20 @@ class test_22(GaiaTestCase):
         #
         # Report on how many items were in the Sent folder.
         #
+        time.sleep(20)
         sent_emails_after = self.Email.countMessagesInFolder("Sent Mail")
-        self.testUtils.reportComment(
+        self.UTILS.reportComment(
             "Sent folder count before sending: " + str(sent_emails_before) + ", and after: " + str(sent_emails_after))
 
         total_sent = sent_emails_after - sent_emails_before
-        self.testUtils.TEST(total_sent == 1,
+        self.UTILS.TEST(total_sent == 1,
             "Expected 1 more 'Sent' email, but found " + str(total_sent) + ".")
         
         #
         # Check our email is in the sent folder.
         #
         self.Email.openMailFolder("Sent Mail")
-        self.testUtils.TEST(self.Email.emailIsInFolder(self.subject),
+        self.UTILS.TEST(self.Email.emailIsInFolder(self.subject),
             "Email was not found in the Sent Mail folder after being sent.")
         
 
@@ -106,7 +107,7 @@ class test_22(GaiaTestCase):
         #
         # Give the email time to arrive ....
         #
-        time.sleep(30)
+        time.sleep(60)
 
         ##################################################
         #
@@ -125,21 +126,21 @@ class test_22(GaiaTestCase):
         #
         # Open the email, matching the subject.
         #
-        self.testUtils.TEST(self.Email.openUnreadMsg(self.subject),
+        self.UTILS.TEST(self.Email.openUnreadMsg(self.subject),
             "Unable to find an email with the subject '" + self.subject, True)
             
         #
         # Verify the contents.
         #
-        x = self.testUtils.get_element(*DOM.Email.open_email_from)
-        self.testUtils.TEST(x.text == self.EMAIL1, 
+        x = self.UTILS.get_element(*DOM.Email.open_email_from)
+        self.UTILS.TEST(x.text == self.EMAIL1, 
             "Expected 'From' field to be '" + self.EMAIL1 + "', but it was '" + x.text + "'.")
 
-        x = self.testUtils.get_element(*DOM.Email.open_email_to)
-        self.testUtils.TEST(x.text == self.EMAIL2, 
+        x = self.UTILS.get_element(*DOM.Email.open_email_to)
+        self.UTILS.TEST(x.text == self.EMAIL2, 
             "Expected 'To' field to be '" + self.EMAIL2 + "', but it was '" + x.text + "'.")
 
-        x = self.testUtils.get_element(*DOM.Email.open_email_subject)
-        self.testUtils.TEST(x.text == self.subject, 
+        x = self.UTILS.get_element(*DOM.Email.open_email_subject)
+        self.UTILS.TEST(x.text == self.subject, 
             "Expected 'From' field to be '" + self.subject + "', but it was '" + x.text + "'.")
         

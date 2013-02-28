@@ -8,7 +8,7 @@ class main():
     # "self" object so we can access the calling class' objects.
     #
     def __init__(self, p_parentSelf, p_testUtils):
-        self.testUtils  = p_testUtils
+        self.UTILS  = p_testUtils
         self.marionette = p_parentSelf.marionette
         self.parent     = p_parentSelf
 
@@ -72,5 +72,5 @@ class main():
         # Stop the timer.
         elapsed_time = int(time.time() - start_time)
         
-        self.testUtils.TEST((elapsed_time > p_from_SS), "Video is shorter than expected (played for %.2f seconds)." % elapsed_time)
-        self.testUtils.TEST((elapsed_time < p_to_SS), "Video is longer than expected (played for %.2f seconds)." % elapsed_time)
+        self.UTILS.TEST((elapsed_time > p_from_SS), "Video is shorter than expected (played for %.2f seconds)." % elapsed_time)
+        self.UTILS.TEST((elapsed_time < p_to_SS), "Video is longer than expected (played for %.2f seconds)." % elapsed_time)

@@ -8,7 +8,7 @@ class main():
     # "self" object so we can access the calling class' objects.
     #
     def __init__(self, p_parentSelf, p_testUtils):
-        self.testUtils  = p_testUtils
+        self.UTILS  = p_testUtils
         self.marionette = p_parentSelf.marionette
         self.parent     = p_parentSelf
 
@@ -20,11 +20,11 @@ class main():
     # Open url.
     #
     def open_url(self, p_url):
-        x=self.testUtils.get_element(*DOM.Browser.url_input)
-        self.testUtils.reportComment("Using URL " + p_url)
+        x=self.UTILS.get_element(*DOM.Browser.url_input)
+        self.UTILS.reportComment("Using URL " + p_url)
         x.send_keys(p_url)
         
-        x=self.testUtils.get_element(*DOM.Browser.url_go_button)
+        x=self.UTILS.get_element(*DOM.Browser.url_go_button)
         self.marionette.tap(x)
         
         #
@@ -41,7 +41,7 @@ class main():
     # Check the page didn't have a problem.
     #
     def check_page_loaded(self):
-        x=self.testUtils.get_element(*DOM.Browser.url_input)
+        x=self.UTILS.get_element(*DOM.Browser.url_input)
         testStr = x.get_attribute("value")
         
         #
@@ -51,4 +51,4 @@ class main():
         browser_frame = self.marionette.find_element(*DOM.Browser.browser_page_frame)
         self.marionette.switch_to_frame(browser_frame)
 
-        self.testUtils.TEST("Problem loading page" != testStr, "Had a problem loading the page.")
+        self.UTILS.TEST("Problem loading page" != testStr, "Had a problem loading the page.")

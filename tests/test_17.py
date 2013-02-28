@@ -16,18 +16,21 @@ class test_17(GaiaTestCase):
         # Set up child objects...
         #
         GaiaTestCase.setUp(self)
-        self.testUtils  = TestUtils(self, 17)
-        self.Settings   = app_settings.main(self, self.testUtils)
-        self.Browser    = app_browser.main(self, self.testUtils)
-        self.testURL    = self.testUtils.get_os_variable("URL_TEST_17", "URL to test data connection with")
+        self.UTILS  = TestUtils(self, 17)
+        self.Settings   = app_settings.main(self, self.UTILS)
+        self.Browser    = app_browser.main(self, self.UTILS)
+        self.testURL    = self.UTILS.get_os_variable("URL_TEST_17", "URL to test data connection with")
         
         self.marionette.set_search_timeout(50)
         self.lockscreen.unlock()
         
-        self.testUtils.reportComment("Using " + self.testURL)
+        self.UTILS.reportComment("Using " + self.testURL)
+        
+        self.data_layer.disable_wifi()
+        self.data_layer.disable_cell_data()
         
     def tearDown(self):
-        self.testUtils.reportResults()
+        self.UTILS.reportResults()
         
     def test_run(self):
         

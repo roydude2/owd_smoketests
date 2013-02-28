@@ -15,13 +15,13 @@ class test_21(GaiaTestCase):
         # Set up child objects...
         #
         GaiaTestCase.setUp(self)
-        self.testUtils  = TestUtils(self, 21)
-        self.Market     = app_market.main(self, self.testUtils)
+        self.UTILS  = TestUtils(self, 21)
+        self.Market     = app_market.main(self, self.UTILS)
         
         self.marionette.set_search_timeout(50)
         self.lockscreen.unlock()
         
-        self.testUtils.reportComment("Using app '" + self.APP_NAME + "'")
+        self.UTILS.reportComment("Using app '" + self.APP_NAME + "'")
         
         #
         # Make sure our app isn't installed already.
@@ -32,7 +32,7 @@ class test_21(GaiaTestCase):
             x=1 # Do nothing.
         
     def tearDown(self):
-        self.testUtils.reportResults()
+        self.UTILS.reportResults()
         
     def test_run(self):
         
@@ -57,7 +57,7 @@ class test_21(GaiaTestCase):
         #
         # Go home then run the new app.
         #
-        self.testUtils.goHome()
+        self.UTILS.goHome()
         
         self.app = self.apps.launch(self.APP_NAME)
         self.wait_for_element_not_displayed(*DOM.GLOBAL.loading_overlay)
@@ -65,6 +65,6 @@ class test_21(GaiaTestCase):
         test_title = ('class name', 'titlebarIcon')
         self.wait_for_element_displayed(*test_title)
         x = self.marionette.find_element(*test_title)
-        self.testUtils.TEST(x.get_attribute("title") == "Wikipedia homepage",
+        self.UTILS.TEST(x.get_attribute("title") == "Wikipedia homepage",
             "Application did not have the expected title - please check the screenshot matches '" + self.APP_NAME  + "'")
         

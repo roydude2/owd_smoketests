@@ -14,8 +14,8 @@ class test_7(GaiaTestCase):
         # Set up child objects...
         #
         GaiaTestCase.setUp(self)
-        self.testUtils = TestUtils(self, 7)
-        self.contacts  = app_contacts.main(self, self.testUtils)
+        self.UTILS = TestUtils(self, 7)
+        self.contacts  = app_contacts.main(self, self.UTILS)
         
         #
         # Set the timeout for element searches.
@@ -29,7 +29,7 @@ class test_7(GaiaTestCase):
         self.Contact_1 = MockContacts().Contact_1
         
     def tearDown(self):
-        self.testUtils.reportResults()
+        self.UTILS.reportResults()
 
     def test_run(self):
         #

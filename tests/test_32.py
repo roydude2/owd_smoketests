@@ -20,9 +20,9 @@ class test_32(GaiaTestCase):
         # Set up child objects...
         #
         GaiaTestCase.setUp(self)
-        self.testUtils  = TestUtils(self, 32)
-        self.Settings   = app_settings.main(self, self.testUtils)
-        self.Browser    = app_browser.main(self, self.testUtils)
+        self.UTILS  = TestUtils(self, 32)
+        self.Settings   = app_settings.main(self, self.UTILS)
+        self.Browser    = app_browser.main(self, self.UTILS)
         
         self.marionette.set_search_timeout(50)
         self.lockscreen.unlock()
@@ -34,7 +34,7 @@ class test_32(GaiaTestCase):
         except: x=1 #(ignore any exceptions)
         
     def tearDown(self):
-        self.testUtils.reportResults()
+        self.UTILS.reportResults()
         
     def test_run(self):
         
@@ -50,7 +50,7 @@ class test_32(GaiaTestCase):
         #
         self.Settings.turn_dataConn_on(True)
         
-        self.testUtils.TEST(
+        self.UTILS.TEST(
             self.data_layer.get_setting("ril.data.enabled"),    
             "Data connection is OFF! Please run this again (I currently cannot force it to be off before I toggle it).", True)
         
@@ -73,28 +73,28 @@ class test_32(GaiaTestCase):
         # Install the app.
         #
         x = ('id', 'install-app')        
-        install_btn = self.testUtils.get_element(*x)
+        install_btn = self.UTILS.get_element(*x)
         self.marionette.tap(install_btn)
         
         # Install button on the splash screen (switch to main frame to 'see' this).
         self.marionette.switch_to_frame()
 
         x = ('id', 'app-install-install-button')        
-        install_btn = self.testUtils.get_element(*x)
+        install_btn = self.UTILS.get_element(*x)
         self.marionette.tap(install_btn)
         
         # ... and switch back to brwoser to see the next splash screen(!)
-        self.testUtils.switchFrame(*DOM.Browser.frame_locator)
+        self.UTILS.switchFrame(*DOM.Browser.frame_locator)
         x = ('id', 'modal-dialog-alert-ok')
-        btn = self.testUtils.get_element(*x)
+        btn = self.UTILS.get_element(*x)
         self.marionette.tap(btn)
 
         #
         # Go back to the home page and check the app is installed.
         #
-        self.testUtils.TEST(self.testUtils.isAppInstalled(self._appName), "App icon not found in homescreen.")
+        self.UTILS.TEST(self.UTILS.isAppInstalled(self._appName), "App icon not found in homescreen.")
                 
         #
         # Remove the app.
         #
-        self.testUtils.uninstallApp(self._appName)
+        self.UTILS.uninstallApp(self._appName)

@@ -8,7 +8,7 @@ class main():
     # "self" object so we can access the calling class' objects.
     #
     def __init__(self, p_parentSelf, p_testUtils):
-        self.testUtils  = p_testUtils
+        self.UTILS  = p_testUtils
         self.marionette = p_parentSelf.marionette
         self.parent     = p_parentSelf
 
@@ -26,15 +26,15 @@ class main():
     def getContactFields(self):
         
         return {
-        'givenName' : self.testUtils.get_element(*DOM.Contacts.given_name_field),
-        'familyName': self.testUtils.get_element(*DOM.Contacts.family_name_field),
-        'tel'       : self.testUtils.get_element(*DOM.Contacts.phone_field),
-        'email'     : self.testUtils.get_element(*DOM.Contacts.email_field),
-        'street'    : self.testUtils.get_element(*DOM.Contacts.street_field),
-        'zip'       : self.testUtils.get_element(*DOM.Contacts.zip_code_field),
-        'city'      : self.testUtils.get_element(*DOM.Contacts.city_field),
-        'country'   : self.testUtils.get_element(*DOM.Contacts.country_field),
-        'comment'   : self.testUtils.get_element(*DOM.Contacts.comment_field)
+        'givenName' : self.UTILS.get_element(*DOM.Contacts.given_name_field),
+        'familyName': self.UTILS.get_element(*DOM.Contacts.family_name_field),
+        'tel'       : self.UTILS.get_element(*DOM.Contacts.phone_field),
+        'email'     : self.UTILS.get_element(*DOM.Contacts.email_field),
+        'street'    : self.UTILS.get_element(*DOM.Contacts.street_field),
+        'zip'       : self.UTILS.get_element(*DOM.Contacts.zip_code_field),
+        'city'      : self.UTILS.get_element(*DOM.Contacts.city_field),
+        'country'   : self.UTILS.get_element(*DOM.Contacts.country_field),
+        'comment'   : self.UTILS.get_element(*DOM.Contacts.comment_field)
         }
         
     #
@@ -72,19 +72,19 @@ class main():
     #
     def verifyFieldContents(self, p_contact):
 
-        #self.testUtils.reportComment("Not testing email field at the moment (it turns the screen off when automated!).")
+        #self.UTILS.reportComment("Not testing email field at the moment (it turns the screen off when automated!).")
 
         contFields = self.getContactFields()      # Get the contact's fields again.
         
-        self.testUtils.testMatch(contFields['givenName' ] , "value", p_contact['givenName']            , "given name")
-        self.testUtils.testMatch(contFields['familyName'] , "value", p_contact['familyName']           , "family name")
-        self.testUtils.testMatch(contFields['tel'       ] , "value", p_contact['tel']['value']         , "telephone")
-        self.testUtils.testMatch(contFields['email'     ] , "value", p_contact['email']['value']       , "email")
-        self.testUtils.testMatch(contFields['street'    ] , "value", p_contact['adr']['streetAddress'] , "street")
-        self.testUtils.testMatch(contFields['zip'       ] , "value", p_contact['adr']['postalCode']    , "zip")
-        self.testUtils.testMatch(contFields['city'      ] , "value", p_contact['adr']['locality']      , "city")
-        self.testUtils.testMatch(contFields['country'   ] , "value", p_contact['adr']['countryName']   , "country")
-        self.testUtils.testMatch(contFields['comment'   ] , "value", p_contact['comment']              , "comment")
+        self.UTILS.testMatch(contFields['givenName' ] , "value", p_contact['givenName']            , "given name")
+        self.UTILS.testMatch(contFields['familyName'] , "value", p_contact['familyName']           , "family name")
+        self.UTILS.testMatch(contFields['tel'       ] , "value", p_contact['tel']['value']         , "telephone")
+        self.UTILS.testMatch(contFields['email'     ] , "value", p_contact['email']['value']       , "email")
+        self.UTILS.testMatch(contFields['street'    ] , "value", p_contact['adr']['streetAddress'] , "street")
+        self.UTILS.testMatch(contFields['zip'       ] , "value", p_contact['adr']['postalCode']    , "zip")
+        self.UTILS.testMatch(contFields['city'      ] , "value", p_contact['adr']['locality']      , "city")
+        self.UTILS.testMatch(contFields['country'   ] , "value", p_contact['adr']['countryName']   , "country")
+        self.UTILS.testMatch(contFields['comment'   ] , "value", p_contact['comment']              , "comment")
 
 
     def createNewContact(self, p_contact):
@@ -99,9 +99,9 @@ class main():
         # Click Create new contact from the view all screen.
         #
         self.parent.wait_for_element_displayed(*DOM.Contacts.view_all_header)
-        add_new_contact = self.testUtils.get_element(*DOM.Contacts.add_contact_button)
+        add_new_contact = self.UTILS.get_element(*DOM.Contacts.add_contact_button)
         
-        self.testUtils.clickNTap(add_new_contact)
+        self.marionette.tap(add_new_contact)
         
         #
         # Enter details for new contact.
@@ -112,8 +112,8 @@ class main():
         self.populateFields(p_contact)
         
         # Press the 'done' button and wait for the 'all contacts' page to load.
-        done_button = self.testUtils.get_element(*DOM.Contacts.done_button)
-        self.testUtils.clickNTap(done_button)
+        done_button = self.UTILS.get_element(*DOM.Contacts.done_button)
+        self.marionette.tap(done_button)
         
         self.parent.wait_for_element_displayed(*DOM.Contacts.view_all_header)
         
@@ -131,16 +131,16 @@ class main():
         try:
             contact_found = self.marionette.find_element("link text", p_contact['name'])
         except:
-            self.testUtils.reportError("Could not find '" + p_contact['name'] + "' in the contacts list!")
+            self.UTILS.reportError("Could not find '" + p_contact['name'] + "' in the contacts list!")
             return 0 # (leave the function)
         
         #
         # TEST: try to click the contact name in the contacts list.
         #
         try: 
-            self.testUtils.clickNTap(contact_found)
+            self.marionette.tap(contact_found)
         except:
-            self.testUtils.reportError("Could not tap on '" + p_contact['name'] + "' in contacts list!")
+            self.UTILS.reportError("Could not tap on '" + p_contact['name'] + "' in contacts list!")
             return 0 # (leave the function)
         
         self.parent.wait_for_element_displayed(*DOM.Contacts.view_details_title)
@@ -148,7 +148,7 @@ class main():
         # 
         # TEST: Correct contact name is in the page header.
         #
-        self.testUtils.TEST(self.testUtils.headerFound(p_contact['name']), 
+        self.UTILS.TEST(self.UTILS.headerFound(p_contact['name']), 
             "'View contact' screen header was not '" + p_contact["name"] + "'.")
         
 
@@ -171,8 +171,8 @@ class main():
     # Validate the details of a contact in the 'view contact' screen.
     #
     def checkEditContactDetails(self, p_contact):
-        editBTN = self.testUtils.get_element(*DOM.Contacts.edit_details_button)
-        self.testUtils.clickNTap(editBTN)
+        editBTN = self.UTILS.get_element(*DOM.Contacts.edit_details_button)
+        self.marionette.tap(editBTN)
         self.parent.wait_for_element_displayed(*DOM.Contacts.edit_contact_header)
 
         #
@@ -192,8 +192,8 @@ class main():
         #
         # Tap the Edit button to go to the edit details page.
         #
-        editBTN = self.testUtils.get_element(*DOM.Contacts.edit_details_button)
-        self.testUtils.clickNTap(editBTN)
+        editBTN = self.UTILS.get_element(*DOM.Contacts.edit_details_button)
+        self.marionette.tap(editBTN)
         self.parent.wait_for_element_displayed(*DOM.Contacts.edit_contact_header)
 
         #
@@ -204,13 +204,13 @@ class main():
         #
         # Save the changes
         #
-        updateBTN = self.testUtils.get_element(*DOM.Contacts.edit_update_button)
-        self.testUtils.clickNTap(updateBTN)
+        updateBTN = self.UTILS.get_element(*DOM.Contacts.edit_update_button)
+        self.marionette.tap(updateBTN)
 
         #
         # Return to the contact list screen.
         #
-        backBTN = self.testUtils.get_element(*DOM.Contacts.details_back_button)
-        self.testUtils.clickNTap(backBTN)
+        backBTN = self.UTILS.get_element(*DOM.Contacts.details_back_button)
+        self.marionette.tap(backBTN)
         
         self.parent.wait_for_element_displayed(*DOM.Contacts.view_all_header)

@@ -8,7 +8,7 @@ class main():
     # "self" object so we can access the calling class' objects.
     #
     def __init__(self, p_parentSelf, p_testUtils):
-        self.testUtils  = p_testUtils
+        self.UTILS  = p_testUtils
         self.marionette = p_parentSelf.marionette
         self.parent     = p_parentSelf
 
@@ -20,7 +20,7 @@ class main():
     # Open wifi settings.
     #
     def wifi(self):
-        x = self.testUtils.get_element(*DOM.Settings.wifi)
+        x = self.UTILS.get_element(*DOM.Settings.wifi)
         self.marionette.tap(x)
         self.parent.wait_for_element_displayed(*DOM.Settings.wifi_header)
 
@@ -28,7 +28,7 @@ class main():
     # Open cellular and data settings.
     #
     def cellular_and_data(self):
-        x = self.testUtils.get_element(*DOM.Settings.cellData)
+        x = self.UTILS.get_element(*DOM.Settings.cellData)
         self.marionette.tap(x)
         self.parent.wait_for_element_displayed(*DOM.Settings.celldata_header)
 
@@ -47,9 +47,9 @@ class main():
             # If we disabled the wifi we'll be in the wrong frame here, so just make sure ...
             #
             self.marionette.switch_to_frame()
-            self.testUtils.switchFrame(*DOM.Settings.frame_locator)
+            self.UTILS.switchFrame(*DOM.Settings.frame_locator)
             
-            x = self.testUtils.get_element(*DOM.Settings.celldata_DataConn)
+            x = self.UTILS.get_element(*DOM.Settings.celldata_DataConn)
             self.marionette.tap(x)
             
         #
@@ -71,22 +71,22 @@ class main():
         #
         # Check to see if data conn is now enabled (it may be, even if the icon doesn't appear).
         #
-        self.testUtils.TEST(
+        self.UTILS.TEST(
             self.parent.data_layer.get_setting("ril.data.enabled"),    
             "Data connection is not enabled after trying to enable it.", True)
         
         #
         # Give the statusbar icon time to appear, then check for it.
         #
-        x = self.testUtils.check_statusbar_for_icon(DOM.Statusbar.dataConn, DOM.Settings.frame_locator)
-        self.testUtils.TEST(x, "Data connection is enabled, but the icon is not present in the status bar.", False)
+        x = self.UTILS.check_statusbar_for_icon(DOM.Statusbar.dataConn, DOM.Settings.frame_locator)
+        self.UTILS.TEST(x, "Data connection is enabled, but the icon is not present in the status bar.", False)
 
     #
     # Click slider to turn wifi on.
     #
     def turn_wifi_on(self):
         if not self.parent.data_layer.get_setting("wifi.enabled"):
-            x = self.testUtils.get_element(*DOM.Settings.wifi_enabled)
+            x = self.UTILS.get_element(*DOM.Settings.wifi_enabled)
             self.marionette.tap(x)
         
         #
@@ -128,7 +128,7 @@ class main():
     #
     def tap_wifi_network_name(self, p_wifi_name, p_user, p_pass):
         wifi_name_element = DOM.Settings.wifi_name_xpath % p_wifi_name
-        x= self.testUtils.get_element('xpath', wifi_name_element)
+        x= self.UTILS.get_element('xpath', wifi_name_element)
         self.marionette.tap(x)
         
         #
@@ -160,7 +160,7 @@ class main():
             conBool = True
         except:
             conBool = False
-        self.testUtils.TEST(conBool, "Timeout waiting for wifi to be marked as 'Connected' in the list.")
+        self.UTILS.TEST(conBool, "Timeout waiting for wifi to be marked as 'Connected' in the list.")
         
-        self.testUtils.TEST(self.parent.data_layer.get_setting("wifi.enabled"),
+        self.UTILS.TEST(self.parent.data_layer.get_setting("wifi.enabled"),
             "Wifi connection to '" + p_wifi_name + "' not established.", True)

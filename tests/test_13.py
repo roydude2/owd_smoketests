@@ -13,15 +13,15 @@ class test_13(GaiaTestCase):
         # Set up child objects.
         #
         GaiaTestCase.setUp(self)
-        self.testUtils = TestUtils(self, 13)
-        self.camera    = app_camera.main(self, self.testUtils)
-        self.video     = app_video.main(self, self.testUtils)
+        self.UTILS = TestUtils(self, 13)
+        self.camera    = app_camera.main(self, self.UTILS)
+        self.video     = app_video.main(self, self.UTILS)
         
         self.marionette.set_search_timeout(50)
         self.lockscreen.unlock()
     
     def tearDown(self):
-        self.testUtils.reportResults()
+        self.UTILS.reportResults()
         
     def test_run(self):
         #

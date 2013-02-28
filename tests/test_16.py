@@ -11,18 +11,20 @@ class test_16(GaiaTestCase):
     def setUp(self):
         # Set up child objects...
         GaiaTestCase.setUp(self)
-        self.testUtils  = TestUtils(self, 16)
-        self.Settings   = app_settings.main(self, self.testUtils)
-        self.Browser    = app_browser.main(self, self.testUtils)
-        self.wifi_name  = self.testUtils.get_os_variable("WIFI_TEST_16", "Name of wifi to connect to (case sensitive!)")
-        self.testURL    = self.testUtils.get_os_variable("URL_TEST_16", "URL to test wifi with")
-        self.wifi_user  = self.testUtils.get_os_variable("USERNAME_16", "Wifi username")
-        self.wifi_pass  = self.testUtils.get_os_variable("PASSWORD_16", "Wifi password")
+        self.UTILS  = TestUtils(self, 16)
+        self.Settings   = app_settings.main(self, self.UTILS)
+        self.Browser    = app_browser.main(self, self.UTILS)
+        self.wifi_name  = self.UTILS.get_os_variable("WIFI_TEST_16", "Name of wifi to connect to (case sensitive!)")
+        self.testURL    = self.UTILS.get_os_variable("URL_TEST_16", "URL to test wifi with")
+        self.wifi_user  = self.UTILS.get_os_variable("USERNAME_16", "Wifi username")
+        self.wifi_pass  = self.UTILS.get_os_variable("PASSWORD_16", "Wifi password")
 
         self.marionette.set_search_timeout(50)
         
+        self.data_layer.disable_wifi()
+        
     def tearDown(self):
-        self.testUtils.reportResults()
+        self.UTILS.reportResults()
         
     def test_run(self):
         #
@@ -53,7 +55,7 @@ class test_16(GaiaTestCase):
         #
         # Tap specific wifi network (if it's not already connected).
         #
-        self.testUtils.TEST(
+        self.UTILS.TEST(
                 self.Settings.checkWifiLisetedAsConnected(self.wifi_name),
                 "Wifi '" + self.wifi_name + "' not listed as 'connected' in wifi settings.", True)
             

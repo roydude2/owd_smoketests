@@ -8,7 +8,7 @@ class main():
     # "self" object so we can access the calling class' objects.
     #
     def __init__(self, p_parentSelf, p_testUtils):
-        self.testUtils  = p_testUtils
+        self.UTILS  = p_testUtils
         self.marionette = p_parentSelf.marionette
         self.parent     = p_parentSelf
 
@@ -21,7 +21,7 @@ class main():
     # screen with the destination number filled in already).
     #
     def enterSMSMsg(self, p_msg):
-        msgArea = self.testUtils.get_element(*DOM.Messages.input_message_area)
+        msgArea = self.UTILS.get_element(*DOM.Messages.input_message_area)
         msgArea.send_keys(p_msg)
 
     
@@ -29,7 +29,7 @@ class main():
     # Just presses the 'send' button (assumes everything else is done).
     #
     def sendSMS(self):
-        sendBtn = self.testUtils.get_element(*DOM.Messages.send_message_button)
+        sendBtn = self.UTILS.get_element(*DOM.Messages.send_message_button)
         sendBtn.click()
         time.sleep(5)
         self.marionette.tap(sendBtn)
@@ -38,8 +38,8 @@ class main():
         self.parent.wait_for_element_not_present(*DOM.Messages.message_sending_spinner, timeout=120)
         
         # Go back to main messages screen
-        header_back_button = self.testUtils.get_element(*DOM.Messages.header_back_button)
-        self.testUtils.clickNTap(header_back_button)
+        header_back_button = self.UTILS.get_element(*DOM.Messages.header_back_button)
+        self.marionette.tap(header_back_button)
     
     #
     # Get the element of the new SMS from the status bar notification.
@@ -62,13 +62,13 @@ class main():
         # in the popup messages (this way we make sure it's coming from our number,
         # as opposed to just containing our number in the notification).
         #
-        x = self.testUtils.waitForStatusBarNew(x, p_timeout)
+        x = self.UTILS.waitForStatusBarNew(x, p_timeout)
         
         if not x:
-            self.testUtils.reportError("Failed to locate new sms before timeout!")
+            self.UTILS.reportError("Failed to locate new sms before timeout!")
             errmsg = "(NOTE: If you asked the device to message itself, the return message may have just returned "
             errmsg = errmsg + "too quickly to be detected - try using the number of a different device.)"
-            self.testUtils.reportError(errmsg)
+            self.UTILS.reportError(errmsg)
             return False
         else:
             return True
@@ -87,7 +87,7 @@ class main():
         # need to loop through the elements in the drop down notif bar
         # and click the relevant link there instead.
         #
-        self.testUtils.displayStatusBar()
+        self.UTILS.displayStatusBar()
 
         x = self.marionette.find_elements(*DOM.GLOBAL.status_bar_count)
         
@@ -117,7 +117,7 @@ class main():
         #
         # Switch back to the messaging app.
         #
-        self.testUtils.switchFrame(*DOM.Messages.frame_locator)
+        self.UTILS.switchFrame(*DOM.Messages.frame_locator)
         
 
     #
@@ -125,7 +125,7 @@ class main():
     #
     def readLastSMSInThread(self):
         self.parent.wait_for_element_displayed(*DOM.Messages.received_messages)
-        received_message = self.testUtils.get_elements(*DOM.Messages.received_messages)[-1]
+        received_message = self.UTILS.get_elements(*DOM.Messages.received_messages)[-1]
         return str(received_message.text)
 
     #
@@ -152,14 +152,14 @@ class main():
         # Tap create new sms button.
         #
         self.parent.wait_for_element_displayed(*DOM.Messages.create_new_message_btn)
-        newMsgBtn = self.testUtils.get_element(*DOM.Messages.create_new_message_btn)
-        self.testUtils.clickNTap(newMsgBtn)
+        newMsgBtn = self.UTILS.get_element(*DOM.Messages.create_new_message_btn)
+        self.marionette.tap(newMsgBtn)
         
         #
         # Enter the number.
         #
         self.parent.wait_for_element_displayed(*DOM.Messages.target_number)
-        numInput = self.testUtils.get_element(*DOM.Messages.target_number)
+        numInput = self.UTILS.get_element(*DOM.Messages.target_number)
         numInput.send_keys(p_num)
         
         #

@@ -13,9 +13,9 @@ class test_12(GaiaTestCase):
         # Set up child objects...
         #
         GaiaTestCase.setUp(self)
-        self.testUtils = TestUtils(self, 12)
-        self.gallery   = app_gallery.main(self, self.testUtils)
-        self.camera    = app_camera.main(self, self.testUtils)
+        self.UTILS = TestUtils(self, 12)
+        self.gallery   = app_gallery.main(self, self.UTILS)
+        self.camera    = app_camera.main(self, self.UTILS)
         
         #
         # Default timeout for finding elements on the screen.
@@ -24,7 +24,7 @@ class test_12(GaiaTestCase):
         self.lockscreen.unlock()
     
     def tearDown(self):
-        self.testUtils.reportResults()
+        self.UTILS.reportResults()
         
     def test_run(self):
         

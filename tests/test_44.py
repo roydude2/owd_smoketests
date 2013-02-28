@@ -6,9 +6,9 @@ from tests.shared_test_functions import FTU_LANG_KB
 from gaiatest import GaiaTestCase
 
 class test_42(GaiaTestCase):
-    _Description = "First time use screens - check ENGLISH keyboard."
+    _Description = "First time use screens - check SPANISH keyboard."
     
-    _LANG           = "English (US)"
+    _LANG           = "Espanol"
     _SCREEN_SIZES   = (45132, 21224, 21359, 20615)
     
     def setUp(self):

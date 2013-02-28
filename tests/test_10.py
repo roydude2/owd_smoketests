@@ -15,8 +15,8 @@ class test_10(GaiaTestCase):
         # Set up child objects...
         #
         GaiaTestCase.setUp(self)
-        self.testUtils  = TestUtils(self, 8)
-        self.messages   = app_messages.main(self, self.testUtils)
+        self.UTILS  = TestUtils(self, 8)
+        self.messages   = app_messages.main(self, self.UTILS)
         
         self.marionette.set_search_timeout(50)
         self.lockscreen.unlock()
@@ -31,11 +31,11 @@ class test_10(GaiaTestCase):
         #
         # Establish which phone number to use.
         #
-        self.target_telNum = self.testUtils.get_os_variable("TEST_SMS_NUM", "Mobile number for SMS tests (test 10)")
-        self.testUtils.reportComment("Sending sms to telephone number " + self.target_telNum)
+        self.target_telNum = self.UTILS.get_os_variable("TEST_SMS_NUM", "Mobile number for SMS tests (test 10)")
+        self.UTILS.reportComment("Sending sms to telephone number " + self.target_telNum)
         
     def tearDown(self):
-        self.testUtils.reportResults()
+        self.UTILS.reportResults()
         
     def test_run(self):
         
@@ -52,14 +52,14 @@ class test_10(GaiaTestCase):
         #
         # Go home and wait for the notification.
         #
-        self.testUtils.goHome()
+        self.UTILS.goHome()
         
         #
         # Wait 3 mins for the notification to appear in the utility / noification / status bar (has too many names!).
         # Then open the bar and click on the new message notification.
         #
         x = self.messages.waitForSMSNotifier(self.target_telNum, 180)
-        self.testUtils.TEST(x, "Failed to find new msg - aborting:", True)
+        self.UTILS.TEST(x, "Failed to find new msg - aborting:", True)
         
         self.messages.clickSMSNotifier(self.target_telNum)
 
@@ -71,5 +71,5 @@ class test_10(GaiaTestCase):
         #
         # TEST: The returned message is as expected.
         #
-        self.testUtils.TEST((returnedSMS.lower() == self._TestMsg.lower()), 
+        self.UTILS.TEST((returnedSMS.lower() == self._TestMsg.lower()), 
             "Expected text to be '" + self._TestMsg + "' but was '" + returnedSMS + "'")

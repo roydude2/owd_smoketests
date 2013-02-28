@@ -8,7 +8,7 @@ class main():
     # "self" object so we can access the calling class' objects.
     #
     def __init__(self, p_parentSelf, p_testUtils):
-        self.testUtils  = p_testUtils
+        self.UTILS  = p_testUtils
         self.marionette = p_parentSelf.marionette
         self.parent     = p_parentSelf
 
@@ -42,7 +42,7 @@ class main():
         if margin_time >= diff_time:
             in_errorMargin = True
             
-        self.testUtils.TEST(in_errorMargin, 
+        self.UTILS.TEST(in_errorMargin, 
             "Expected video length on thumbnail to be %s (within %s seconds), but it was %s." % 
                 (p_length_str_MMSS, p_errorMargin_SS, myDur))
 
@@ -69,7 +69,7 @@ class main():
         # Allow for bug - if video plays without screen being tapped, then when
         # it finishes the player closes (and marionette crashes).
         #
-        self.testUtils.reportComment(
+        self.UTILS.reportComment(
             "BUG IN VIDEO PLAYER: Sometimes crashes after playing a video! " + 
             "If you see an error dumped by Marionette here, it's probably because of that.")
         #x=self.marionette.find_element(*DOM.Video.video_loaded)
@@ -99,5 +99,5 @@ class main():
         #
         # Check the elapsed time.
         #
-        self.testUtils.TEST((elapsed_time > p_from_SS), "Video is shorter than expected (played for %.2f seconds)." % elapsed_time)
-        self.testUtils.TEST((elapsed_time < p_to_SS), "Video is longer than expected (played for %.2f seconds)." % elapsed_time)
+        self.UTILS.TEST((elapsed_time > p_from_SS), "Video is shorter than expected (played for %.2f seconds)." % elapsed_time)
+        self.UTILS.TEST((elapsed_time < p_to_SS), "Video is longer than expected (played for %.2f seconds)." % elapsed_time)
