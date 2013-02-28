@@ -95,40 +95,6 @@ class test_32(GaiaTestCase):
         self.testUtils.TEST(self.testUtils.isAppInstalled(self._appName), "App icon not found in homescreen.")
                 
         #
-        # Find the app icon.
+        # Remove the app.
         #
-        self.testUtils.switchFrame(*DOM.GLOBAL.home_frame_locator)
-        
-        # Setup element object referencing our icon.
-        app_xpath = ('xpath', DOM.GLOBAL.app_icon_str % "cool packaged app")
-        app_icon = self.marionette.find_element(*app_xpath)
-        
-        self.testUtils.TEST(self.testUtils.findAppIcon(app_icon),
-            "Could not find the app icon on the homescreen.", True)
-        
-        #
-        # We found it! Go into edit mode (can't be done via marionette gestures yet).
-        #
-        self.testUtils.activateHomeEditMode()
-        
-        #
-        # Delete it.
-        #
-        delete_button = app_icon.find_element(*DOM.GLOBAL.app_delete_icon)
-        self.marionette.tap(delete_button)
- 
-        #
-        # Confirm deletion.
-        #
-        self.wait_for_element_displayed(*DOM.GLOBAL.app_confirm_delete)
-        delete = self.marionette.find_element(*DOM.GLOBAL.app_confirm_delete)
-        self.marionette.tap(delete)
-
-        #
-        # Once it's gone, go home and check the icon is no longer there.
-        #
-        self.wait_for_element_not_present(*app_xpath)
-        
-        self.testUtils.touchHomeButton()
-        self.testUtils.TEST(not self.testUtils.isAppInstalled(self._appName), "App is still installed after deletion.")
-        
+        self.testUtils.uninstallApp(self._appName)

@@ -233,29 +233,22 @@ class TestUtils():
     #
     # Scroll around the homescreen until we find our app icon.
     #
-    def findAppIcon(self, p_appElement):
-        while not p_appElement.is_displayed():
-            self.scrollHomescreenRight()
-        
-        return p_appElement.is_displayed()
-        ## Is the app on page 1?
-        #foundApp = True
-        #if not p_appElement.is_displayed():
-            ## Is the app on page 2?
-            #self.scrollHomescreenRight()
-            #time.sleep(1)
-            #if not p_appElement.is_displayed():
-                ## Is the app on page 3?
-                #self.scrollHomescreenRight()
-                #time.sleep(1)
-                #if not p_appElement.is_displayed():
-                    ##
-                    ## Failed to find the app icon.
-                    ##
-                    #foundApp = False
-            #else:
-                #self.reportComment("THERE IT ... ISN'T!")
-        #return foundApp
+    def findAppIcon(self, p_appName):
+        self.homescreen = self.parent.apps.launch('Homescreen')
+        self.marionette.switch_to_frame()
+        self.marionette.switch_to_frame(self.homescreen.frame)        
+
+        try:
+            appIcon = self.marionette.find_element('css selector', DOM.GLOBAL.app_icon_css % p_appName)
+            while not appIcon.is_displayed():
+                self.scrollHomescreenRight()
+                
+            if appIcon.is_displayed():
+                return appIcon
+            else:
+                return False
+        except:
+            return False
     
     #
     # Touch the home button (sometimes does something different to going home).
@@ -287,14 +280,52 @@ class TestUtils():
     # Return whether an app is present on the homescreen (i.e. 'installed').
     #
     def isAppInstalled(self, p_appName):
-        self.goHome()
-        self.switchFrame(*DOM.GLOBAL.home_frame_locator)
-        x = ('xpath', DOM.GLOBAL.app_icon_str % p_appName)
+        self.homescreen = self.parent.apps.launch('Homescreen')
+        self.marionette.switch_to_frame()
+        self.marionette.switch_to_frame(self.homescreen.frame)
+
+        x = ('css selector', DOM.GLOBAL.app_icon_css % p_appName)
         try:
             self.parent.wait_for_element_present(*x)
             return True
         except:
             return False
+
+    #
+    # Remove an app using the UI.
+    #
+    def uninstallApp(self, p_appName):
+        #
+        # Find the app icon.
+        #
+        myApp = self.findAppIcon("cool packaged app")
+        self.TEST(myApp,
+            "Could not find the app icon on the homescreen.", True)
+        
+        #
+        # We found it! Go into edit mode (can't be done via marionette gestures yet).
+        #
+        self.activateHomeEditMode()
+        
+        #
+        # Delete it.
+        #
+        delete_button = myApp.find_element(*DOM.GLOBAL.app_delete_icon)
+        self.marionette.tap(delete_button)
+        
+        #
+        # Confirm deletion.
+        #
+        self.parent.wait_for_element_displayed(*DOM.GLOBAL.app_confirm_delete)
+        delete = self.marionette.find_element(*DOM.GLOBAL.app_confirm_delete)
+        self.marionette.tap(delete)
+
+        #
+        # Once it's gone, go home and check the icon is no longer there.
+        #
+        self.touchHomeButton()
+        self.TEST(not self.isAppInstalled(p_appName), "App is still installed after deletion.")
+
 
 
     #

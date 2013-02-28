@@ -152,7 +152,7 @@ sudo $cmd_adb forward tcp:2828 tcp:2828 > /dev/null
 # Do the flash.
 #
 printf "\n\nFLASHING DEVICE - DO NOT DISTURB! :)\n"
-./flash.sh
+sudo ./flash.sh
 
 
 #

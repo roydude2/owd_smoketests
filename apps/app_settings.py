@@ -40,6 +40,8 @@ class main():
             if self.parent.data_layer.get_setting("wifi.enabled"):
                 self.parent.data_layer.disable_wifi()
             
+        time.sleep(1)
+        
         if not self.parent.data_layer.get_setting("ril.data.enabled"):
             #
             # If we disabled the wifi we'll be in the wrong frame here, so just make sure ...
@@ -50,13 +52,16 @@ class main():
             x = self.testUtils.get_element(*DOM.Settings.celldata_DataConn)
             self.marionette.tap(x)
             
-            #
-            # If we get prompted for action, say 'Turn ON'.
-            #
-            time.sleep(1)
+        #
+        # If we get prompted for action, say 'Turn ON'.
+        #
+        time.sleep(1)
+        try:
             x = self.marionette.find_element(*DOM.Settings.celldata_DataConn_ON)
             if x.is_displayed():
                 self.marionette.tap(x)
+        except:
+            ignoreme=1
 
         #
         # Give it time to start up.

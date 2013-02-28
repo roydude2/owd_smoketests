@@ -87,7 +87,6 @@ class main():
         self.marionette.tap(x)
         
         self.parent.wait_for_element_displayed('xpath', DOM.GLOBAL.app_head_specific % "Mail settings")
-        #x = self.testUtils.get_element('xpath', './/*[text()="roytest_1@hotmail.com"]')
         
         #
         # Remove each email address listed ...

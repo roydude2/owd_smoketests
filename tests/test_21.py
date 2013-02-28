@@ -43,7 +43,9 @@ class test_21(GaiaTestCase):
         
         #
         # Install app.
-        #
+        # NOTE: At the moment this just installs the first app it finds (Wikipedia)!
+        # Once marionette gestures are fixed (or someone removes that slider that reveals the
+        # search box) then fix this.
         self.Market.install_app(self.APP_NAME)
 
 
