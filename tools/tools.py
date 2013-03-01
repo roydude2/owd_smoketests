@@ -35,8 +35,8 @@ class TestUtils():
         #
         self.marionette.switch_to_frame()
 
-        sms_iframe = self.marionette.find_element(*p_frame)
-        self.marionette.switch_to_frame(sms_iframe)
+        new_iframe = self.marionette.find_element(*p_frame)
+        self.marionette.switch_to_frame(new_iframe)
         
     #
     # Due to the lack of developer docs, this might help to provide a list
@@ -182,6 +182,21 @@ class TestUtils():
         els = self.marionette.find_elements(*p_elements)
         return els
     
+    ##
+    ## Quickly install an app.
+    ##
+    #def installAppQuick(self, p_name):
+        ##
+        ## The url address usually uses the name of the app, minus spaces
+        ## and in lowercase.
+        ##
+        #appURL   = p_name.lower()
+        #appURL   = appURL.replace(" ", "")
+        #MANIFEST = "app://%s.gaiamobile.org/manifest.webapp" % appURL
+        #self.marionette.switch_to_frame()
+        #self.marionette.execute_script(
+            #'navigator.mozApps.install("%s")' % MANIFEST)
+    
     #
     # Save the HTML of the current page to the specified file.
     #
@@ -209,9 +224,17 @@ class TestUtils():
         self.marionette.execute_script('window.wrappedJSObject.GridManager.goToNextPage()')
     
     #
+    # Scroll to previous page (left).
+    # Should change this to use marionette.flick() when it works.
+    #
+    def scrollHomescreenLeft(self):
+        self.marionette.execute_script('window.wrappedJSObject.GridManager.goToPreviousPage()')
+    
+    #
     # Scroll around the homescreen until we find our app icon.
     #
     def findAppIcon(self, p_appName):
+        self.parent.apps.kill_all()
         self.homescreen = self.parent.apps.launch('Homescreen')
         self.marionette.switch_to_frame()
         self.marionette.switch_to_frame(self.homescreen.frame)        
@@ -239,15 +262,16 @@ class TestUtils():
     # Return to the home screen.
     #
     def goHome(self):
+        self.parent.apps.kill_all()
         self.homescreen = self.parent.apps.launch('Homescreen')
         self.marionette.switch_to_frame()
+        self.marionette.switch_to_frame(self.homescreen.frame)        
 
     #
     # Activate edit mode in the homescreen.
     # ASSUMES YOU ARE ALREADY IN THE HOMESCREEN + CORRECT FRAME., i.e.
     #
     #    self.goHome()
-    #    self.switchFrame(*DOM.GLOBAL.home_frame_locator)
     #
     # ... before you execute this!
     #
@@ -255,16 +279,30 @@ class TestUtils():
         self.marionette.execute_script("window.wrappedJSObject.Homescreen.setMode('edit')")
 
     #
+    # Launch an app via the homescreen.
+    #
+    def launchAppViaHomescreen(self, p_name):
+        if self.isAppInstalled(p_name):
+            self.findAppIcon(p_name)
+            x = ('css selector', DOM.GLOBAL.app_icon_css % p_name)
+            myApp = self.marionette.find_element(*x)
+            self.marionette.tap(myApp)
+            return True
+        else:
+            return False
+            
+    #
     # Return whether an app is present on the homescreen (i.e. 'installed').
     #
     def isAppInstalled(self, p_appName):
+        self.parent.apps.kill_all()
         self.homescreen = self.parent.apps.launch('Homescreen')
         self.marionette.switch_to_frame()
         self.marionette.switch_to_frame(self.homescreen.frame)
 
         x = ('css selector', DOM.GLOBAL.app_icon_css % p_appName)
         try:
-            self.parent.wait_for_element_present(*x)
+            self.marionette.find_element(*x)
             return True
         except:
             return False
@@ -276,7 +314,7 @@ class TestUtils():
         #
         # Find the app icon.
         #
-        myApp = self.findAppIcon("cool packaged app")
+        myApp = self.findAppIcon(p_appName)
         self.TEST(myApp,
             "Could not find the app icon on the homescreen.", True)
         

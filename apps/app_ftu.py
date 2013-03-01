@@ -13,6 +13,7 @@ class main():
         self.parent     = p_parentSelf
 
     def launch(self):
+        self.parent.apps.kill_all()
         # We need WiFi enabled but not connected to a network
         self.parent.data_layer.enable_wifi()
         self.parent.data_layer.forget_all_networks()

@@ -13,8 +13,10 @@ class main():
         self.parent     = p_parentSelf
 
     def launch(self):
+        self.parent.apps.kill_all()
         self.app = self.parent.apps.launch('Settings')
         self.parent.wait_for_element_not_displayed(*DOM.GLOBAL.loading_overlay)
+
 
     #
     # Open wifi settings.
@@ -55,7 +57,7 @@ class main():
         #
         # If we get prompted for action, say 'Turn ON'.
         #
-        time.sleep(1)
+        time.sleep(2)
         try:
             x = self.marionette.find_element(*DOM.Settings.celldata_DataConn_ON)
             if x.is_displayed():

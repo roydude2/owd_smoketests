@@ -8,16 +8,21 @@ class main():
     # "self" object so we can access the calling class' objects.
     #
     def __init__(self, p_parentSelf, p_testUtils):
-        self.UTILS  = p_testUtils
+        self.UTILS      = p_testUtils
         self.marionette = p_parentSelf.marionette
         self.parent     = p_parentSelf
         
         #
-        # Default to not prompting for geolocation.
+        # Default to not prompting for geolocation (this was broken in Gaia recently so 'try' it).
         #
-        self.parent.apps.set_permission('Camera', 'geolocation', 'deny')
+        try:
+            self.parent.apps.set_permission('Camera', 'geolocation', 'deny')
+        except:
+            self.UTILS.reportComment("Couldn't automatically set Camera geolocation permission!")
+        
 
     def launch(self):
+        self.parent.apps.kill_all()
         self.app = self.parent.apps.launch('Camera')
         self.parent.wait_for_element_not_displayed(*DOM.GLOBAL.loading_overlay)
         

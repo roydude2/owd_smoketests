@@ -13,6 +13,7 @@ class main():
         self.parent     = p_parentSelf
 
     def launch(self):
+        self.parent.apps.kill_all()
         self.app = self.parent.apps.launch('Browser')
         self.parent.wait_for_element_not_displayed(*DOM.GLOBAL.loading_overlay)
 

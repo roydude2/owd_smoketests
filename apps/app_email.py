@@ -13,6 +13,7 @@ class main():
         self.parent     = p_parentSelf
 
     def launch(self):
+        self.parent.apps.kill_all()
         self.app = self.parent.apps.launch('Email')
         self.parent.wait_for_element_not_displayed(*DOM.GLOBAL.loading_overlay)
         
@@ -27,12 +28,9 @@ class main():
     # Goto a specific folder in the folder list screen.
     #
     def goto_folder_from_list(self, p_name):
-        x = self.UTILS.get_elements(*DOM.Email.folderList_folders)
-        for i in x:
-            if i.text == p_name:
-                self.marionette.tap(i)
-                self.parent.wait_for_element_displayed('xpath', DOM.GLOBAL.app_head_specific % p_name)
-                break
+        x = self.UTILS.get_element('xpath', DOM.Email.folderList_name_xpath % p_name)
+        self.marionette.tap(x)
+        
     
     #
     # Add a new account.
@@ -79,7 +77,7 @@ class main():
     #
     # Remove current email account and restart the application.
     #
-    def remove_account_and_restart(self):
+    def remove_accounts_and_restart(self):
         x = self.UTILS.get_element(*DOM.Email.settings_menu_btn)
         self.marionette.tap(x)
         
@@ -230,53 +228,91 @@ class main():
         #
         time.sleep(5)
             
-    #
-    # Return the number of unread messages in a folder.
-    #
-    def countMessagesInFolder(self, p_folderName):
-        self.openMailFolder(p_folderName)
-        
-        x = self.marionette.find_elements(*DOM.Email.folder_message_list)
-        
-        return len(x) # Always returns 1 more than there is!!!
         
     #
-    # Assumes we are in the Inbox - read first unread mail.
+    # Assumes we are in the required folder.
     #
-    def openUnreadMsg(self, p_subject):
-        #
-        # The subject part doesn't always do anything when you tap it, so I need the
-        # parent link as well.
-        #
-        subject_areas   = self.UTILS.get_elements(*DOM.Email.folder_subject_list)
-        for i in subject_areas:
-            if i.text == p_subject:
-                #
-                # For some reason this link has to be clicked, NOT tapped
-                # (imagine how much time I wasted figuring that out!)!
-                #
-                i.click()
+    def openMsg(self, p_subject):
+        # ROY - try and get this nightmare working SOMEHOW!!!
+
+        if self.emailIsInFolder(p_subject):
+        
+            #
+            # After trying almost everything (including "//*[text()="!)
+            # I'm resorting to brute force!!
+            #
+            z = self.marionette.find_elements('xpath', "//span")
+            for i in z:
+                if i.text == p_subject:
+                    i.click()
+                    return True
+            
+            return False
+        
+        else:
+            self.UTILS.reportError("Unable to find a message with the subject '"  + p_subject + "' in this folder.")
+            return False
+
+
+        #x = self.marionette.find_elements('class name', 'msg-header-item')
+        #for i in x:
+            #if i.is_displayed():
+                ##y = i.find_element('class name', 'msg-header-subject')
+                ##if y.text == p_subject:
+                #i.click()
+                #return True
+        #return False
+        
+
+            
+        #try:
+            #x = self.UTILS.get_element("xpath", "//span[text()='%s']" % p_subject)
+
+            ##
+            ## For some reason this link has to be clicked, NOT tapped
+            ## (imagine how much time I wasted figuring that out!)!
+            ##
+            #x.click()
+            #return True
+        #except:
+            #self.UTILS.reportError("Email with subject '" + p_subject + "' not found.")
+            #return False
+        
+        ##
+        ## The subject part doesn't always do anything when you tap it, so I need the
+        ## parent link as well.
+        ##
+        #subject_areas   = self.UTILS.get_elements(*DOM.Email.folder_subject_list)
+        #for i in subject_areas:
+            #if i.text == p_subject:
+                ##
+                ## For some reason this link has to be clicked, NOT tapped
+                ## (imagine how much time I wasted figuring that out!)!
+                ##
+                ##i.click()
                 #self.marionette.tap(i)
                     
-                try: self.parent.wait_for_element_displayed(*DOM.Email.open_email_subject)
-                except:
-                    self.UTILS.TEST(1==2, "Found the email but it won't open!", True)
-                    return False
-                else:
-                    return True
+                #try: self.parent.wait_for_element_displayed(*DOM.Email.open_email_subject)
+                #except:
+                    #self.UTILS.TEST(1==2, "Found the email but it won't open!", True)
+                    #return False
+                #else:
+                    #return True
         
-        return False
+        #self.UTILS.reportError("Email with subject \"" + p_subject + "\" not found.")
+        #return False
     
     #
     # Verify an email is in this folder with the expected subject.
     #
     def emailIsInFolder(self, p_subject):
         #
-        # Get all the message subjects and look for ours.
+        # After trying almost everything (including //span[text()=)
+        # I'm resorting to brute force!!
         #
-        x = self.marionette.find_elements(*DOM.Email.folder_subject_list)
-        for i in x:
-            if p_subject == i.text:
+        z = self.marionette.find_elements('xpath', "//span")
+        for i in z:
+            if i.text == p_subject:
                 return True
         
         return False

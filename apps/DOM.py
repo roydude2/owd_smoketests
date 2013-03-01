@@ -18,6 +18,7 @@ class Statusbar():
 class Contacts():
     frame_locator          = ('css selector', 'iframe[src="app://communications.gaiamobile.org/index.html"]')
     view_all_header        = ('xpath', GLOBAL.app_head_specific % 'Contacts')
+    view_all_contact_xpath = '//*[@data-order="%s"]'
     add_contact_button     = ('id', 'add-contact-button')
     add_contact_header     = ('xpath', GLOBAL.app_head_specific % 'Add contact')
     view_details_title     = ('id', 'contact-form-title')
@@ -106,7 +107,7 @@ class Settings():
     cellData               = ('id', 'menuItem-cellularAndData')
     celldata_header        = ('xpath', GLOBAL.app_head_specific % 'Cellular & Data')
     celldata_DataConn      = ('xpath', ".//*[@id='carrier']/ul[2]/li[1]/label")
-    celldata_DataConn_ON   = ('id', 'dataConnection-expl')
+    celldata_DataConn_ON   = ('xpath', "//button[@data-l10n-id='turnOn']")
 
 class Browser():
     frame_locator           = ('css selector', 'iframe[src="app://browser.gaiamobile.org/index.html"]')
@@ -145,7 +146,6 @@ class Email():
     settings_menu_btn       = ('class name', 'icon icon-menu')
     settings_set_btn        = ('class name', 'fld-nav-settings-btn bottom-btn')
     settings_del_acc_btn    = ('class name', 'tng-account-delete')
-    #settings_del_conf_btn   = ('id', 'account-delete-ok')
     settings_del_conf_btn   = ('xpath', './/*[text()="Cancel"]')
     settings_add_account_btn= ('class name', 'tng-account-add')
 
@@ -153,9 +153,9 @@ class Email():
     accounts_list_names     = ('class name', 'fld-account-name')
     
     folderList_header       = ('class name', 'fld-folders-header-account-label')
-    folderList_folders      = ('class name', 'fld-folder-name')
+    folderList_name_xpath   = '//*[text()="%s"]'
     
-    folder_message_list     = ('class name', 'msg-header-item') #'msg-header-details-section')
+    folder_message_list     = ('class name', 'msg-header-item') #
     folder_subject_list     = ('class name', 'msg-header-subject')
     
     open_email_from         = ('xpath', "//*[@id='cards']/div[3]/div[1]/div[1]/div[2]/div/span")
@@ -209,5 +209,7 @@ class FTU():
     tour_finished_btn   = ('id', 'tutorialFinished')
 
 class EME():
-    icons_groups        = ('xpath', ".//*[@id='shortcuts-items']/documentfragment/li")
-    back_btn            = ('id', 'button-clear')
+    here_check              = ('id', 'shortcuts-items')
+    icons_groups            = ('xpath', ".//*[@id='shortcuts-items']/documentfragment/li")
+    back_btn                = ('id', 'button-clear')
+    add_app_to_homescreen   = ('id', 'modal-dialog-confirm-ok')

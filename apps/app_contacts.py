@@ -13,6 +13,7 @@ class main():
         self.parent     = p_parentSelf
 
     def launch(self):
+        self.parent.apps.kill_all()
         self.app = self.parent.apps.launch('Contacts')
         self.parent.wait_for_element_not_displayed(*DOM.GLOBAL.loading_overlay)
 
@@ -118,18 +119,20 @@ class main():
         self.parent.wait_for_element_displayed(*DOM.Contacts.view_all_header)
         
         # For some reason the new contact doesn't always appear imediately.
-        self.parent.wait_for_element_displayed("link text", p_contact['name'])
+        #time.sleep(5)
+        self.parent.wait_for_element_displayed("xpath", DOM.Contacts.view_all_contact_xpath % p_contact['name'].replace(" ",""))
 
     #
     # Navigate to the 'view details' screen for a contact (assumes we ae in the
     # 'view all contacts' screen).
     #
     def viewContact(self, p_contact):
+        
         #
         # Find the name of our contact in the contacts list.
         #
         try:
-            contact_found = self.marionette.find_element("link text", p_contact['name'])
+            contact_found = self.marionette.find_element("xpath", DOM.Contacts.view_all_contact_xpath % p_contact['name'].replace(" ",""))
         except:
             self.UTILS.reportError("Could not find '" + p_contact['name'] + "' in the contacts list!")
             return 0 # (leave the function)
@@ -137,7 +140,7 @@ class main():
         #
         # TEST: try to click the contact name in the contacts list.
         #
-        try: 
+        try:
             self.marionette.tap(contact_found)
         except:
             self.UTILS.reportError("Could not tap on '" + p_contact['name'] + "' in contacts list!")
