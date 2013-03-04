@@ -154,7 +154,20 @@ class main():
         self.UTILS.TEST(self.UTILS.headerFound(p_contact['name']), 
             "'View contact' screen header was not '" + p_contact["name"] + "'.")
         
-
+    #
+    # Tap the link button to go to facebook.
+    #
+    def tapLinkButton(self):
+        #
+        # There's more than one element with the id "link_button"
+        # (and matching on text() didn't work)!
+        #
+        x = self.marionette.find_elements(*DOM.Contacts.link_button)
+        for i in x:
+            if i.is_displayed():
+                if i.text == "Link contact":
+                    i.click()
+                    self.marionette.tap(i)
 
     #
     # Validate the details of a contact in the 'view contact' screen.

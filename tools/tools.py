@@ -59,6 +59,18 @@ class TestUtils():
                 self.marionette.switch_to_frame(iframe)
                 return True
         return False
+    
+    #
+    # Some iframes use id (such as facebook via contacts).
+    #
+    def connect_to_iframe_by_id(self, p_id):
+        iframes = self.marionette.execute_script("return document.getElementsByTagName('iframe')")
+        for idx in range(0,iframes['length']):
+            iframe = iframes[str(idx)]
+            if p_id == iframe.get_attribute('id'):
+                self.marionette.switch_to_frame(iframe)
+                return True
+        return False
         
     #
     # Wait for a statusbar setting to be displayed, then return to the
@@ -257,6 +269,13 @@ class TestUtils():
     def touchHomeButton(self):
         self.marionette.switch_to_frame()
         self.marionette.execute_script("window.wrappedJSObject.dispatchEvent(new Event('home'));")
+    
+    #
+    # Long hold the home button to bring up the 'current running apps'.
+    #
+    def holdHomeButton(self):
+        self.marionette.switch_to_frame()
+        self.marionette.execute_script("window.wrappedJSObject.dispatchEvent(new Event('holdhome'));")
     
     #
     # Return to the home screen.
