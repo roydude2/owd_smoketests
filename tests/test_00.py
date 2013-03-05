@@ -2,7 +2,7 @@ import sys
 sys.path.insert(1, "./")
 
 from tools import TestUtils
-from apps import DOM, app_contacts
+from apps import DOM, app_contacts, app_settings
 from tests.mock_data.contacts import MockContacts
 from gaiatest import GaiaTestCase
 
@@ -14,8 +14,9 @@ class test_40(GaiaTestCase):
         # Set up child objects...
         #
         GaiaTestCase.setUp(self)
-        self.UTILS  = TestUtils(self, 40)
+        self.UTILS      = TestUtils(self, 40)
         self.contacts   = app_contacts.main(self, self.UTILS)
+        self.settings   = app_settings.main(self, self.UTILS)
                 
         #
         # Set timeout for element searches.
@@ -38,6 +39,7 @@ class test_40(GaiaTestCase):
         # Set up to use data connection.
         #
         self.UTILS.reportError("roy")
+        #self.settings.turn_dataConn_on(False)
         
     def tearDown(self):
         self.UTILS.reportResults()
@@ -49,17 +51,66 @@ class test_40(GaiaTestCase):
         self.contacts.launch()
 
         #
-        # Select my contact.
+        # Enable facebook.
         #
-        self.contacts.viewContact(self.Contact_1)
+        self.contacts.enableFaceBook()
         
         #
-        # Tap link button to go to facebook.
+        # Give facebook time to load, then connect to the iframe with src="".
         #
-        self.contacts.tapLinkButton()
-        
         import time
-        #time.sleep(4)
-        #self.UTILS.connect_to_iframe_by_id("fb-curtain")
-        time.sleep(2)
-        self.UTILS.savePageHTML("/tmp/roy1.html")
+        time.sleep(8)
+
+        self.marionette.switch_to_frame()
+        self.UTILS.connect_to_iframe("")
+
+        #
+        # Login?
+        #
+        time.sleep(1)
+        try:
+            x = self.marionette.find_element(*DOM.Facebook.email)
+            if x.is_displayed():
+                x.send_keys("roytesterton.1@gmail.com")
+                
+                x = self.UTILS.get_element(*DOM.Facebook.password)
+                x.send_keys("test123x")
+
+                x = self.UTILS.get_element(*DOM.Facebook.login_button)
+                self.marionette.tap(x)
+        except:
+            ignoreme=1
+        
+        #
+        # Install?
+        #
+        time.sleep(1)
+        try:
+            x = self.marionette.find_element(*DOM.Facebook.install_fbowd_button)
+            if x.is_displayed():
+                self.marionette.tap(x)
+        except:
+            ignoreme=1
+        
+        time.sleep(6)
+        self.marionette.switch_to_frame()
+        self.UTILS.connect_to_iframe(DOM.Facebook.facebook_friends_iframe)
+        
+        x = self.marionette.find_elements("tag name", "button")
+        for i in x:
+            self.UTILS.reportError("BTN id " + i.get_attribute("id") + ", class '" + i.get_attribute("class") + ", text '" + i.text + "'")
+        
+        #time.sleep(1)
+        #self.UTILS.savePageHTML("/tmp/roy1.html")
+
+        ## FOR TEST 41 ...
+        ##
+        ## Select my contact.
+        ##
+        #self.contacts.viewContact(self.Contact_1)
+        
+        ##
+        ## Tap link button to go to facebook.
+        ##
+        #self.contacts.tapLinkButton()
+        

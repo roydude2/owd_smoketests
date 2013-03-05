@@ -140,6 +140,12 @@ fi
 #
 ./bin/connect_device
 
+if [ $? -ne 0 ]
+then
+	# There was a problem connecting the device - just quit.
+	exit 1
+fi
+
 #
 # Now run tests as required.
 #

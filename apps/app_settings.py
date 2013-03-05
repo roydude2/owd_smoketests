@@ -38,6 +38,18 @@ class main():
     # Click slider to turn data connection on.
     #
     def turn_dataConn_on(self, p_wifiOFF=False):
+        #
+        # First, make sure we're in "Settings".
+        #
+        try:
+            x = self.marionette.find_element(*DOM.Settings.frame_locator)
+        except:
+            #
+            # Settings isn't running, so start it.
+            #
+            self.launch()
+            self.cellular_and_data()
+        
         if p_wifiOFF:
             if self.parent.data_layer.get_setting("wifi.enabled"):
                 self.parent.data_layer.disable_wifi()
@@ -166,3 +178,23 @@ class main():
         
         self.UTILS.TEST(self.parent.data_layer.get_setting("wifi.enabled"),
             "Wifi connection to '" + p_wifi_name + "' not established.", True)
+
+    #
+    # Set the volume for alarms.
+    #
+    def setAlarmVolume(self, p_vol):
+        self.parent.data_layer.set_setting('audio.volume.alarm', p_vol)
+        
+    #
+    # Set the volume for ringer and notifications.
+    #
+    def setRingerAndNotifsVolume(self, p_vol):
+        self.parent.data_layer.set_setting('audio.volume.notification', p_vol)
+        
+    #
+    # Go to Sound menu.
+    #
+    def goSound(self):
+        self.launch()
+        x = self.UTILS.get_element(*DOM.Settings.sound)
+        self.marionette.tap(x)

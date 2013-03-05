@@ -49,6 +49,28 @@ class TestUtils():
             self.reportComment("iFrame - " + iframe.get_attribute('src'))
 
     #
+    # Also to help with the lack of docs just now - this will loop through every
+    # iframe, report the "src", take a screenshot and capture the html in /tmp/royX.html.
+    #
+    # Because this is only meant as a dev aid (and shouldn't be in any released test
+    # scripts), it reports to ERROR instead of COMMENT.
+    #
+    def viewAllIframes(self):
+        self.marionette.switch_to_frame()
+        time.sleep(1)
+        y = 1
+        iframes = self.marionette.execute_script("return document.getElementsByTagName('iframe')")
+        for idx in range(0,iframes['length']):
+            self.marionette.switch_to_frame()
+            iframe = iframes[str(idx)]
+            self.reportError("Frame " + str(y) + " src=\"" + iframe.get_attribute("src") + "\", id=\"" + iframe.get_attribute("id") + "\"")
+            self.marionette.switch_to_frame(iframe)
+            time.sleep(1)
+            self.savePageHTML("/tmp/roy" + str(y) + ".html")
+            self.screenShot("DEBUG_" + str(y))
+            y = y + 1
+        
+    #
     # Connect to an iframe.
     #
     def connect_to_iframe(self, p_name):

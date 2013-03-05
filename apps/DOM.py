@@ -26,6 +26,8 @@ class Contacts():
     frame_locator          = ('css selector', 'iframe[src="app://communications.gaiamobile.org/index.html"]')
     view_all_header        = ('xpath', GLOBAL.app_head_specific % 'Contacts')
     view_all_contact_xpath = '//*[@data-order="%s"]'
+    settings_button        = ('id', 'settings-button')
+    settings_fb_enable     = ('xpath', '//li[@class="fb-item"]')
     add_contact_button     = ('id', 'add-contact-button')
     add_contact_header     = ('xpath', GLOBAL.app_head_specific % 'Add contact')
     view_details_title     = ('id', 'contact-form-title')
@@ -116,6 +118,9 @@ class Settings():
     celldata_header        = ('xpath', GLOBAL.app_head_specific % 'Cellular & Data')
     celldata_DataConn      = ('xpath', ".//*[@id='carrier']/ul[2]/li[1]/label")
     celldata_DataConn_ON   = ('xpath', "//button[@data-l10n-id='turnOn']")
+    
+    sound                  = ('id', 'menuItem-sound')
+    sound_alarm_vol        = ('name', 'audio.volume.alarm')
 
 class Browser():
     frame_locator           = ('css selector', 'iframe[src="app://browser.gaiamobile.org/index.html"]')
@@ -250,8 +255,34 @@ class Calendar():
     view_events_title_week   = ".//div[text()='%s']"
     view_events_locat        = "//*[@class='location' and text()='%s']"
 
-
-
+class Clock():
+    new_alarm_btn           = ('id', 'alarm-new')
+    
+    time_picker_column      = ('xpath', "//div[@id='value-picker-%s']")
+    time_picker_curr_val    = ("class name", "picker-unit active")
+    time_picker_ampm        = ('xpath', "//div[@id='value-picker-hour24-state']")
+    alarm_label             = ("name", "alarm.label")
+    alarm_done              = ('id', 'alarm-done')
+    
+    alarm_preview_alarms    = ('id', 'alarm-item')
+    alarm_preview_time      = ("class name", "time")
+    alarm_preview_ampm      = ("class name", "hour24-state")
+    alarm_preview_label     = ("class name", "label")
+    alarm_preview_repeat    = ("class name", "repeat")
+    
+    alarm_notifier          = ('id', 'statusbar-alarm')
+    
+    alarm_alert_time        = ('id', 'ring-clock-time')
+    alarm_alert_ampm        = ('id', 'ring-clock-hour24-state')
+    alarm_alert_label       = ('id', 'ring-alarm-label')
+    alarm_alert_close       = ('id', 'ring-button-close')
+    
+class Facebook():
+    email                   = ("name", "email")
+    password                = ("name", "pass")
+    login_button            = ("name", "login")
+    install_fbowd_button    = ("id", "grant_clicked")
+    facebook_friends_iframe = "app://communications.gaiamobile.org/contacts/index.html"
 
 
 

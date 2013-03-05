@@ -153,7 +153,22 @@ class main():
         #
         self.UTILS.TEST(self.UTILS.headerFound(p_contact['name']), 
             "'View contact' screen header was not '" + p_contact["name"] + "'.")
+    
+    #
+    # Tap the settings button.
+    #
+    def tapSettingsButton(self):
+        x = self.UTILS.get_element(*DOM.Contacts.settings_button)
+        self.marionette.tap(x)
         
+    #
+    # Enable fb import.
+    #
+    def enableFaceBook(self):
+        self.tapSettingsButton()
+        x = self.UTILS.get_element(*DOM.Contacts.settings_fb_enable)
+        self.marionette.tap(x)
+    
     #
     # Tap the link button to go to facebook.
     #
