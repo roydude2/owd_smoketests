@@ -12,6 +12,12 @@
 
 
 #
+# Test number: 00
+# Test desc. :  "Importing facebook contacts."
+#
+export ENTER=		#  "For test 41 please ensure you are logged into facebook on the device
+
+#
 # Test number: 09
 # Test desc. :  "Send an SMS to a contact from the contacts app."
 #
@@ -67,3 +73,15 @@ export GMAIL_2_PASS=		# Gmail 2 password
 export WIFI_TEST_27=		# Name of wifi to connect to (case sensitive!)
 export USERNAME_27=		# Wifi username
 export PASSWORD_27=		# Wifi password
+
+#
+# Test number: 40
+# Test desc. :  "Importing facebook contacts."
+#
+export ENTER=		#  "For test 40 please ensure you are logged into facebook on the device
+
+#
+# Test number: 41
+# Test desc. :  "Importing facebook contacts."
+#
+export ENTER=		#  "For test 41 please ensure you are logged into facebook on the device

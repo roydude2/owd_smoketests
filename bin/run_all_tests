@@ -74,7 +74,7 @@ do
 		fi
 
 	done << EOF
-	$(grep -i "testUtils.get_os_variable" tests/test_${x}.py )
+	$(grep -i ".get_os_variable" tests/test_${x}.py )
 EOF
 done
 
@@ -128,6 +128,13 @@ then
 	runSetup ./bin/setup_python27
 
 	runSetup ./bin/setup_adb
+
+	#
+	# Remove any previous version of marionette
+	# (not using variables just to be sure!).
+	#
+	sudo rm -rf /usr/local/lib/python2.7/dist-packages/marionette* 2> /dev/null
+	sudo rm /usr/local/bin/marionette 2> /dev/null
 
 	#
 	# Setup gaiatest and Marionette.

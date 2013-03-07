@@ -2,5 +2,8 @@
 .bak/*
 nohup.out
 .gaiatest_installed
+.metadata
+.project
+.pydevproject
 gaia-ui-tests
 debug

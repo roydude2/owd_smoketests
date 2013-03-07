@@ -93,7 +93,8 @@ class main():
         # Give the statusbar icon time to appear, then check for it.
         #
         x = self.UTILS.check_statusbar_for_icon(DOM.Statusbar.dataConn, DOM.Settings.frame_locator)
-        self.UTILS.TEST(x, "Data connection is enabled, but the icon is not present in the status bar.", False)
+        self.UTILS.TEST(x, "Data connection is listed as 'enabled', but the icon is not present in the status bar.", True)
+
 
     #
     # Click slider to turn wifi on.

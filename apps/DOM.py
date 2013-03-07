@@ -26,8 +26,11 @@ class Contacts():
     frame_locator          = ('css selector', 'iframe[src="app://communications.gaiamobile.org/index.html"]')
     view_all_header        = ('xpath', GLOBAL.app_head_specific % 'Contacts')
     view_all_contact_xpath = '//*[@data-order="%s"]'
+    view_all_fb_contacts   = ('class name', "icon-social icon-fb")
     settings_button        = ('id', 'settings-button')
-    settings_fb_enable     = ('xpath', '//li[@class="fb-item"]')
+    settings_header        = ('xpath', GLOBAL.app_head_specific % 'Settings')
+   #settings_fb_enable     = ('xpath', '//li[@class="fb-item"]')
+    settings_import_fb     = ('id', 'import-fb') 
     add_contact_button     = ('id', 'add-contact-button')
     add_contact_header     = ('xpath', GLOBAL.app_head_specific % 'Add contact')
     view_details_title     = ('id', 'contact-form-title')
@@ -49,6 +52,22 @@ class Contacts():
     comment_field          = ('id', 'note_0')
     sms_button             = ('id', 'send-sms-button-0')
     link_button            = ('id', "link_button") # WARNING: >1 element has this id!
+
+class Facebook():
+    fb_friends_header       = ('xpath', GLOBAL.app_head_specific % 'Facebook Friends')
+    fb_friends_list         = ('xpath', "//li[@class='block-item']")
+    fb_link_friends_list    = ('xpath', "//ol[@id='friends-list']//li")
+    fb_totals               = ('id', 'fb-totals')
+   #email                   = ("name", "email")
+   #password                = ("name", "pass")
+   #login_button            = ("name", "login")
+   #install_fbowd_button    = ("id", "grant_clicked")
+    fb_friends_iframe_1     = "app://communications.gaiamobile.org/contacts/index.html"
+    fb_friends_iframe_2     = 'fb-extensions'
+    fb_friends_select_all   = ('id', 'select-all')
+    fb_friends_deselect_all = ('id', 'deselect-all')
+    fb_friends_import       = ('id', 'import-action')
+    fb_friends_update       = ('id', 'update-action')
 
 class Messages():
     frame_locator          = ('css selector', 'iframe[src="app://sms.gaiamobile.org/index.html"]')
@@ -277,13 +296,4 @@ class Clock():
     alarm_alert_label       = ('id', 'ring-alarm-label')
     alarm_alert_close       = ('id', 'ring-button-close')
     
-class Facebook():
-    email                   = ("name", "email")
-    password                = ("name", "pass")
-    login_button            = ("name", "login")
-    install_fbowd_button    = ("id", "grant_clicked")
-    facebook_friends_iframe = "app://communications.gaiamobile.org/contacts/index.html"
-
-
-
 

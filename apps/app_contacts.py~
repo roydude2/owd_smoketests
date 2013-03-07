@@ -153,8 +153,6 @@ class main():
         #
         self.UTILS.TEST(self.UTILS.headerFound(p_contact['name']), 
             "'View contact' screen header was not '" + p_contact["name"] + "'.")
-            
-        time.sleep(2)
     
     #
     # Press the 'Link contact' button in the view contact details screen.
