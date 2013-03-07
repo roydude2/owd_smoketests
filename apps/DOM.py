@@ -246,7 +246,7 @@ class EME():
     add_app_to_homescreen   = ('id', 'modal-dialog-confirm-ok')
 
 class Calendar():
-    add_event_btn           = ('xpath', ".//a[@href='/add/']")
+    add_event_btn           = ('xpath', ".//a[@href='/event/add/']")
 
     event_title             = ('xpath', ".//input[@name='title']")
     event_location          = ('xpath', ".//input[@name='location']")

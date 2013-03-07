@@ -1,21 +1,25 @@
 from apps import DOM
+from gaiatest import GaiaTestCase
+from tools import TestUtils
 import time
 
-class main():
+class main(GaiaTestCase):
     
     #
     # When you create your instance of this class, include the
     # "self" object so we can access the calling class' objects.
     #
-    def __init__(self, p_parentSelf, p_testUtils):
-        self.UTILS  = p_testUtils
-        self.marionette = p_parentSelf.marionette
-        self.parent     = p_parentSelf
+    def __init__(self, p_parent):
+        self.marionette = p_parent.marionette
+#        self.UTILS      = p_parent.UTILS
+        self.apps       = p_parent.apps
+        
+        self.UTILS      = TestUtils(p_parent, 00)
 
     def launch(self):
-        self.parent.apps.kill_all()
-        self.app = self.parent.apps.launch('Calendar')
-        self.parent.wait_for_element_not_displayed(*DOM.GLOBAL.loading_overlay)
+        self.apps.kill_all()
+        self.app = self.apps.launch('Calendar')
+        self.wait_for_element_not_displayed(*DOM.GLOBAL.loading_overlay)
 
     def addEvent(self):
         x = self.UTILS.get_element(*DOM.Calendar.add_event_btn)
@@ -142,7 +146,7 @@ class main():
                     try:
                         ev_title = event_object.find_element('xpath', viewStr[1] % p_title)
                     except:
-                        ignoreme=1
+                        pass
                     else:
                         # ... and location (if specifed and if this isn't 'week' view).
                         #
@@ -153,7 +157,7 @@ class main():
                                     'xpath',
                                     DOM.Calendar.view_events_locat % p_location)
                             except:
-                                ignoreme=1
+                                pass
                             else:
                                 return event_object
                         else:

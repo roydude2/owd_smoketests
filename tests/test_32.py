@@ -31,7 +31,7 @@ class test_32(GaiaTestCase):
         # Uninstall the app (if need be).
         #
         try: self.apps.uninstall(self._appName)
-        except: x=1 #(ignore any exceptions)
+        except: pass #(ignore any exceptions)
         
     def tearDown(self):
         self.UTILS.reportResults()

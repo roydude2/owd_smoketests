@@ -344,7 +344,7 @@ class main():
         #try:
             #x = self.UTILS.get_element('xpath', "//button[text()='Remove']")
         #except:
-            #ignoreme=1
+            #pass
         #else:
             ##
             ## We are already logged into facebook - remove fb data

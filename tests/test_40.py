@@ -109,26 +109,3 @@ class test_40(GaiaTestCase):
         self.UTILS.TEST(x.text == y, "After import, expected '" + y + "', but instead saw '" + x.text + "'.")
         
         
-        
-        
-        
-        
-        
-
-        
-
-        
-        #time.sleep(1)
-        #self.UTILS.savePageHTML("/tmp/roy1.html")
-
-        ## FOR TEST 41 ...
-        ##
-        ## Select my contact.
-        ##
-        #self.contacts.viewContact(self.Contact_1)
-        
-        ##
-        ## Tap link button to go to facebook.
-        ##
-        #self.contacts.tapLinkButton()
-        

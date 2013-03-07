@@ -47,7 +47,7 @@ class test_00(GaiaTestCase):
             # Doesn't work for Tetris for some reason.
             #self.apps.uninstall(self._APP_NAME)
         except:
-            ignoreme=1 # Do nothing.
+            pass
             
         #
         # Don't prompt me for geolocation (this was broken recently in Gaia, so 'try' it).

@@ -7,9 +7,18 @@ export RUNTEST="./bin/run_test_case"
 export TESTDIR="./tests"
 
 #
-# Load default environment variables.
+# Load default environment variables (if possible).
 #
-. ./tests_parameters/parameters
+PARAM_FILE="./tests_parameters/parameters"
+if [ -f "$PARAM_FILE" ]
+then
+	. ./tests_parameters/parameters
+else
+	#
+	# The file's not there, so rebuild it.
+	#
+	./bin/rebuild_tests_parameters_file
+fi
 
 #
 # Did the caller just want to run certain tests:
@@ -62,6 +71,14 @@ do
 
 		VARNAM=$(echo $line | sed -e "s/^.*(\"//" | sed -e "s/\".*//")
 		VARSTR=$(echo $line | sed -e "s/^.*, *\"//" | sed -e "s/\".*//")
+
+		#
+		# Ignore this 'variable' - just using it to prompt.
+		#
+		if [ "$VARNAM" = "ENTER" ]
+		then
+			continue
+		fi
 
 		#
 		# Make sure it's not already set.

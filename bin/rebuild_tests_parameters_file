@@ -34,6 +34,14 @@ do
 		VARNAME=$(echo $x | awk 'BEGIN{FS=","}{print $1}' | sed -e "s/^.*\"\(.*\)\" *$/\1/")
 		VARDESC=$(echo $x | awk 'BEGIN{FS=","}{print $2}' | sed -e "s/^.*\"\(.*\)\" *$/\1/")
 
+		#
+		# Ignore this varname - it's just for prompting.
+		#
+		if [ "$VARNAME" = "ENTER" ]
+		then
+			continue
+		fi
+
 		if [ "$VARNAME" ]
 		then
 			EXT_VARS="${EXT_VARS}export $VARNAME=\t\t# $VARDESC\n"

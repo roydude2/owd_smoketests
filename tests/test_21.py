@@ -29,7 +29,7 @@ class test_21(GaiaTestCase):
         try:
             self.apps.uninstall(self.APP_NAME)
         except:
-            x=1 # Do nothing.
+            pass # Do nothing.
         
     def tearDown(self):
         self.UTILS.reportResults()

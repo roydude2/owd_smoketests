@@ -5,5 +5,6 @@ nohup.out
 .metadata
 .project
 .pydevproject
+tests_parameters/parameters
 gaia-ui-tests
 debug

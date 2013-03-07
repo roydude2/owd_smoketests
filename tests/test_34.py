@@ -15,7 +15,7 @@ class test_34(GaiaTestCase):
         #
         GaiaTestCase.setUp(self)
         self.UTILS      = TestUtils(self, 34)
-        self.calendar   = app_calendar.main(self, self.UTILS)
+        self.calendar   = app_calendar.main(self)
         self.titleStr   = "Test event " + str(datetime.now().time())
         self.locatStr   = "Right here"
         
@@ -49,7 +49,7 @@ class test_34(GaiaTestCase):
         t_m1 = "00"
         t_m2 = "00"
         t_s  = "00"
-
+        
         startTime = t_h1 + ":" + t_m1 + ":" + t_s
         endTime   = t_h2 + ":" + t_m2 + ":" + t_s        
         self.calendar.createEvent(self.titleStr, self.locatStr, False, False, startTime, False, endTime, "Some test notes")

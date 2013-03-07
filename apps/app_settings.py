@@ -17,7 +17,6 @@ class main():
         self.app = self.parent.apps.launch('Settings')
         self.parent.wait_for_element_not_displayed(*DOM.GLOBAL.loading_overlay)
 
-
     #
     # Open wifi settings.
     #
@@ -75,7 +74,7 @@ class main():
             if x.is_displayed():
                 self.marionette.tap(x)
         except:
-            ignoreme=1
+            pass
 
         #
         # Give it time to start up.
