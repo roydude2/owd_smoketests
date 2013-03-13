@@ -1,12 +1,16 @@
 #
-# This is a template for new tests - make the required changes - refer to previous tests if you need help.
+# Imports which are standard for all test cases.
 #
 import sys
 sys.path.insert(1, "./")
+from tools      import TestUtils
+from gaiatest   import GaiaTestCase
+import DOM
 
-from tools import TestUtils
-from apps import DOM, app_ftu
-from gaiatest import GaiaTestCase
+#
+# Imports particular to this test case.
+#
+from apps.app_ftu import *
 
 class test_27(GaiaTestCase):
     _Description = "First time use screens."
@@ -19,7 +23,7 @@ class test_27(GaiaTestCase):
         #
         GaiaTestCase.setUp(self)
         self.UTILS      = TestUtils(self, 27)
-        self.FTU        = app_ftu.main(self, self.UTILS)
+        self.FTU        = AppFTU(self)
         self.wifi_name  = self.UTILS.get_os_variable("WIFI_TEST_27", "Name of wifi to connect to (case sensitive!)")
         self.wifi_user  = self.UTILS.get_os_variable("USERNAME_27", "Wifi username")
         self.wifi_pass  = self.UTILS.get_os_variable("PASSWORD_27", "Wifi password")
@@ -41,6 +45,11 @@ class test_27(GaiaTestCase):
         self.UTILS.reportComment("Using city     : " + self.city)
         self.UTILS.reportComment("Using language : " + self.language)
         
+        #
+        # Turn off wifi and dataconn.
+        #
+        self.data_layer.disable_wifi()
+        self.data_layer.disable_cell_data()
         self.marionette.set_search_timeout(50)
         self.lockscreen.unlock()
         
@@ -69,7 +78,8 @@ class test_27(GaiaTestCase):
         #
         # WIFI CONNECTIVITY.
         #
-        self.FTU.setNetwork(self.wifi_name, self.wifi_user, self.wifi_pass)
+        self.UTILS.reportError("ROY")
+#        self.FTU.setNetwork(self.wifi_name, self.wifi_user, self.wifi_pass)
         self.FTU.nextScreen()
         
         #
@@ -80,7 +90,7 @@ class test_27(GaiaTestCase):
         #
         # Skip the import contacts / privacy / etc... screens until you get to the Tour.
         #
-        tourStartBtn = self.marionette.find_element(*DOM.FTU.tour_start_btn)
+        tourStartBtn = self.marionette.find_element(*self.UTILS.verify("DOM.FTU.tour_start_btn"))
 
         while not tourStartBtn.is_displayed():
             self.FTU.nextScreen()
@@ -93,7 +103,7 @@ class test_27(GaiaTestCase):
         #
         # Move through the tour until we hit the end.
         #
-        tourEndBtn = self.marionette.find_element(*DOM.FTU.tour_finished_btn)
+        tourEndBtn = self.marionette.find_element(*self.UTILS.verify("DOM.FTU.tour_finished_btn"))
         
         while not tourEndBtn.is_displayed():
             self.FTU.nextTourScreen()

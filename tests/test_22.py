@@ -1,9 +1,16 @@
+#
+# Imports which are standard for all test cases.
+#
 import sys
 sys.path.insert(1, "./")
+from tools      import TestUtils
+from gaiatest   import GaiaTestCase
+import DOM
 
-from tools import TestUtils
+#
+# Imports particular to this test case.
+#
 from tests.shared_test_functions import EMAIL_SEND_AND_RECEIVE
-from gaiatest import GaiaTestCase
 
 class test_22_23(GaiaTestCase):
     _Description = "Combination of 22 and 23 Send and receive an email between hotmail accounts (very long pauses between tests)."
@@ -40,6 +47,8 @@ class test_22_23(GaiaTestCase):
                                                   self.EMAIL2,
                                                   self.USER2,
                                                   self.PASS2)
+        
+        
 
     def tearDown(self):
         self.UTILS.reportResults()

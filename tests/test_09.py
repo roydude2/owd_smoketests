@@ -1,10 +1,18 @@
+#
+# Imports which are standard for all test cases.
+#
 import sys
 sys.path.insert(1, "./")
+from tools      import TestUtils
+from gaiatest   import GaiaTestCase
+import DOM
 
-from tools import TestUtils
-from apps import DOM, app_contacts, app_messages
+#
+# Imports particular to this test case.
+#
+from apps.app_contacts import *
+from apps.app_messages import *
 from tests.mock_data.contacts import MockContacts
-from gaiatest import GaiaTestCase
 
 class test_9(GaiaTestCase):
     _Description = "Send an SMS to a contact from the contacts app."
@@ -16,9 +24,9 @@ class test_9(GaiaTestCase):
         # Set up child objects...
         #
         GaiaTestCase.setUp(self)
-        self.UTILS  = TestUtils(self, 8)
-        self.contacts   = app_contacts.main(self, self.UTILS)
-        self.messages   = app_messages.main(self, self.UTILS)
+        self.UTILS      = TestUtils(self, 8)
+        self.contacts   = AppContacts(self)
+        self.messages   = AppMessages(self)
         
         self.marionette.set_search_timeout(50)
         self.lockscreen.unlock()
@@ -54,7 +62,6 @@ class test_9(GaiaTestCase):
         #
         # View the details of our contact.
         #
-        self.UTILS.reportComment("0")
         self.contacts.viewContact(self.contact_1)
         
         #
@@ -68,14 +75,24 @@ class test_9(GaiaTestCase):
         # Switch to the 'Messages' app frame (or marionette will still be watching the
         # 'Contacts' app!).
         #
-        self.UTILS.switchFrame(*DOM.Messages.frame_locator)
+        self.marionette.switch_to_frame()
+        self.UTILS.switchToFrame(*DOM.Messages.frame_locator)
 
         #
-        # TEST: correct name is in the header of this sms.
+        # TEST: this automatically opens the 'send SMS' screen, so
+        # check the correct name is in the header of this sms.
         #
-        self.UTILS.TEST(self.UTILS.headerFound(self.contact_1['name']), 
-            "'Send message' header was not '" + self.contact_1['name'] + "'.")
-
+        boolOK = False
+        try:
+            self.wait_for_element_displayed("xpath", "//h1[text()='" + self.contact_1['name'] + "']")
+            boolOK = True
+        except:
+            boolOK = False
+            
+        self.UTILS.TEST(boolOK,
+                        "'Send message' header was not '" + self.contact_1['name'] + "'.")
+        
+    
         #
         # Create SMS.
         #
@@ -104,7 +121,8 @@ class test_9(GaiaTestCase):
         #
         # Switch back to the sms app. (if we managed to click).
         #
-        self.UTILS.switchFrame(*DOM.Messages.frame_locator)
+        self.marionette.switch_to_frame()
+        self.UTILS.switchToFrame(*DOM.Messages.frame_locator)
         
         #
         # Read the new message.

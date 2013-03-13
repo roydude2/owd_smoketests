@@ -1,0 +1,5 @@
+cards_view            = ('id', 'cards-view')
+app_card              = ('css selector', '#cards-view li.card[data-origin="%s"]')
+#app_card              = ('xpath', '//*[@data-origin="app://%s.gaiamobile.org"]')
+app_close             = ('css selector', '#cards-view li.card[data-origin*="%s"] .close-card')
+lockscreen_frame      = ('id', 'lockscreen')

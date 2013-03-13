@@ -104,7 +104,7 @@ SMOKETESTS COVERED:
     <td  align=center>27</td><td  align=left>First time use screens.</td>
   </tr>
   <tr>
-    <td  align=center>29</td><td  align=left>Create a contact via the contacts app.</td>
+    <td  align=center>29</td><td  align=left>Killing apps via the homescreen.</td>
   </tr>
   <tr>
     <td  align=center>31</td><td  align=left>Use Data Connection to download packaged app.</td>
@@ -128,7 +128,7 @@ SMOKETESTS COVERED:
     <td  align=center>40</td><td  align=left>Importing facebook contacts.</td>
   </tr>
   <tr>
-    <td  align=center>41</td><td  align=left>Importing facebook contacts.</td>
+    <td  align=center>41</td><td  align=left>Link a facebook contact.</td>
   </tr>
   <tr>
     <td  align=center>42</td><td  align=left>First time use screens - check ENGLISH keyboard.</td>

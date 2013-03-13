@@ -1,30 +1,39 @@
+#
+# Imports which are standard for all test cases.
+#
 import sys
 sys.path.insert(1, "./")
+from tools      import TestUtils
+from gaiatest   import GaiaTestCase
+import DOM
 
-from tools import TestUtils
-from apps import DOM, app_calendar
-from gaiatest import GaiaTestCase
+#
+# Imports particular to this test case.
+#
+from apps.app_calendar import *
 from datetime import datetime
 
 class test_34(GaiaTestCase):
     _Description = "Add calendar event."
+    _TestCase    = 34
  
     def setUp(self):
         #
         # Set up child objects...
         #
         GaiaTestCase.setUp(self)
-        self.UTILS      = TestUtils(self, 34)
-        self.calendar   = app_calendar.main(self)
+        self.UTILS      = TestUtils(self, self._TestCase)
+        self.calendar   = AppCalendar(self)
         self.titleStr   = "Test event " + str(datetime.now().time())
         self.locatStr   = "Right here"
+        
         
         #
         # Set the timeout for element searches.
         #
         self.marionette.set_search_timeout(50)
         self.lockscreen.unlock()
-        
+
     def tearDown(self):
         self.UTILS.reportResults()
 

@@ -1,9 +1,17 @@
+#
+# Imports which are standard for all test cases.
+#
 import sys
 sys.path.insert(1, "./")
+from tools      import TestUtils
+from gaiatest   import GaiaTestCase
+import DOM
 
-from tools import TestUtils
-from apps import DOM, app_camera, app_video
-from gaiatest import GaiaTestCase
+#
+# Imports particular to this test case.
+#
+from apps.app_camera import *
+from apps.app_video import *
 
 class test_13(GaiaTestCase):
     _Description = "Record video and view it in the video player app."
@@ -13,9 +21,9 @@ class test_13(GaiaTestCase):
         # Set up child objects.
         #
         GaiaTestCase.setUp(self)
-        self.UTILS = TestUtils(self, 13)
-        self.camera    = app_camera.main(self, self.UTILS)
-        self.video     = app_video.main(self, self.UTILS)
+        self.UTILS      = TestUtils(self, 13)
+        self.camera     = AppCamera(self)
+        self.video      = AppVideo(self)
         
         self.marionette.set_search_timeout(50)
         self.lockscreen.unlock()
@@ -29,7 +37,7 @@ class test_13(GaiaTestCase):
         #
         self.camera.launch()
         self.camera.recordVideo("00:05")
-        self.camera.testVideoLength(0, 4.9, 9.1)
+        self.camera.checkVideoLength(0, 4.9, 10.1)
 
         #
         # Open the video player application.
@@ -44,5 +52,5 @@ class test_13(GaiaTestCase):
         #
         # Check that the video is as long as expected.
         #
-        self.video.testVideoLength(0, 4.9, 9.1)
+        self.video.checkVideoLength(0, 4.9, 10.1)
         

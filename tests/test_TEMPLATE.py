@@ -1,25 +1,27 @@
 #
-# This is a template for new tests - make the required changes - refer to previous tests if you need help.
+# Imports which are standard for all test cases.
 #
 import sys
 sys.path.insert(1, "./")
+from tools      import TestUtils
+from gaiatest   import GaiaTestCase
+import DOM
 
-from tools import TestUtils
-from apps import DOM, app_email
-from gaiatest import GaiaTestCase
+#
+# Imports particular to this test case.
+#
+from apps.app_gallery import *
 
-class test_?(GaiaTestCase):
-    _Description = "?????"
-    
-    _boolCheck   = True
+class test_??(GaiaTestCase):
+    _Description = "??"
     
     def setUp(self):
         #
         # Set up child objects...
         #
         GaiaTestCase.setUp(self)
-        self.UTILS  = TestUtils(self, ?)
-        self.??     = app_??.main(self, self.UTILS)
+        self.UTILS      = TestUtils(self, ??)
+        self.gallery    = AppGallery(self)
         
         self.marionette.set_search_timeout(50)
         self.lockscreen.unlock()

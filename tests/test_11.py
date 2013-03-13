@@ -1,9 +1,17 @@
+#
+# Imports which are standard for all test cases.
+#
 import sys
 sys.path.insert(1, "./")
+from tools      import TestUtils
+from gaiatest   import GaiaTestCase
+import DOM
 
-from tools import TestUtils
-from apps import DOM, app_gallery, app_camera
-from gaiatest import GaiaTestCase
+#
+# Imports particular to this test case.
+#
+from apps.app_gallery import *
+from apps.app_camera import *
 
 class test_11(GaiaTestCase):
     _Description = "Take a photograph via the camera app."
@@ -13,9 +21,9 @@ class test_11(GaiaTestCase):
         # Set up child objects...
         #
         GaiaTestCase.setUp(self)
-        self.UTILS = TestUtils(self, 11)
-        self.gallery   = app_gallery.main(self, self.UTILS)
-        self.camera    = app_camera.main(self, self.UTILS)
+        self.UTILS      = TestUtils(self, 11)
+        self.gallery    = AppGallery(self)
+        self.camera     = AppCamera(self)
 
         self.marionette.set_search_timeout(50)
         self.lockscreen.unlock()
@@ -38,7 +46,7 @@ class test_11(GaiaTestCase):
         #
         # TEST: Thumbnail has not been previewed yet.
         #
-        prev_marker = self.marionette.find_element(*DOM.Camera.thumbnail_preview_marker)
+        prev_marker = self.marionette.find_element(*self.UTILS.verify("DOM.Camera.thumbnail_preview_marker"))
         self.UTILS.TEST((prev_marker.get_attribute("class") == "offscreen"), "Image was previewed as soon as picture was taken.")
         
         #
@@ -49,8 +57,8 @@ class test_11(GaiaTestCase):
         #
         # TEST: Thumbnail is previewed.
         #
-        self.wait_for_element_displayed(*DOM.Camera.thumbnail_preview_marker)
-        prev_marker = self.UTILS.get_element(*DOM.Camera.thumbnail_preview_marker)
+        self.wait_for_element_displayed(*self.UTILS.verify("DOM.Camera.thumbnail_preview_marker", 20))
+        prev_marker = self.UTILS.get_element(*self.UTILS.verify("DOM.Camera.thumbnail_preview_marker", 20))
         self.UTILS.TEST((prev_marker.get_attribute("class") == ""), "Image was not previewed when thumbnail was clicked.")
         
         #
@@ -71,14 +79,14 @@ class test_11(GaiaTestCase):
         #
         # TEST: Thumbnails are not visible when vieweing an image.
         #
-        thumbs = self.marionette.find_element(*DOM.Gallery.thumbnail_list_section)
+        thumbs = self.marionette.find_element(*self.UTILS.verify("DOM.Gallery.thumbnail_list_section", 20))
         self.UTILS.TEST( (thumbs.get_attribute("class") == "hidden"), "Thumbnails still present when vieweing image in gallery.")
         
         #
         # TEST: Image is displayed as expected.
         #
         try: 
-            thisIMG = self.UTILS.get_element(*DOM.Gallery.current_image_pic)
+            thisIMG = self.UTILS.get_element(*self.UTILS.verify("DOM.Gallery.current_image_pic"))
             try:
                 x = str(thisIMG.get_attribute('src'))
                 self.UTILS.TEST((x != ""), "Image source is empty in gallery after clicking thumbnail.")

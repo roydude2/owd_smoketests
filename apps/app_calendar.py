@@ -1,20 +1,25 @@
-from apps import DOM
-from gaiatest import GaiaTestCase
-from tools import TestUtils
-import time
+import DOM, time
+from gaiatest   import GaiaTestCase
+from tools      import TestUtils
+from marionette import Marionette
 
-class main(GaiaTestCase):
+class AppCalendar(GaiaTestCase):
     
     #
     # When you create your instance of this class, include the
     # "self" object so we can access the calling class' objects.
     #
     def __init__(self, p_parent):
-        self.marionette = p_parent.marionette
-#        self.UTILS      = p_parent.UTILS
         self.apps       = p_parent.apps
-        
-        self.UTILS      = TestUtils(p_parent, 00)
+        self.data_layer = p_parent.data_layer
+
+        # Just so I get 'autocomplete' in my IDE!
+        self.marionette = Marionette()
+        self.UTILS      = TestUtils(self, 00)        
+        if True:
+            self.marionette = p_parent.marionette
+            self.UTILS      = p_parent.UTILS
+
 
     def launch(self):
         self.apps.kill_all()
@@ -22,7 +27,7 @@ class main(GaiaTestCase):
         self.wait_for_element_not_displayed(*DOM.GLOBAL.loading_overlay)
 
     def addEvent(self):
-        x = self.UTILS.get_element(*DOM.Calendar.add_event_btn)
+        x = self.UTILS.get_element(*self.UTILS.verify("DOM.Calendar.add_event_btn"))
         self.marionette.tap(x)
         
     #
@@ -39,60 +44,60 @@ class main(GaiaTestCase):
         #
         # Set the title.
         #
-        x = self.UTILS.get_element(*DOM.Calendar.event_title)
+        x = self.UTILS.get_element(*self.UTILS.verify("DOM.Calendar.event_title"))
         x.send_keys(p_title)
 
         #
         # Set the location.
         #
         if p_location:
-            x = self.UTILS.get_element(*DOM.Calendar.event_location)
+            x = self.UTILS.get_element(*self.UTILS.verify("DOM.Calendar.event_location"))
             x.send_keys(p_location)
 
         #
         # Set the 'all day' marker.
         #
         if p_allDay:
-            x = self.UTILS.get_element(*DOM.Calendar.event_allDay)
+            x = self.UTILS.get_element(*self.UTILS.verify("DOM.Calendar.event_allDay"))
             self.marionette.tap(x)
 
         #
         # Set start date.
         #
         if p_startDate: 
-            x = self.UTILS.get_element(*DOM.Calendar.event_start_date)
+            x = self.UTILS.get_element(*self.UTILS.verify("DOM.Calendar.event_start_date"))
             x.send_keys(p_startDate)
         
         #
         # Start start time.
         #
-        x = self.UTILS.get_element(*DOM.Calendar.event_start_time)
+        x = self.UTILS.get_element(*self.UTILS.verify("DOM.Calendar.event_start_time"))
         x.send_keys(p_startTime)
         
         #
         # Set end date.
         #
         if p_endDate: 
-            x = self.UTILS.get_element(*DOM.Calendar.event_end_date)
+            x = self.UTILS.get_element(*self.UTILS.verify("DOM.Calendar.event_end_date"))
             x.send_keys(p_endDate)
         
         #
         # Set end time.
         #
-        x = self.UTILS.get_element(*DOM.Calendar.event_end_time)
+        x = self.UTILS.get_element(*self.UTILS.verify("DOM.Calendar.event_end_time"))
         x.send_keys(p_endTime)
         
         #
         # Set notes.
         #
         if p_notes: 
-            x = self.UTILS.get_element(*DOM.Calendar.event_notes)
+            x = self.UTILS.get_element(*self.UTILS.verify("DOM.Calendar.event_notes"))
             x.send_keys(p_notes)
         
         #
         # Save it.
         #
-        x = self.UTILS.get_element(*DOM.Calendar.event_save_btn)
+        x = self.UTILS.get_element(*self.UTILS.verify("DOM.Calendar.event_save_btn"))
         self.marionette.tap(x)
         
     #
@@ -103,7 +108,7 @@ class main(GaiaTestCase):
         self.marionette.tap(x)
         
     #
-    # Return object for an event in month view.
+    # Return object for an event in month / week or day view.
     #
     def getEventPreview(self, p_view, p_hour24, p_title, p_location=False):
         

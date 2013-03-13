@@ -1,28 +1,38 @@
-from apps import DOM
-import time
+import DOM, time
+from gaiatest   import GaiaTestCase
+from tools      import TestUtils
+from marionette import Marionette
 
-class main():
+class AppMessages(GaiaTestCase):
     
     #
     # When you create your instance of this class, include the
     # "self" object so we can access the calling class' objects.
     #
-    def __init__(self, p_parentSelf, p_testUtils):
-        self.UTILS  = p_testUtils
-        self.marionette = p_parentSelf.marionette
-        self.parent     = p_parentSelf
+    def __init__(self, p_parent):
+        self.apps       = p_parent.apps
+        self.data_layer = p_parent.data_layer
+
+        # Just so I get 'autocomplete' in my IDE!
+        self.marionette = Marionette()
+        self.UTILS      = TestUtils(self, 00)        
+        if True:
+            self.marionette = p_parent.marionette
+            self.UTILS      = p_parent.UTILS
+
+
 
     def launch(self):
-        self.parent.apps.kill_all()
-        self.app = self.parent.apps.launch('Messages')
-        self.parent.wait_for_element_not_displayed(*DOM.GLOBAL.loading_overlay)
+        self.apps.kill_all()
+        self.app = self.apps.launch('Messages')
+        self.wait_for_element_not_displayed(*DOM.GLOBAL.loading_overlay)
 
     #
     # Create and send a message (assumes we are in a new 'create new message'
     # screen with the destination number filled in already).
     #
     def enterSMSMsg(self, p_msg):
-        msgArea = self.UTILS.get_element(*DOM.Messages.input_message_area)
+        msgArea = self.UTILS.get_element(*self.UTILS.verify("DOM.Messages.input_message_area"))
         msgArea.send_keys(p_msg)
 
     
@@ -30,16 +40,16 @@ class main():
     # Just presses the 'send' button (assumes everything else is done).
     #
     def sendSMS(self):
-        sendBtn = self.UTILS.get_element(*DOM.Messages.send_message_button)
+        sendBtn = self.UTILS.get_element(*self.UTILS.verify("DOM.Messages.send_message_button"))
         sendBtn.click()
         time.sleep(5)
         self.marionette.tap(sendBtn)
         
         time.sleep(1)
-        self.parent.wait_for_element_not_present(*DOM.Messages.message_sending_spinner, timeout=120)
+        self.wait_for_element_not_present(*DOM.Messages.message_sending_spinner, timeout=120)
         
         # Go back to main messages screen
-        header_back_button = self.UTILS.get_element(*DOM.Messages.header_back_button)
+        header_back_button = self.UTILS.get_element(*self.UTILS.verify("DOM.Messages.header_back_button"))
         self.marionette.tap(header_back_button)
     
     #
@@ -59,7 +69,7 @@ class main():
             DOM.Messages.statusbar_new_sms[1] % p_num)
         
         #
-        # Wait for the notification to be present for this number (3 minute timeout)
+        # Wait for the notification to be present for this number 
         # in the popup messages (this way we make sure it's coming from our number,
         # as opposed to just containing our number in the notification).
         #
@@ -90,7 +100,7 @@ class main():
         #
         self.UTILS.displayStatusBar()
 
-        x = self.marionette.find_elements(*DOM.GLOBAL.status_bar_count)
+        x = self.marionette.find_elements(*self.UTILS.verify("DOM.GLOBAL.status_bar_count"))
         
         for i in range(0, len(x)):
             #
@@ -118,15 +128,15 @@ class main():
         #
         # Switch back to the messaging app.
         #
-        self.UTILS.switchFrame(*DOM.Messages.frame_locator)
+        self.UTILS.switchToFrame(*DOM.Messages.frame_locator)
         
 
     #
     # Read last message.
     #
     def readLastSMSInThread(self):
-        self.parent.wait_for_element_displayed(*DOM.Messages.received_messages)
-        received_message = self.UTILS.get_elements(*DOM.Messages.received_messages)[-1]
+        self.wait_for_element_displayed(*self.UTILS.verify("DOM.Messages.received_messages"))
+        received_message = self.UTILS.get_elements(*self.UTILS.verify("DOM.Messages.received_messages"))[-1]
         return str(received_message.text)
 
     #
@@ -152,15 +162,15 @@ class main():
         #
         # Tap create new sms button.
         #
-        self.parent.wait_for_element_displayed(*DOM.Messages.create_new_message_btn)
-        newMsgBtn = self.UTILS.get_element(*DOM.Messages.create_new_message_btn)
+        self.wait_for_element_displayed(*self.UTILS.verify("DOM.Messages.create_new_message_btn"))
+        newMsgBtn = self.UTILS.get_element(*self.UTILS.verify("DOM.Messages.create_new_message_btn"))
         self.marionette.tap(newMsgBtn)
         
         #
         # Enter the number.
         #
-        self.parent.wait_for_element_displayed(*DOM.Messages.target_number)
-        numInput = self.UTILS.get_element(*DOM.Messages.target_number)
+        self.wait_for_element_displayed(*self.UTILS.verify("DOM.Messages.target_number"))
+        numInput = self.UTILS.get_element(*self.UTILS.verify("DOM.Messages.target_number"))
         numInput.send_keys(p_num)
         
         #

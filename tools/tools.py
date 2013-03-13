@@ -2,23 +2,38 @@ import os
 import base64
 import time
 import sys
-from apps import DOM
+import DOM
+from gaiatest   import GaiaTestCase
+from marionette import Marionette
 
-class TestUtils():
+class TestUtils(GaiaTestCase):
     #
     # When you create your instance of this class, include the
     # "self" object so we can access the calling class' objects.
     #
-    def __init__(self, p_parentSelf, p_testNum):
+    def __init__(self, p_parent, p_testNum):
+        self.parent         = p_parent
+        self.apps           = p_parent.apps
+        self.marionette     = p_parent.marionette
+        self.testNum        = str(p_testNum)
         self._failArray     = []
         self._commentArray  = []
-        self.marionette     = p_parentSelf.marionette
-        self.parent         = p_parentSelf
-        self.testNum        = str(p_testNum)
         self.errNum         = 0
         self.passed         = 0
         self.failed         = 0
-    
+        
+        # Just so I get 'autocomplete' in my IDE!
+        self.marionette = Marionette()
+        if True:
+            self.marionette = p_parent.marionette
+        
+        #
+        # Use this just for IDE autocomplete - you need to comment it out when
+        # you've finished editing!
+        #
+#        self.marionette = Marionette()
+
+        
     #
     # Get a variable from the OS.
     #
@@ -26,17 +41,68 @@ class TestUtils():
         return os.environ[p_name]
     
     #
-    # Switch to frame (needed if accessing an app via another app, i.e.
-    # launching Messages from Contacts).
+    # Get a DOM element - includes a check that the element is still
+    # correct and stops the test if the element has changed.
     #
-    def switchFrame(self, *p_frame):
+    # NOTE: Do not use this for:
+    #        - Checking elements that are supposed to stop existing
+    #          (i.e. wait_for_element_NOT_exists() )
+    #        - Checking for frames.
+    #        - Checking against elements which will be in a different frame to this one.
+    #
+    def verify(self, p_DOM_definition, p_timeOut=20):
         #
-        # For some obscure reason you have to go 'home' before anywhere else.
+        # Split the variable into it's parts.
         #
-        self.marionette.switch_to_frame()
+        varname     = p_DOM_definition
+        domElement  = eval(p_DOM_definition)
+        
+        try:
+            self.wait_for_element_present(*domElement, timeout=p_timeOut)
+        except:
+            fileTag  = "DOM_error_screen"
+            htmlFile = os.environ['RESULT_FILE'] + fileTag + ".html"
+            shotFile = self.screenShot(fileTag)
 
-        new_iframe = self.marionette.find_element(*p_frame)
-        self.marionette.switch_to_frame(new_iframe)
+            self.savePageHTML(htmlFile)
+            
+
+            errMsg    = "Element definition '" + p_DOM_definition + "' (\"" + domElement[0] + "\",\"" + domElement[1] + "\") "
+            errMsg    = errMsg + "is invalid."
+            self.reportError(errMsg)
+            
+            self.reportError("|__ [screenhtml = " + htmlFile + "]")
+            self.reportError("|__", shotFile)
+            
+            self.quitTest()
+        else:
+            return domElement
+
+#    #
+#    # Switch to frame (needed if accessing an app via another app, i.e.
+#    # launching Messages from Contacts).
+#    #
+#    def switchFrame(self, *p_frame):
+#        #
+#        # You have to go back to the top level before anywhere else.
+#        #
+#        self.marionette.switch_to_frame()
+#
+#        new_iframe = self.marionette.find_element(*p_frame)
+#        self.marionette.switch_to_frame(new_iframe)
+        
+#    #
+#    # Some iframes use id (such as facebook via contacts).
+#    #
+#    def connect_to_iframe_by_id(self, p_id):
+#        iframes = self.marionette.execute_script("return document.getElementsByTagName('iframe')")
+#        for idx in range(0,iframes['length']):
+#            iframe = iframes[str(idx)]
+#            if p_id == iframe.get_attribute('id'):
+#                self.marionette.switch_to_frame(iframe)
+#                return True
+#        return False
+
         
     #
     # Due to the lack of developer docs, this might help to provide a list
@@ -70,6 +136,34 @@ class TestUtils():
             self.screenShot("DEBUG_" + str(y))
             y = y + 1
         
+    def switchToFrame(self, p_tag, p_str, p_quitOnError=True):
+        #
+        # Switch to iframe based on the p_tag = p_string, i.e.
+        # "id" = "my_iframe".
+        #
+        # Be aware that you USUALLY need to do this first:
+        #
+        #    "self.marionette.switch_to_frame()"
+        #
+        frameSpec = ("xpath", "//iframe[@" + p_tag + "='" + p_str + "']")
+        
+        try:
+            self.wait_for_element_present(*frameSpec)
+            iframe = self.marionette.find_element(*frameSpec)
+            if self.marionette.switch_to_frame(iframe):
+                return True    
+        except:
+            #
+            # Ignore the exception - if we get pas this we've failed to switch.
+            #
+            pass
+        
+        if p_quitOnError:
+            self.reportError("Could not switch to frame " + p_tag + "=\"" + p_str + "\".")
+            self.quitTest()
+        else:
+            return False
+    
     #
     # Connect to an iframe.
     #
@@ -78,18 +172,6 @@ class TestUtils():
         for idx in range(0,iframes['length']):
             iframe = iframes[str(idx)]
             if p_name == iframe.get_attribute('src'):
-                self.marionette.switch_to_frame(iframe)
-                return True
-        return False
-    
-    #
-    # Some iframes use id (such as facebook via contacts).
-    #
-    def connect_to_iframe_by_id(self, p_id):
-        iframes = self.marionette.execute_script("return document.getElementsByTagName('iframe')")
-        for idx in range(0,iframes['length']):
-            iframe = iframes[str(idx)]
-            if p_id == iframe.get_attribute('id'):
                 self.marionette.switch_to_frame(iframe)
                 return True
         return False
@@ -104,8 +186,7 @@ class TestUtils():
         isThere = x.is_displayed()
         
         if p_returnFrame != "":
-            prev_frame = self.marionette.find_element(*p_returnFrame)
-            self.marionette.switch_to_frame(prev_frame)
+            self.switchToFrame(*p_returnFrame)
         
         return isThere
         
@@ -123,9 +204,22 @@ class TestUtils():
     # Screenshot on error.
     #
     def screenShotOnErr(self):
+        #
+        # Build the error filename.
+        #
         self.errNum = self.errNum + 1
         fnam = "_" + self.testNum + "_err_" + str(self.errNum)
+        
+        #
+        # Record the screenshot.
+        #
         x = self.screenShot(fnam)
+        
+        #
+        # Dump the current page's html source too.
+        #
+        htmlDump = os.environ['RESULT_FILE'] + fnam + ".html"
+        self.savePageHTML(htmlDump)
         return x
 
     #
@@ -149,6 +243,7 @@ class TestUtils():
     # Quit this test suite.
     #
     def quitTest(self):
+        self.screenShotOnErr()
         self.reportError("CANNOT CONTINUE PAST THIS ERROR - ABORTING THIS TEST!")
         sys.exit("Fatal error, quitting this test.")
 
@@ -172,7 +267,8 @@ class TestUtils():
     # Test for a match between an element and a string
     # (found I was doing this rather a lot so it's better in a function).
     #
-    def testMatch(self, p_el, p_type, p_val, p_name):
+    # formerly "testMatch"
+    def checkMatch(self, p_el, p_type, p_val, p_name):
         if p_type == "value":
             test_str = str(p_el.get_attribute("value"))
         else:
@@ -207,12 +303,12 @@ class TestUtils():
     # Wait for an element to be displayed, then return the element.
     #
     def get_element(self, *p_element):
-        self.parent.wait_for_element_displayed(*p_element)
+        self.wait_for_element_displayed(*p_element)
         el = self.marionette.find_element(*p_element)
         return el
         
     def get_elements(self, *p_elements):
-        self.parent.wait_for_element_displayed(*p_elements)
+        self.wait_for_element_displayed(*p_elements)
         els = self.marionette.find_elements(*p_elements)
         return els
     
@@ -243,10 +339,14 @@ class TestUtils():
     # NOTE: ALL headers in this frame are true for ".is_displayed()"!
     #
     def headerFound(self, p_str):
-        headerName = self.get_elements(*DOM.GLOBAL.app_head)
-        for i in headerName:
-            if i.text == p_str:
-                return True
+        try:
+            self.wait_for_element_present(*DOM.GLOBAL.app_head)
+            headerName = self.marionette.find_elements(*DOM.GLOBAL.app_head)
+            for i in headerName:
+                if i.text == p_str:
+                    return True
+        except:
+            return False
                 
         return False
         
@@ -268,22 +368,49 @@ class TestUtils():
     # Scroll around the homescreen until we find our app icon.
     #
     def findAppIcon(self, p_appName):
-        self.parent.apps.kill_all()
-        self.homescreen = self.parent.apps.launch('Homescreen')
+        self.apps.kill_all()
+        self.homescreen = self.apps.launch('Homescreen')
         self.marionette.switch_to_frame()
-        self.marionette.switch_to_frame(self.homescreen.frame)        
+        self.marionette.switch_to_frame(self.homescreen.frame)
 
-        try:
-            appIcon = self.marionette.find_element('css selector', DOM.GLOBAL.app_icon_css % p_appName)
-            while not appIcon.is_displayed():
-                self.scrollHomescreenRight()
-                
-            if appIcon.is_displayed():
-                return appIcon
-            else:
-                return False
-        except:
-            return False
+        #
+        # Bit long-winded, but it ensures the icon is displayed.
+        #
+        # We need to return the entire 'li' element, not just the
+        # 'span' element (otherwise we can't use what's returned
+        # to find the delete icon when the homescreen is in edit mode).
+        #
+        # As these dom specs are only ever useful right here, I'm not
+        # defining them in DOM.
+        #
+        for i_page in range(1, 10):
+            try:
+                # (16 apps per page)
+                for i_li in range(1,17):
+                    try:
+                        xpath_str = "//div[@class='page'][%s]//li[%s]" % (i_page, i_li)
+                        x = self.marionette.find_element("xpath", 
+                                                         xpath_str + "//span[text()='" + p_appName + "']")
+                        
+                        #
+                        # Found it - return tihs list item!
+                        #
+                        myEl = self.marionette.find_element("xpath", xpath_str)
+                        return myEl
+                    except:
+                        pass
+            except:
+                pass
+            
+            #
+            # No such app in this page, try again.
+            #
+            self.scrollHomescreenRight()
+            
+        #
+        # If we get here, we didn't find it!
+        #
+        return False
     
     #
     # Touch the home button (sometimes does something different to going home).
@@ -303,8 +430,8 @@ class TestUtils():
     # Return to the home screen.
     #
     def goHome(self):
-        self.parent.apps.kill_all()
-        self.homescreen = self.parent.apps.launch('Homescreen')
+        self.apps.kill_all()
+        self.homescreen = self.apps.launch('Homescreen')
         self.marionette.switch_to_frame()
         self.marionette.switch_to_frame(self.homescreen.frame)        
 
@@ -325,6 +452,7 @@ class TestUtils():
     def launchAppViaHomescreen(self, p_name):
         if self.isAppInstalled(p_name):
             self.findAppIcon(p_name)
+            time.sleep(1)
             x = ('css selector', DOM.GLOBAL.app_icon_css % p_name)
             myApp = self.marionette.find_element(*x)
             self.marionette.tap(myApp)
@@ -336,8 +464,8 @@ class TestUtils():
     # Return whether an app is present on the homescreen (i.e. 'installed').
     #
     def isAppInstalled(self, p_appName):
-        self.parent.apps.kill_all()
-        self.homescreen = self.parent.apps.launch('Homescreen')
+        self.apps.kill_all()
+        self.homescreen = self.apps.launch('Homescreen')
         self.marionette.switch_to_frame()
         self.marionette.switch_to_frame(self.homescreen.frame)
 
@@ -365,16 +493,28 @@ class TestUtils():
         self.activateHomeEditMode()
         
         #
-        # Delete it.
+        # Delete it (and refresh the 'myApp' object to include the new button).
         #
+        # NOTE: This kind of 'element-within-an-element' isn't necessarily
+        #       appropriate for 'verify'.
+        #
+        self.marionette.switch_to_frame()
+        self.marionette.switch_to_frame(self.homescreen.frame)
+        myApp = self.findAppIcon(p_appName)
+        
+        #
+        # If the app wasn't found, just return.
+        #
+        if not myApp: return False
+        
         delete_button = myApp.find_element(*DOM.GLOBAL.app_delete_icon)
         self.marionette.tap(delete_button)
         
         #
         # Confirm deletion.
         #
-        self.parent.wait_for_element_displayed(*DOM.GLOBAL.app_confirm_delete)
-        delete = self.marionette.find_element(*DOM.GLOBAL.app_confirm_delete)
+        self.wait_for_element_displayed(*self.verify("DOM.GLOBAL.app_confirm_delete"))
+        delete = self.marionette.find_element(*self.verify("DOM.GLOBAL.app_confirm_delete"))
         self.marionette.tap(delete)
 
         #
@@ -382,8 +522,8 @@ class TestUtils():
         #
         self.touchHomeButton()
         self.TEST(not self.isAppInstalled(p_appName), "App is still installed after deletion.")
-
-
+        
+        return True
 
     #
     # Displays the status / notification bar in the home screen.
@@ -400,8 +540,7 @@ class TestUtils():
     #
     def waitForStatusBarNew(self, p_dom=DOM.GLOBAL.status_bar_new, p_time=20):
         try: 
-            self.parent.wait_for_element_present(*p_dom, timeout=p_time)
+            self.wait_for_element_present(*p_dom, timeout=p_time)
             return True
         except:
             return False
-

@@ -1,28 +1,38 @@
-from apps import DOM
-import time
+import DOM, time
+from gaiatest   import GaiaTestCase
+from tools      import TestUtils
+from marionette import Marionette
 
-class main():
+class AppVideo(GaiaTestCase):
     
     #
     # When you create your instance of this class, include the
     # "self" object so we can access the calling class' objects.
     #
-    def __init__(self, p_parentSelf, p_testUtils):
-        self.UTILS  = p_testUtils
-        self.marionette = p_parentSelf.marionette
-        self.parent     = p_parentSelf
+    def __init__(self, p_parent):
+        self.apps       = p_parent.apps
+        self.data_layer = p_parent.data_layer
+
+        # Just so I get 'autocomplete' in my IDE!
+        self.marionette = Marionette()
+        self.UTILS      = TestUtils(self, 00)        
+        if True:
+            self.marionette = p_parent.marionette
+            self.UTILS      = p_parent.UTILS
+
+
 
     def launch(self):
-        self.parent.apps.kill_all()
-        self.app = self.parent.apps.launch('Video')
-        self.parent.wait_for_element_not_displayed(*DOM.Video.items)
+        self.apps.kill_all()
+        self.app = self.apps.launch('Video')
+        self.wait_for_element_not_displayed(*DOM.Video.items)
         
     #
     # NOTE: p_length_str_MMSS needs to be in the format "MM:SS"
     #
     def checkThumbDuration(self, p_thumb_num, p_length_str_MMSS, p_errorMargin_SS):
-        self.parent.wait_for_element_present(*DOM.Video.thumb_durations)
-        durations = self.marionette.find_elements(*DOM.Video.thumb_durations)
+        self.wait_for_element_present(*self.UTILS.verify("DOM.Video.thumb_durations"))
+        durations = self.marionette.find_elements(*self.UTILS.verify("DOM.Video.thumb_durations"))
         
         myDur = durations[p_thumb_num].text
         
@@ -54,8 +64,8 @@ class main():
         #
         # Get the list of video items and click the 'p_num' one.
         #
-        self.parent.wait_for_element_displayed(*DOM.Video.items)
-        all_videos = self.marionette.find_elements(*DOM.Video.items)
+        self.wait_for_element_displayed(*self.UTILS.verify("DOM.Video.items"))
+        all_videos = self.marionette.find_elements(*self.UTILS.verify("DOM.Video.items"))
         my_video = all_videos[p_num]
         
         self.marionette.tap(my_video)
@@ -63,8 +73,9 @@ class main():
         #
         # Wait for the video to start playing before returning.
         #
-        self.parent.wait_for_element_displayed(*DOM.Video.video_frame)
-        self.parent.wait_for_element_displayed(*DOM.Video.video_loaded)
+        self.UTILS.reportError("ROY - does this need to be checked like this?")
+#        self.wait_for_element_displayed(*DOM.Video.video_frame)
+        self.wait_for_element_displayed(*DOM.Video.video_loaded)
 
         #
         # Allow for bug - if video plays without screen being tapped, then when
@@ -79,7 +90,7 @@ class main():
     #
     # Check the length of a video.
     #
-    def testVideoLength(self, p_vid_num, p_from_SS, p_to_SS):
+    def checkVideoLength(self, p_vid_num, p_from_SS, p_to_SS):
             
         #
         # Start the timer.
@@ -94,7 +105,7 @@ class main():
         #
         # Stop the timer.
         #
-        self.parent.wait_for_element_not_displayed(*DOM.Video.video_frame)
+        self.wait_for_element_not_displayed(*DOM.Video.video_frame)
         elapsed_time = int(time.time() - start_time)
         
         #

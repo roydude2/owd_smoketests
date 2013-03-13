@@ -1,12 +1,16 @@
 #
-# This is a template for new tests - make the required changes - refer to previous tests if you need help.
+# Imports which are standard for all test cases.
 #
 import sys
 sys.path.insert(1, "./")
+from tools      import TestUtils
+from gaiatest   import GaiaTestCase
+import DOM
 
-from tools import TestUtils
-from apps import DOM, app_calculator
-from gaiatest import GaiaTestCase
+#
+# Imports particular to this test case.
+#
+from apps.app_calculator import *
 
 class test_33(GaiaTestCase):
     _Description = "Basic calculator test."
@@ -19,10 +23,16 @@ class test_33(GaiaTestCase):
         #
         GaiaTestCase.setUp(self)
         self.UTILS  = TestUtils(self, 33)
-        self.Calc   = app_calculator.main(self, self.UTILS)
+        self.Calc   = AppCalculator(self)
         
         self.marionette.set_search_timeout(50)
         self.lockscreen.unlock()
+        
+        #
+        # Sometimes the calcultaor gets uninstalled!
+        #
+        self.UTILS.TEST(self.UTILS.findAppIcon("Calculator"),
+                        "Calculator isn't installed!", True)
         
     def tearDown(self):
         self.UTILS.reportResults()
@@ -34,19 +44,19 @@ class test_33(GaiaTestCase):
         #
         self.Calc.launch()
 
-        btn3 = self.UTILS.get_element(*DOM.Calculator.button_3)
+        btn3 = self.UTILS.get_element(*self.UTILS.verify("DOM.Calculator.button_3"))
         self.marionette.tap(btn3)
         
-        btnX = self.UTILS.get_element(*DOM.Calculator.button_mutiply)
+        btnX = self.UTILS.get_element(*self.UTILS.verify("DOM.Calculator.button_mutiply"))
         self.marionette.tap(btnX)
         
-        btn5 = self.UTILS.get_element(*DOM.Calculator.button_5)
+        btn5 = self.UTILS.get_element(*self.UTILS.verify("DOM.Calculator.button_5"))
         self.marionette.tap(btn5)
         
-        btnEQ = self.UTILS.get_element(*DOM.Calculator.button_equals)
+        btnEQ = self.UTILS.get_element(*self.UTILS.verify("DOM.Calculator.button_equals"))
         self.marionette.tap(btnEQ)
         
-        Answer = self.UTILS.get_element(*DOM.Calculator.display)
+        Answer = self.UTILS.get_element(*self.UTILS.verify("DOM.Calculator.display"))
         
         self.UTILS.TEST(Answer.text == "15", "Expected answer to be 15, but it was " + Answer.text + ".")
         

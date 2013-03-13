@@ -1,15 +1,19 @@
 #
-# This is a template for new tests - make the required changes - refer to previous tests if you need help.
+# Imports which are standard for all test cases.
 #
 import sys
 sys.path.insert(1, "./")
+from tools      import TestUtils
+from gaiatest   import GaiaTestCase
+import DOM
 
-from tools import TestUtils
-from apps import DOM, app_settings, app_everythingMe
-from gaiatest import GaiaTestCase
-import time
+#
+# Imports particular to this test case.
+#
+from apps.app_settings import *
+from apps.app_everythingMe import *
 
-class test_00(GaiaTestCase):
+class test_39(GaiaTestCase):
     _Description = "Install an app via 'everything.me'."
     
     _APP_NAME    = "Tetris"
@@ -23,8 +27,8 @@ class test_00(GaiaTestCase):
         GaiaTestCase.setUp(self)
         
         self.UTILS      = TestUtils(self, 0)
-        self.Settings   = app_settings.main(self, self.UTILS)
-        self.EME        = app_everythingMe.main(self, self.UTILS)
+        self.Settings   = AppSettings(self)
+        self.EME        = AppEverythingMe(self)
         
         self.marionette.set_search_timeout(50)
         self.lockscreen.unlock()
@@ -33,21 +37,13 @@ class test_00(GaiaTestCase):
         # Make sure 'things' are as we expect them to be first.
         #
         self.data_layer.disable_wifi()
-        self.data_layer.disable_cell_data()
+        self.Settings.trun_dataConn_on_if_required()
         
         #
         # Make sure our app isn't installed already.
         #
-        try:
-            if self.UTILS.isAppInstalled(self._APP_NAME):
-                self.UTILS.uninstallApp(self._APP_NAME)
-                
-            self.UTILS.goHome()
-            
-            # Doesn't work for Tetris for some reason.
-            #self.apps.uninstall(self._APP_NAME)
-        except:
-            pass
+        if self.UTILS.isAppInstalled(self._APP_NAME):
+            self.UTILS.uninstallApp(self._APP_NAME)
             
         #
         # Don't prompt me for geolocation (this was broken recently in Gaia, so 'try' it).
@@ -62,18 +58,6 @@ class test_00(GaiaTestCase):
         self.UTILS.reportResults()
         
     def test_run(self):
-        #
-        # Launch Settings app.
-        #
-        self.Settings.launch()
-        
-        self.Settings.cellular_and_data()
-        
-        #
-        # Wifi needs to be off for this test to work.
-        #
-        self.Settings.turn_dataConn_on(True)
-        
         #
         # Launch the 'everything.me' app.
         #
@@ -101,6 +85,7 @@ class test_00(GaiaTestCase):
         #
         time.sleep(10)
         self.marionette.switch_to_frame()
-        self.UTILS.connect_to_iframe("https://aduros.com/block-dream")
+        self.UTILS.switchToFrame("src", "https://aduros.com/block-dream")
+#        self.UTILS.connect_to_iframe("https://aduros.com/block-dream")
         x = self.UTILS.screenShot("_" + self._APP_NAME)
         self.UTILS.reportComment("NOTE: Please check the game screenshot in " + x)

@@ -1,48 +1,57 @@
-from apps import DOM
-import time
+import DOM, time
+from gaiatest   import GaiaTestCase
+from tools      import TestUtils
+from marionette import Marionette
 
-class main():
+class AppGallery(GaiaTestCase):
     
     #
     # When you create your instance of this class, include the
     # "self" object so we can access the calling class' objects.
     #
-    def __init__(self, p_parentSelf, p_testUtils):
-        self.UTILS  = p_testUtils
-        self.marionette = p_parentSelf.marionette
-        self.parent     = p_parentSelf
+    def __init__(self, p_parent):
+        self.apps       = p_parent.apps
+        self.data_layer = p_parent.data_layer
+
+        # Just so I get 'autocomplete' in my IDE!
+        self.marionette = Marionette()
+        self.UTILS      = TestUtils(self, 00)        
+        if True:
+            self.marionette = p_parent.marionette
+            self.UTILS      = p_parent.UTILS
+
 
     def launch(self):
-        self.parent.apps.kill_all()
-        self.app = self.parent.apps.launch('Gallery')
-        self.parent.wait_for_element_not_displayed(*DOM.GLOBAL.loading_overlay)
+        self.apps.kill_all()
+        self.app = self.apps.launch('Gallery')
+        self.wait_for_element_not_displayed(*DOM.GLOBAL.loading_overlay)
 
     def thumbCount(self):
-        self.parent.wait_for_element_present(*DOM.Gallery.thumbnail_items)
-        x = self.marionette.find_elements(*DOM.Gallery.thumbnail_items)
+        self.wait_for_element_present(*self.UTILS.verify("DOM.Gallery.thumbnail_items"))
+        x = self.marionette.find_elements(*self.UTILS.verify("DOM.Gallery.thumbnail_items"))
         return len(x)
 
     #
     # Returns a list of gallery item objects.
     #
     def getGalleryItems(self):
-        self.parent.wait_for_element_displayed(*DOM.Gallery.thumbnail_items)
+        self.wait_for_element_displayed(*self.UTILS.verify("DOM.Gallery.thumbnail_items"))
         return self.marionette.execute_script("return window.wrappedJSObject.files;")
         
     def clickThumb(self, p_num):
         gallery_items = self.getGalleryItems()
         for index, item in enumerate(gallery_items):
             if index == p_num:
-                my_item = self.marionette.find_elements(*DOM.Gallery.thumbnail_items)[index]
+                my_item = self.marionette.find_elements(*self.UTILS.verify("DOM.Gallery.thumbnail_items"))[index]
                 self.marionette.tap(my_item)
 
                 if 'video' in item['metadata']:
-                    self.parent.wait_for_element_displayed(*DOM.Gallery.current_image_vid)
+                    self.wait_for_element_displayed(*self.UTILS.verify("DOM.Gallery.current_image_vid"))
                 else:
-                    self.parent.wait_for_element_displayed(*DOM.Gallery.current_image_pic)
+                    self.wait_for_element_displayed(*self.UTILS.verify("DOM.Gallery.current_image_pic"))
                 break
 
-        #self.parent.wait_for_element_displayed(*DOM.Gallery.thumbnail_items)
+        #self.wait_for_element_displayed(*DOM.Gallery.thumbnail_items)
         #all_items = self.marionette.find_elements(*DOM.Gallery.thumbnail_items)
         #my_item = all_items[p_num]
         #self.marionette.tap(my_item)
@@ -53,16 +62,16 @@ class main():
     # THEN press a play button - it doesn't play automatically).
     #
     def playCurrentVideo(self):
-        self.parent.wait_for_element_displayed(*DOM.Gallery.video_play_button)
-        playBTN = self.marionette.find_element(*DOM.Gallery.video_play_button)
+        self.wait_for_element_displayed(*self.UTILS.verify("DOM.Gallery.video_play_button"))
+        playBTN = self.marionette.find_element(*self.UTILS.verify("DOM.Gallery.video_play_button"))
         playBTN.click()
         self.marionette.tap(playBTN)
-        self.parent.wait_for_element_not_displayed(*DOM.Gallery.video_pause_button)
+        self.wait_for_element_not_displayed(*self.UTILS.verify("DOM.Gallery.video_pause_button"))
 
     #
     # Check the length of a video.
     #
-    def testVideoLength(self, p_from_SS, p_to_SS):
+    def checkVideoLength(self, p_from_SS, p_to_SS):
             
         # Start the timer.
         start_time = time.time()

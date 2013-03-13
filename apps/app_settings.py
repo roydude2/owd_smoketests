@@ -1,37 +1,55 @@
-from apps import DOM
-import time
+import DOM, time
+from gaiatest   import GaiaTestCase
+from tools      import TestUtils
+from marionette import Marionette
 
-class main():
+class AppSettings(GaiaTestCase):
     
     #
     # When you create your instance of this class, include the
     # "self" object so we can access the calling class' objects.
     #
-    def __init__(self, p_parentSelf, p_testUtils):
-        self.UTILS  = p_testUtils
-        self.marionette = p_parentSelf.marionette
-        self.parent     = p_parentSelf
+    def __init__(self, p_parent):
+        self.apps       = p_parent.apps
+        self.data_layer = p_parent.data_layer
+
+        # Just so I get 'autocomplete' in my IDE!
+        self.marionette = Marionette()
+        self.UTILS      = TestUtils(self, 00)        
+        if True:
+            self.marionette = p_parent.marionette
+            self.UTILS      = p_parent.UTILS
+
+
 
     def launch(self):
-        self.parent.apps.kill_all()
-        self.app = self.parent.apps.launch('Settings')
-        self.parent.wait_for_element_not_displayed(*DOM.GLOBAL.loading_overlay)
+        self.apps.kill_all()
+        self.app = self.apps.launch('Settings')
+        self.wait_for_element_not_displayed(*DOM.GLOBAL.loading_overlay)
 
     #
     # Open wifi settings.
     #
     def wifi(self):
-        x = self.UTILS.get_element(*DOM.Settings.wifi)
+        x = self.UTILS.get_element(*self.UTILS.verify("DOM.Settings.wifi"))
         self.marionette.tap(x)
-        self.parent.wait_for_element_displayed(*DOM.Settings.wifi_header)
+        self.wait_for_element_displayed(*self.UTILS.verify("DOM.Settings.wifi_header"))
 
     #
     # Open cellular and data settings.
     #
     def cellular_and_data(self):
-        x = self.UTILS.get_element(*DOM.Settings.cellData)
+        x = self.UTILS.get_element(*self.UTILS.verify("DOM.Settings.cellData"))
         self.marionette.tap(x)
-        self.parent.wait_for_element_displayed(*DOM.Settings.celldata_header)
+        self.wait_for_element_displayed(*self.UTILS.verify("DOM.Settings.celldata_header"))
+
+    def trun_dataConn_on_if_required(self):
+        #
+        # Turns data conn on via settings app, but only
+        # if it's not already on.
+        #
+        if not self.data_layer.get_setting("ril.data.enabled"):
+            self.turn_dataConn_on()
 
     #
     # Click slider to turn data connection on.
@@ -50,23 +68,25 @@ class main():
             self.cellular_and_data()
         
         if p_wifiOFF:
-            if self.parent.data_layer.get_setting("wifi.enabled"):
-                self.parent.data_layer.disable_wifi()
+            if self.data_layer.get_setting("wifi.enabled"):
+                self.data_layer.disable_wifi()
             
         time.sleep(1)
         
-        if not self.parent.data_layer.get_setting("ril.data.enabled"):
+        if not self.data_layer.get_setting("ril.data.enabled"):
             #
             # If we disabled the wifi we'll be in the wrong frame here, so just make sure ...
             #
             self.marionette.switch_to_frame()
-            self.UTILS.switchFrame(*DOM.Settings.frame_locator)
+            self.UTILS.switchToFrame(*DOM.Settings.frame_locator)
             
-            x = self.UTILS.get_element(*DOM.Settings.celldata_DataConn)
+            x = self.UTILS.get_element(*self.UTILS.verify("DOM.Settings.celldata_DataConn"))
             self.marionette.tap(x)
             
         #
         # If we get prompted for action, say 'Turn ON'.
+        #
+        # (Because it's only 'if', we don't verfy this DOM setting.)
         #
         time.sleep(2)
         try:
@@ -85,22 +105,28 @@ class main():
         # Check to see if data conn is now enabled (it may be, even if the icon doesn't appear).
         #
         self.UTILS.TEST(
-            self.parent.data_layer.get_setting("ril.data.enabled"),    
+            self.data_layer.get_setting("ril.data.enabled"),    
             "Data connection is not enabled after trying to enable it.", True)
         
         #
         # Give the statusbar icon time to appear, then check for it.
         #
-        x = self.UTILS.check_statusbar_for_icon(DOM.Statusbar.dataConn, DOM.Settings.frame_locator)
-        self.UTILS.TEST(x, "Data connection is listed as 'enabled', but the icon is not present in the status bar.", True)
+        # NOTE: 'p_wifiOFF' works here: if it's true then the icon SHOULD be there, else
+        #       it shouldn't.
+        #
+        if p_wifiOFF:
+            x = self.UTILS.check_statusbar_for_icon(DOM.Statusbar.dataConn, DOM.Settings.frame_locator)
+            self.UTILS.TEST(x, 
+                            "Data connection is listed as 'enabled', but the icon is not present in the status bar.", 
+                            True)
 
 
     #
     # Click slider to turn wifi on.
     #
     def turn_wifi_on(self):
-        if not self.parent.data_layer.get_setting("wifi.enabled"):
-            x = self.UTILS.get_element(*DOM.Settings.wifi_enabled)
+        if not self.data_layer.get_setting("wifi.enabled"):
+            x = self.UTILS.get_element(*self.UTILS.verify("DOM.Settings.wifi_enabled"))
             self.marionette.tap(x)
         
         #
@@ -122,7 +148,7 @@ class main():
         # Compare the available networks - if one's connected then check it's the
         # one we expect (starts at array 3).
         #
-        x = self.marionette.find_elements(*DOM.Settings.wifi_available_networks)
+        x = self.marionette.find_elements(*self.UTILS.verify("DOM.Settings.wifi_available_networks"))
         for i in range(3, len(x)):
             connStatus = self.marionette.find_element('xpath', DOM.Settings.wifi_available_status % i)
             connName   = self.marionette.find_element('xpath', DOM.Settings.wifi_available_name   % i)
@@ -149,9 +175,9 @@ class main():
         # In case we are asked for a username and password ...
         #
         time.sleep(2)
-        wifi_login_user = self.marionette.find_element(*DOM.Settings.wifi_login_user)
-        wifi_login_pass = self.marionette.find_element(*DOM.Settings.wifi_login_pass)
-        wifi_login_ok   = self.marionette.find_element(*DOM.Settings.wifi_login_ok_btn)
+        wifi_login_user = self.marionette.find_element(*self.UTILS.verify("DOM.Settings.wifi_login_user"))
+        wifi_login_pass = self.marionette.find_element(*self.UTILS.verify("DOM.Settings.wifi_login_pass"))
+        wifi_login_ok   = self.marionette.find_element(*self.UTILS.verify("DOM.Settings.wifi_login_ok_btn"))
         if wifi_login_user.is_displayed():
             wifi_login_user.send_keys(p_user)
             wifi_login_pass.send_keys(p_pass)
@@ -160,41 +186,40 @@ class main():
             #
             # We were not asked, so go back to the list.
             #
-            backBTN = self.marionette.find_element(*DOM.Settings.back_button)
+            backBTN = self.marionette.find_element(*self.UTILS.verify("DOM.Settings.back_button"))
             self.marionette.tap(backBTN)
-            self.parent.wait_for_element_displayed('xpath', DOM.GLOBAL.app_head_specific % "Wi-Fi")
+            self.wait_for_element_displayed('xpath', DOM.GLOBAL.app_head_specific % "Wi-Fi")
         
         #
         # A couple of checks to wait for 'anything' to be Connected.
         #
         conBool = False
-        x = ('xpath', '//small[text()="Connected"]')
         try:
-            self.parent.wait_for_element_displayed(*x)
+            self.wait_for_element_displayed(*self.UTILS.verify("DOM.Settings.wifi_connected"))
             conBool = True
         except:
             conBool = False
         self.UTILS.TEST(conBool, "Timeout waiting for wifi to be marked as 'Connected' in the list.")
         
-        self.UTILS.TEST(self.parent.data_layer.get_setting("wifi.enabled"),
+        self.UTILS.TEST(self.data_layer.get_setting("wifi.enabled"),
             "Wifi connection to '" + p_wifi_name + "' not established.", True)
 
     #
     # Set the volume for alarms.
     #
     def setAlarmVolume(self, p_vol):
-        self.parent.data_layer.set_setting('audio.volume.alarm', p_vol)
+        self.data_layer.set_setting('audio.volume.alarm', p_vol)
         
     #
     # Set the volume for ringer and notifications.
     #
     def setRingerAndNotifsVolume(self, p_vol):
-        self.parent.data_layer.set_setting('audio.volume.notification', p_vol)
+        self.data_layer.set_setting('audio.volume.notification', p_vol)
         
     #
     # Go to Sound menu.
     #
     def goSound(self):
         self.launch()
-        x = self.UTILS.get_element(*DOM.Settings.sound)
+        x = self.UTILS.get_element(*self.UTILS.verify("DOM.Settings.sound"))
         self.marionette.tap(x)

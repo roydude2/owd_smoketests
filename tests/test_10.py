@@ -1,9 +1,16 @@
+#
+# Imports which are standard for all test cases.
+#
 import sys
 sys.path.insert(1, "./")
+from tools      import TestUtils
+from gaiatest   import GaiaTestCase
+import DOM
 
-from tools import TestUtils
-from apps import DOM, app_messages
-from gaiatest import GaiaTestCase
+#
+# Imports particular to this test case.
+#
+from apps.app_messages import *
 
 class test_10(GaiaTestCase):
     _Description = "Send and receive an SMS via the messaging app."
@@ -15,8 +22,8 @@ class test_10(GaiaTestCase):
         # Set up child objects...
         #
         GaiaTestCase.setUp(self)
-        self.UTILS  = TestUtils(self, 8)
-        self.messages   = app_messages.main(self, self.UTILS)
+        self.UTILS      = TestUtils(self, 8)
+        self.messages   = AppMessages(self)
         
         self.marionette.set_search_timeout(50)
         self.lockscreen.unlock()

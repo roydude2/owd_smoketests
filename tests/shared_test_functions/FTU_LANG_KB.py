@@ -6,7 +6,20 @@
 #
 # Currently used by tests 42,43 and 44.
 #
-from apps import DOM, app_ftu
+
+#
+# Imports which are standard for all test cases.
+#
+import sys
+sys.path.insert(1, "./")
+from tools      import TestUtils
+from gaiatest   import GaiaTestCase
+import DOM
+
+#
+# Imports particular to this test case.
+#
+from apps.app_ftu import *
 import os
 
 class main():
@@ -18,7 +31,7 @@ class main():
         self.marionette = self.parent.marionette
         
         self.UTILS      = self.parent.UTILS
-        self.FTU        = app_ftu.main(self.parent, self.UTILS)
+        self.FTU        = AppFTU(self.parent)
         
         self.marionette.set_search_timeout(50)
         self.parent.lockscreen.unlock()
@@ -30,8 +43,8 @@ class main():
         self.parent.data_layer.disable_wifi()
 
     def _checkSize(self, p_x, p_a, p_b):
-        x = p_x + "keyboard image was "
-        x = x + str(p_a) + " bytes, not " + str(p_b)
+        x = p_x + " keyboard image was "
+        x = x + str(p_b) + " bytes, not " + str(p_a)
         x = x + " - please verify the screenshot."
         self.UTILS.TEST((p_a == p_b), x )
         
@@ -78,7 +91,7 @@ class main():
         # PRIVACY SCREEN - info. email.
         #
         # Click the email area to display the keyboard.
-        x = self.UTILS.get_element(*DOM.FTU.privacy_email)
+        x = self.UTILS.get_element(*self.UTILS.verify("DOM.FTU.privacy_email"))
         x.click()
         
         #

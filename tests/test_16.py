@@ -1,9 +1,17 @@
+#
+# Imports which are standard for all test cases.
+#
 import sys
 sys.path.insert(1, "./")
+from tools      import TestUtils
+from gaiatest   import GaiaTestCase
+import DOM
 
-from tools import TestUtils
-from apps import DOM, app_settings, app_browser
-from gaiatest import GaiaTestCase
+#
+# Imports particular to this test case.
+#
+from apps.app_settings import *
+from apps.app_browser import *
 
 class test_16(GaiaTestCase):
     _Description = "Connect to Wifi network."
@@ -12,8 +20,8 @@ class test_16(GaiaTestCase):
         # Set up child objects...
         GaiaTestCase.setUp(self)
         self.UTILS  = TestUtils(self, 16)
-        self.Settings   = app_settings.main(self, self.UTILS)
-        self.Browser    = app_browser.main(self, self.UTILS)
+        self.Settings   = AppSettings(self)
+        self.Browser    = AppBrowser(self)
         self.wifi_name  = self.UTILS.get_os_variable("WIFI_TEST_16", "Name of wifi to connect to (case sensitive!)")
         self.testURL    = self.UTILS.get_os_variable("URL_TEST_16", "URL to test wifi with")
         self.wifi_user  = self.UTILS.get_os_variable("USERNAME_16", "Wifi username")

@@ -1,15 +1,23 @@
+#
+# Imports which are standard for all test cases.
+#
 import sys
 sys.path.insert(1, "./")
+from tools      import TestUtils
+from gaiatest   import GaiaTestCase
+import DOM
 
-from tools import TestUtils
+#
+# Imports particular to this test case.
+#
 from tests.shared_test_functions import FTU_LANG_KB
-from gaiatest import GaiaTestCase
 
 class test_42(GaiaTestCase):
     _Description = "First time use screens - check ENGLISH keyboard."
     
     _LANG           = "English (US)"
-    _SCREEN_SIZES   = (45132, 21224, 21359, 20615)
+#    _SCREEN_SIZES   = (45132, 21224, 21359, 20615)
+    _SCREEN_SIZES   = (45132, 21285, 20594, 20641)
     
     def setUp(self):
         #

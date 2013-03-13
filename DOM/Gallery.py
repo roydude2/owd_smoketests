@@ -1,0 +1,7 @@
+thumbnail_items         = ('css selector', 'li.thumbnail')
+thumbnail_list_section  = ('id', 'thumbnail-list-view')
+current_image_pic       = ('css selector', '#frame2 > img')
+current_image_vid       = ('xpath', "//*[@id='frame2']/div")
+video_play_button       = ('xpath', "//*[@id='frame2']/div/button")
+video_pause_button      = ('xpath', "//*[@id='frame2']/div/div/button")
+fullscreen_back_button  = ('id', 'fullscreen-back-button')

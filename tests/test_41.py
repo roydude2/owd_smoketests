@@ -1,14 +1,22 @@
+#
+# Imports which are standard for all test cases.
+#
 import sys
 sys.path.insert(1, "./")
+from tools      import TestUtils
+from gaiatest   import GaiaTestCase
+import DOM
 
-from tools import TestUtils
-from apps import DOM, app_contacts, app_settings
+#
+# Imports particular to this test case.
+#
+from apps.app_contacts import *
+from apps.app_settings import *
 from tests.mock_data.contacts import MockContacts
-from gaiatest import GaiaTestCase
 import time
 
 class test_41(GaiaTestCase):
-    _Description = "Importing facebook contacts."
+    _Description = "Link a facebook contact."
 
     def setUp(self):
         #
@@ -16,8 +24,8 @@ class test_41(GaiaTestCase):
         #
         GaiaTestCase.setUp(self)
         self.UTILS      = TestUtils(self, 41)
-        self.contacts   = app_contacts.main(self, self.UTILS)
-        self.settings   = app_settings.main(self, self.UTILS)
+        self.contacts   = AppContacts(self)
+        self.settings   = AppSettings(self)
                 
         #
         # Set timeout for element searches.
@@ -34,7 +42,7 @@ class test_41(GaiaTestCase):
         # Set up to use data connection.
         #
         self.data_layer.disable_wifi()
-        self.settings.turn_dataConn_on(False)
+        self.settings.trun_dataConn_on_if_required()
         
         #
         # You must be logged into facebook already to run this test
@@ -94,8 +102,9 @@ class test_41(GaiaTestCase):
         # Switch back and wait for contact details page to re-appear.
         #
         self.marionette.switch_to_frame()
-        self.UTILS.connect_to_iframe(DOM.Facebook.fb_friends_iframe_1)
-        x = self.UTILS.get_element("xpath", DOM.GLOBAL.app_head_specific % self.Contact_1['name'])
+        self.UTILS.switchToFrame(*DOM.Facebook.fb_friends_iframe_1)
+        self.UTILS.TEST(self.UTILS.headerFound(self.Contact_1['name']), 
+                        "Header '"+ self.Contact_1['name'] +"' not found.")
 
         #
         # Reload the contacts app (we need a little sleep to let the facebook
@@ -108,7 +117,7 @@ class test_41(GaiaTestCase):
         #
         # Check that our contact is now listed as a facebook contact (icon by the name in 'all contacts' screen).
         #
-        x = self.marionette.find_elements(*DOM.Contacts.view_all_fb_contacts)
+        x = self.marionette.find_elements(*self.UTILS.verify("DOM.Contacts.view_all_fb_contacts"))
         self.UTILS.TEST(len(x) > 0, "Our contact is not listed as a facebook contact after linking.")
         
 

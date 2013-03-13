@@ -1,25 +1,35 @@
-from apps import DOM
-import time
+import DOM, time
+from gaiatest   import GaiaTestCase
+from tools      import TestUtils
+from marionette import Marionette
 
-class main():
+class AppClock(GaiaTestCase):
     
     #
     # When you create your instance of this class, include the
     # "self" object so we can access the calling class' objects.
     #
-    def __init__(self, p_parentSelf, p_testUtils):
-        self.UTILS  = p_testUtils
-        self.marionette = p_parentSelf.marionette
-        self.parent     = p_parentSelf
+    def __init__(self, p_parent):
+        self.apps       = p_parent.apps
+        self.data_layer = p_parent.data_layer
+
+        # Just so I get 'autocomplete' in my IDE!
+        self.marionette = Marionette()
+        self.UTILS      = TestUtils(self, 00)        
+        if True:
+            self.marionette = p_parent.marionette
+            self.UTILS      = p_parent.UTILS
+
+
 
     def launch(self):
-        self.parent.apps.kill_all()
-        self.app = self.parent.apps.launch('Clock')
-        self.parent.wait_for_element_not_displayed(*DOM.GLOBAL.loading_overlay)
+        self.apps.kill_all()
+        self.app = self.apps.launch('Clock')
+        self.wait_for_element_not_displayed(*DOM.GLOBAL.loading_overlay)
 
     def deleteAllAlarms(self):
         try:
-            self.parent.data_layer.delete_all_alarms()
+            self.data_layer.delete_all_alarms()
             return True
         except:
             return False
@@ -43,11 +53,11 @@ class main():
     #
     # Create a new alarm.
     #
-    def newAlarm(self, p_hour, p_min, p_label, p_repeat="Never", p_sound="Classic Buzz", p_snooze="5 minutes"):
+    def createAlarm(self, p_hour, p_min, p_label, p_repeat="Never", p_sound="Classic Buzz", p_snooze="5 minutes"):
         #
         # Click the new alarm button.
         #
-        x = self.UTILS.get_element(*DOM.Clock.new_alarm_btn)
+        x = self.UTILS.get_element(*self.UTILS.verify("DOM.Clock.new_alarm_btn"))
         self.marionette.tap(x)
         
         #
@@ -72,8 +82,8 @@ class main():
         #
         # Set the AM / PM.
         #
-        scroller = self.UTILS.get_element(*DOM.Clock.time_picker_ampm)
-        currVal  = scroller.find_element(*DOM.Clock.time_picker_curr_val).text
+        scroller = self.UTILS.get_element(*self.UTILS.verify("DOM.Clock.time_picker_ampm"))
+        currVal  = scroller.find_element(*self.UTILS.verify("DOM.Clock.time_picker_curr_val")).text
         
         if t_ampm != currVal:
             if currVal == "AM":
@@ -84,7 +94,7 @@ class main():
         #
         # Set the label.
         #
-        x = self.UTILS.get_element(*DOM.Clock.alarm_label)
+        x = self.UTILS.get_element(*self.UTILS.verify("DOM.Clock.alarm_label"))
         x.send_keys(p_label)
         
         #
@@ -94,7 +104,7 @@ class main():
         #
         # Save the alarm.
         #
-        x = self.UTILS.get_element(*DOM.Clock.alarm_done)
+        x = self.UTILS.get_element(*self.UTILS.verify("DOM.Clock.alarm_done"))
         self.marionette.tap(x)
         
         #
@@ -114,14 +124,14 @@ class main():
         # Put the time in a format we can compare easily with.
         p_time = str(p_hour) + ":" + str(p_min).zfill(2)
         
-        alarms = self.UTILS.get_elements(*DOM.Clock.alarm_preview_alarms)
+        alarms = self.UTILS.get_elements(*self.UTILS.verify("DOM.Clock.alarm_preview_alarms"))
         
         foundBool = False
         for alarm in alarms:
-            alarm_time   = alarm.find_element(*DOM.Clock.alarm_preview_time).text
-            alarm_ampm   = alarm.find_element(*DOM.Clock.alarm_preview_ampm).text
-            alarm_label  = alarm.find_element(*DOM.Clock.alarm_preview_label).text
-            alarm_repeat = alarm.find_element(*DOM.Clock.alarm_preview_repeat).text
+            alarm_time   = alarm.find_element(*self.UTILS.verify("DOM.Clock.alarm_preview_time")).text
+            alarm_ampm   = alarm.find_element(*self.UTILS.verify("DOM.Clock.alarm_preview_ampm")).text
+            alarm_label  = alarm.find_element(*self.UTILS.verify("DOM.Clock.alarm_preview_label")).text
+            alarm_repeat = alarm.find_element(*self.UTILS.verify("DOM.Clock.alarm_preview_repeat")).text
             
             if  p_time      == alarm_time   and \
                 p_ampm      == alarm_ampm   and \
@@ -131,6 +141,21 @@ class main():
                     break
         
         self.UTILS.TEST(foundBool, "Alarm details not displayed correctly on the Clock screen.")
+             
+             
+    def checkStatusbarIcon(self):
+        #
+        # Check for the little alarm bell icon in the statusbar of the
+        # homescreen.
+        #
+        self.marionette.switch_to_frame()
+        boolOK = True
+        try:
+            self.wait_for_element_displayed(*DOM.Clock.alarm_notifier)
+        except:
+            boolOK = False
+        
+        return boolOK
                 
     #
     # Check details of alarm when it rings.
@@ -139,19 +164,22 @@ class main():
     #       wait until the alarm is expected to have started before calling this!
     #
     def checkAlarmDetails(self, p_hour, p_min, p_label):
+
         #
-        # First, navigate 'home' and click the alarm notifier.
+        # The alarm screen appears in a different frame to the clock.
+        # Try to access this frame a few times to give the alarm time to appear.
         #
         self.marionette.switch_to_frame()
-        self.parent.wait_for_element_displayed(*DOM.Clock.alarm_notifier, timeout=180)
-        x = self.UTILS.get_element(*DOM.Clock.alarm_notifier)
-        self.marionette.tap(x)
         
-        #
-        # Once you've opened the notification, the alarm screen appears in 
-        # an odd 'empty' system-level frame.
-        #
-        self.UTILS.connect_to_iframe("")
+        retries = 40
+        while retries >= 0:
+            retries = retries - 1
+            try:
+                self.UTILS.switchToFrame(*DOM.Clock.alarm_alert_iframe)
+                break
+            except:
+                time.sleep(3)
+            
         
         #
         # Sort the time out into 12 hour format.
@@ -163,26 +191,51 @@ class main():
         # Put the time in a format we can compare easily with.
         p_time = str(t_hour) + ":" + str(p_min).zfill(2)
         
-        x = self.UTILS.get_element(*DOM.Clock.alarm_alert_time).text
+        x = self.UTILS.get_element(*self.UTILS.verify("DOM.Clock.alarm_alert_time")).text
         self.UTILS.TEST(x == p_time, "Incorrect time shown when alarm is ringing: expected '" + p_time + "', but it was '" + x + "'.")
         
-        x = self.UTILS.get_element(*DOM.Clock.alarm_alert_ampm).text
+        x = self.UTILS.get_element(*self.UTILS.verify("DOM.Clock.alarm_alert_ampm")).text
         self.UTILS.TEST(x == t_ampm, "Incorrect AM / PM shown when alarm is ringing: expected '" + t_ampm + "', but it was '" + x + "'.")
         
-        x = self.UTILS.get_element(*DOM.Clock.alarm_alert_label).text
+        x = self.UTILS.get_element(*self.UTILS.verify("DOM.Clock.alarm_alert_label")).text
         self.UTILS.TEST(x == p_label, "Incorrect label shown when alarm is ringing: expected '" + p_label + "', but it was '" + x + "'.")
         
         #
         # Stop the alarm.
         #
-        x = self.UTILS.get_element(*DOM.Clock.alarm_alert_close)
+        x = self.UTILS.get_element(*self.UTILS.verify("DOM.Clock.alarm_alert_close"))
         self.marionette.tap(x)
 
     #
     # Scroll forward and backward.
     #
     def _scrollForward(self, p_scroller):
+#        #
+#        # Start in the middle and flick to 'almost' the top.
+#        #
+#        x_pos   = p_scroller.size['width']  / 2
+#        y_start = p_scroller.size['height'] / 2
+#        y_end   = y_start * 0.87
+#        self.UTILS.reportComment("(" + \
+#                                 str(x_pos) + ", " + \
+#                                 str(y_start) + ", " + \
+#                                 str(x_pos) + ", " + \
+#                                 str(y_end) + ", " + \
+#                                 "300)")
+##        x_pos   = "%.0f" % x_pos
+##        y_start = "%.0f" % y_start
+##        y_end   = "%.0f" % y_end
+##        self.UTILS.reportComment("(" + \
+##                                 str(x_pos) + ", " + \
+##                                 str(y_start) + ", " + \
+##                                 str(x_pos) + ", " + \
+##                                 str(y_end) + ", " + \
+##                                 "300)")
+#        
+        
+#        self.marionette.flick(p_scroller, x_pos, y_start, x_pos, y_end, 300)
         self.marionette.flick(p_scroller, 50, 100, 50, 63, 300)
+
         time.sleep(1)
         
     def _scrollBackward(self, p_scroller):
@@ -201,7 +254,7 @@ class main():
         #
         # Get the current setting for this scroller.
         #
-        currVal = scroller.find_element(*DOM.Clock.time_picker_curr_val).text
+        currVal = scroller.find_element(*self.UTILS.verify("DOM.Clock.time_picker_curr_val")).text
         
         #
         # Now flick the scroller as many times as required 
@@ -215,6 +268,6 @@ class main():
                 self._scrollBackward(scroller)
                 
             # Get the new 'currVal'.
-            currVal = scroller.find_element(*DOM.Clock.time_picker_curr_val).text
+            currVal = scroller.find_element(*self.UTILS.verify("DOM.Clock.time_picker_curr_val")).text
                 
 

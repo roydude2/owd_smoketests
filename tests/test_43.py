@@ -1,9 +1,16 @@
+#
+# Imports which are standard for all test cases.
+#
 import sys
 sys.path.insert(1, "./")
+from tools      import TestUtils
+from gaiatest   import GaiaTestCase
+import DOM
 
-from tools import TestUtils
+#
+# Imports particular to this test case.
+#
 from tests.shared_test_functions import FTU_LANG_KB
-from gaiatest import GaiaTestCase
 
 class test_42(GaiaTestCase):
     _Description = "First time use screens - check PORTUGUESE keyboard."

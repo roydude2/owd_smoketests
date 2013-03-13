@@ -1,11 +1,19 @@
+#
+# Imports which are standard for all test cases.
+#
 import sys
 sys.path.insert(1, "./")
+from tools      import TestUtils
+from gaiatest   import GaiaTestCase
+import DOM
 
-from tools import TestUtils
-from apps import DOM, app_clock, app_settings
-from gaiatest import GaiaTestCase
+#
+# Imports particular to this test case.
+#
+from apps.app_clock import *
+from apps.app_settings import *
+#from datetime 
 import datetime
-
 
 class test_35(GaiaTestCase):
     _Description = "Setting a new alarm (will sleep for a while to give alarm time to start)."
@@ -16,8 +24,8 @@ class test_35(GaiaTestCase):
         #
         GaiaTestCase.setUp(self)
         self.UTILS      = TestUtils(self, 35)
-        self.clock      = app_clock.main(self, self.UTILS)
-        self.settings   = app_settings.main(self, self.UTILS)
+        self.clock      = AppClock(self)
+        self.settings   = AppSettings(self)
                 
         #
         # Set timeout for element searches.
@@ -46,24 +54,36 @@ class test_35(GaiaTestCase):
         self.clock.launch()
         
         #
-        # Create an alarm that is 2 minutes in the future.
+        # Create an alarm that is 1 minute in the future.
         #
-        _mins_to_wait = 2
+        _mins_to_wait = 1
+        
+        # (Make sure we're not about to do this at the end of a minute.)
+        import time
+        now_secs = time.time() / 60
+        if now_secs > 45:
+            time.sleep(16)
+        
         t = datetime.datetime.now() + datetime.timedelta(minutes=_mins_to_wait)
         
         _hour   = t.hour
         _minute = t.minute
         _title  = "Test 35 alarm"
 
-        self.clock.newAlarm(_hour, _minute, _title)
-        
+        self.clock.createAlarm(_hour, _minute, _title)
+
         #
-        # Go home and wait for the alarm.
+        # Return to the main screen (since this is where the user will
+        # most likely be when the alarm goes off).
         #
         self.UTILS.goHome()
         
-        # (Because the notifier always seems to be classed as 'visible', we have to manually wait.)
-        import time
-        time.sleep(_mins_to_wait * 60)
-        
+        #
+        # Check the statusbar icon exists.
+        #
+        self.UTILS.TEST(self.clock.checkStatusbarIcon(), "Alarm icon not present in statusbar.")
+
+        #
+        # Wait for the alarm to start.
+        #
         self.clock.checkAlarmDetails(_hour, _minute, _title)

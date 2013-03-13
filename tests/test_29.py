@@ -1,14 +1,20 @@
+#
+# Imports which are standard for all test cases.
+#
 import sys
 sys.path.insert(1, "./")
+from tools      import TestUtils
+from gaiatest   import GaiaTestCase
+import DOM
 
-from tools import TestUtils
-from apps import DOM, app_contacts
+#
+# Imports particular to this test case.
+#
+from apps.app_contacts import *
 from tests.mock_data.contacts import MockContacts
-from gaiatest import GaiaTestCase
-import time
 
 class test_29(GaiaTestCase):
-    _Description = "Create a contact via the contacts app."
+    _Description = "Killing apps via the homescreen."
 
     _test_apps = ["Gallery", "FM Radio"]
     _img_list  = ('img1.jpg', 'img2.jpg')
@@ -18,8 +24,8 @@ class test_29(GaiaTestCase):
         # Set up child objects...
         #
         GaiaTestCase.setUp(self)
-        self.UTILS = TestUtils(self, 29)
-        self.contacts  = app_contacts.main(self, self.UTILS)
+        self.UTILS      = TestUtils(self, 29)
+        self.contacts   = AppContacts(self)
 
         #
         # Load a couple of images into the gallery.
@@ -51,7 +57,7 @@ class test_29(GaiaTestCase):
         
         self.UTILS.holdHomeButton()
         
-        x = self.UTILS.get_element(*DOM.Home.cards_view)
+        x = self.UTILS.get_element(*self.UTILS.verify("DOM.Home.cards_view"))
         self.UTILS.TEST(x.is_displayed(), "Currently running apps not displayed as expected.", True)
         
         #

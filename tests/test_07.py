@@ -1,10 +1,17 @@
+#
+# Imports which are standard for all test cases.
+#
 import sys
 sys.path.insert(1, "./")
+from tools      import TestUtils
+from gaiatest   import GaiaTestCase
+import DOM
 
-from tools import TestUtils
-from apps import DOM, app_contacts
+#
+# Imports particular to this test case.
+#
+from apps.app_contacts import *
 from tests.mock_data.contacts import MockContacts
-from gaiatest import GaiaTestCase
 
 class test_7(GaiaTestCase):
     _Description = "Create a contact via the contacts app."
@@ -14,8 +21,8 @@ class test_7(GaiaTestCase):
         # Set up child objects...
         #
         GaiaTestCase.setUp(self)
-        self.UTILS = TestUtils(self, 7)
-        self.contacts  = app_contacts.main(self, self.UTILS)
+        self.UTILS      = TestUtils(self, 7)
+        self.contacts   = AppContacts(self)
         
         #
         # Set the timeout for element searches.
@@ -27,6 +34,7 @@ class test_7(GaiaTestCase):
         # Get details of our test contact.
         #
         self.Contact_1 = MockContacts().Contact_1
+        
         
     def tearDown(self):
         self.UTILS.reportResults()

@@ -1,9 +1,17 @@
+#
+# Imports which are standard for all test cases.
+#
 import sys
 sys.path.insert(1, "./")
+from tools      import TestUtils
+from gaiatest   import GaiaTestCase
+import DOM
 
-from tools import TestUtils
-from apps import DOM, app_gallery, app_camera
-from gaiatest import GaiaTestCase
+#
+# Imports particular to this test case.
+#
+from apps.app_gallery import *
+from apps.app_camera import *
 
 class test_12(GaiaTestCase):
     _Description = "Record a video and view it in the gallery app."
@@ -13,9 +21,9 @@ class test_12(GaiaTestCase):
         # Set up child objects...
         #
         GaiaTestCase.setUp(self)
-        self.UTILS = TestUtils(self, 12)
-        self.gallery   = app_gallery.main(self, self.UTILS)
-        self.camera    = app_camera.main(self, self.UTILS)
+        self.UTILS      = TestUtils(self, 12)
+        self.gallery    = AppGallery(self)
+        self.camera     = AppCamera(self)
         
         #
         # Default timeout for finding elements on the screen.
@@ -33,7 +41,7 @@ class test_12(GaiaTestCase):
         #
         self.camera.launch()
         self.camera.recordVideo("00:05")
-        self.camera.testVideoLength(0, 4.9, 9.0)
+        self.camera.checkVideoLength(0, 4.9, 10.0)
        
         #
         # Open the gallery application.
@@ -44,7 +52,7 @@ class test_12(GaiaTestCase):
         # Open the first thumbnail (should be our video).
         #
         self.gallery.clickThumb(0)
-        self.gallery.testVideoLength(4.9, 9.0)
+        self.gallery.checkVideoLength(4.9, 10.0)
         
         
         

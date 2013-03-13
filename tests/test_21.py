@@ -1,9 +1,17 @@
+#
+# Imports which are standard for all test cases.
+#
 import sys
 sys.path.insert(1, "./")
+from tools      import TestUtils
+from gaiatest   import GaiaTestCase
+import DOM
 
-from tools import TestUtils
-from apps import DOM, app_market
-from gaiatest import GaiaTestCase
+#
+# Imports particular to this test case.
+#
+from apps.app_market import *
+from apps.app_settings import *
 
 class test_21(GaiaTestCase):
     _Description = "Get an app from the marketplace and run it."
@@ -16,10 +24,16 @@ class test_21(GaiaTestCase):
         #
         GaiaTestCase.setUp(self)
         self.UTILS  = TestUtils(self, 21)
-        self.Market     = app_market.main(self, self.UTILS)
+        self.Market = AppMarket(self)
+        self.Settings   = AppSettings(self)
         
         self.marionette.set_search_timeout(50)
         self.lockscreen.unlock()
+        
+        #
+        # Ensure we have a connection.
+        #
+        self.Settings.trun_dataConn_on_if_required()
         
         self.UTILS.reportComment("Using app '" + self.APP_NAME + "'")
         
@@ -62,9 +76,8 @@ class test_21(GaiaTestCase):
         self.app = self.apps.launch(self.APP_NAME)
         self.wait_for_element_not_displayed(*DOM.GLOBAL.loading_overlay)
         
-        test_title = ('class name', 'titlebarIcon')
-        self.wait_for_element_displayed(*test_title)
-        x = self.marionette.find_element(*test_title)
+        self.wait_for_element_displayed(*self.UTILS.verify("DOM.GLOBAL.app_titlebar_name", 20))
+        x = self.marionette.find_element(*self.UTILS.verify("DOM.GLOBAL.app_titlebar_name"))
         self.UTILS.TEST(x.get_attribute("title") == "Wikipedia homepage",
             "Application did not have the expected title - please check the screenshot matches '" + self.APP_NAME  + "'")
         

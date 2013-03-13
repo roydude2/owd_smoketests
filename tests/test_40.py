@@ -1,10 +1,18 @@
+#
+# Imports which are standard for all test cases.
+#
 import sys
 sys.path.insert(1, "./")
+from tools      import TestUtils
+from gaiatest   import GaiaTestCase
+import DOM
 
-from tools import TestUtils
-from apps import DOM, app_contacts, app_settings
+#
+# Imports particular to this test case.
+#
+from apps.app_contacts import *
+from apps.app_settings import *
 from tests.mock_data.contacts import MockContacts
-from gaiatest import GaiaTestCase
 
 class test_40(GaiaTestCase):
     _Description = "Importing facebook contacts."
@@ -15,8 +23,8 @@ class test_40(GaiaTestCase):
         #
         GaiaTestCase.setUp(self)
         self.UTILS      = TestUtils(self, 40)
-        self.contacts   = app_contacts.main(self, self.UTILS)
-        self.settings   = app_settings.main(self, self.UTILS)
+        self.contacts   = AppContacts(self)
+        self.settings   = AppSettings(self)
                 
         #
         # Set timeout for element searches.
@@ -69,8 +77,9 @@ class test_40(GaiaTestCase):
         # Something in the way gaiatest removes the contacts when it's initliazed,
         # leaves this message at "x/x contacts imported" if you run this after some 
         # have been added.
-        # Therefore ignore this check for now (it'll only be a valid check the very
-        # first time you ever run this test).
+        # Therefore ignore this check for now as it'll only be a valid check the very
+        # first time you ever run this test, and it only fails because I'm accessing the
+        # UI using gaiatest.
         #
         #x = self.UTILS.get_element(*DOM.Facebook.fb_totals)
         #self.UTILS.TEST("No friends imported" in x.text,
@@ -96,15 +105,12 @@ class test_40(GaiaTestCase):
         
         time.sleep(2)
         
-        #self.marionette.switch_to_frame()
-        #self.UTILS.connect_to_iframe("app://communications.gaiamobile.org/contacts/index.html")
-        
-        x = self.marionette.find_elements(*DOM.Contacts.view_all_fb_contacts)
+        x = self.marionette.find_elements(*self.UTILS.verify("DOM.Contacts.view_all_fb_contacts"))
         self.UTILS.TEST(len(x) == friend_count, "Expected " + str(friend_count) + ", but found " + str(len(x)) + ".")
         
         self.contacts.tapSettingsButton()
                 
-        x = self.UTILS.get_element(*DOM.Facebook.fb_totals)
+        x = self.UTILS.get_element(*self.UTILS.verify("DOM.Facebook.fb_totals"))
         y = str(friend_count) + "/" + str(friend_count) + " friends imported"
         self.UTILS.TEST(x.text == y, "After import, expected '" + y + "', but instead saw '" + x.text + "'.")
         

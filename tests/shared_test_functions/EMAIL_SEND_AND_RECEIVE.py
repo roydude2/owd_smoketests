@@ -10,7 +10,22 @@
 #
 # Currently used by tests 22, 23, 24 and 25 (combined to 22 and 24).
 #
-from apps import DOM, app_email
+
+#
+# Imports which are standard for all test cases.
+#
+import sys
+sys.path.insert(1, "./")
+from marionette import Marionette
+from tools      import TestUtils
+from gaiatest   import GaiaTestCase
+import DOM
+
+#
+# Imports particular to this test case.
+#
+from apps.app_settings import *
+from apps.app_email import *
 import os, time
 
 class main():
@@ -36,17 +51,28 @@ class main():
         self.USER2          = p_user2
         self.EMAIL2         = p_email2
         self.PASS2          = p_pass2
-        self.parent         = p_parent
-        self.marionette     = self.parent.marionette
+        self.apps           = p_parent.apps
         self.sentFolderName = p_sentFolderName
-        self.UTILS          = self.parent.UTILS
-        self.Email          = app_email.main(self.parent, self.UTILS)
+        self.Email          = AppEmail(p_parent)
+        self.settings       = AppSettings(p_parent)
         self.subject        = "Test " + p_testNum + " - " + str(time.time())
+        
+                # Just so I get 'autocomplete' in my IDE!
+        self.marionette     = Marionette()
+        self.UTILS          = TestUtils(self, 00)        
+        if True:
+            self.marionette = p_parent.marionette
+            self.UTILS      = p_parent.UTILS
 
         self.UTILS.reportComment("Using subject \"" + self.subject + "\".")
         
         self.marionette.set_search_timeout(50)
-        self.parent.lockscreen.unlock()
+        p_parent.lockscreen.unlock()
+        
+        #
+        # Make sure we have some data connectivity.
+        #
+        self.settings.trun_dataConn_on_if_required()
         
     def run(self):
 
@@ -77,16 +103,15 @@ class main():
         #
         # Check our email is in the sent folder.
         #
-        time.sleep(60)
         self.Email.openMailFolder(self.sentFolderName)
+        time.sleep(10)
         self.UTILS.TEST(self.Email.emailIsInFolder(self.subject),
             "Email was not found in the Sent folder after being sent.")
         
-
         #
         # Give the email time to arrive.
         #
-        time.sleep(180)
+#        time.sleep(180)
 
         ##################################################
         #
@@ -111,15 +136,15 @@ class main():
         #
         # Verify the contents.
         #
-        x = self.UTILS.get_element(*DOM.Email.open_email_from)
+        x = self.UTILS.get_element(*self.UTILS.verify("DOM.Email.open_email_from"))
         self.UTILS.TEST(x.text == self.EMAIL1, 
             "Expected 'From' field to be '" + self.EMAIL1 + "', but it was '" + x.text + "'.")
 
-        x = self.UTILS.get_element(*DOM.Email.open_email_to)
+        x = self.UTILS.get_element(*self.UTILS.verify("DOM.Email.open_email_to"))
         self.UTILS.TEST(x.text == self.EMAIL2, 
             "Expected 'To' field to be '" + self.EMAIL2 + "', but it was '" + x.text + "'.")
 
-        x = self.UTILS.get_element(*DOM.Email.open_email_subject)
+        x = self.UTILS.get_element(*self.UTILS.verify("DOM.Email.open_email_subject"))
         self.UTILS.TEST(x.text == self.subject, 
             "Expected 'From' field to be '" + self.subject + "', but it was '" + x.text + "'.")
         

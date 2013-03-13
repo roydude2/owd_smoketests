@@ -1,12 +1,17 @@
 #
-# This is a template for new tests - make the required changes - refer to previous tests if you need help.
+# Imports which are standard for all test cases.
 #
 import sys
 sys.path.insert(1, "./")
+from tools      import TestUtils
+from gaiatest   import GaiaTestCase
+import DOM
 
-from tools import TestUtils
-from apps import DOM, app_settings, app_browser
-from gaiatest import GaiaTestCase
+#
+# Imports particular to this test case.
+#
+from apps.app_settings import *
+from apps.app_browser import *
 
 class test_32(GaiaTestCase):
     _Description = "Use Data Connection to download packaged app, then delete it."
@@ -20,9 +25,9 @@ class test_32(GaiaTestCase):
         # Set up child objects...
         #
         GaiaTestCase.setUp(self)
-        self.UTILS  = TestUtils(self, 32)
-        self.Settings   = app_settings.main(self, self.UTILS)
-        self.Browser    = app_browser.main(self, self.UTILS)
+        self.UTILS      = TestUtils(self, 32)
+        self.Settings   = AppSettings(self)
+        self.Browser    = AppBrowser(self)
         
         self.marionette.set_search_timeout(50)
         self.lockscreen.unlock()
@@ -33,22 +38,16 @@ class test_32(GaiaTestCase):
         try: self.apps.uninstall(self._appName)
         except: pass #(ignore any exceptions)
         
+        #
+        # Ensure we have a connection without wifi.
+        #
+        self.data_layer.disable_wifi()
+        self.Settings.trun_dataConn_on_if_required()
+        
     def tearDown(self):
         self.UTILS.reportResults()
         
     def test_run(self):
-        
-        #
-        # Launch Settings app.
-        #
-        self.Settings.launch()
-        
-        self.Settings.cellular_and_data()
-        
-        #
-        # Wifi needs to be off for this test to work.
-        #
-        self.Settings.turn_dataConn_on(True)
         
         self.UTILS.TEST(
             self.data_layer.get_setting("ril.data.enabled"),    
@@ -84,7 +83,7 @@ class test_32(GaiaTestCase):
         self.marionette.tap(install_btn)
         
         # ... and switch back to brwoser to see the next splash screen(!)
-        self.UTILS.switchFrame(*DOM.Browser.frame_locator)
+        self.UTILS.switchToFrame(*DOM.Browser.frame_locator)
         x = ('id', 'modal-dialog-alert-ok')
         btn = self.UTILS.get_element(*x)
         self.marionette.tap(btn)

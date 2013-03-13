@@ -1,9 +1,17 @@
+#
+# Imports which are standard for all test cases.
+#
 import sys
 sys.path.insert(1, "./")
+from tools      import TestUtils
+from gaiatest   import GaiaTestCase
+import DOM
 
-from tools import TestUtils
-from apps import DOM, app_market
-from gaiatest import GaiaTestCase
+#
+# Imports particular to this test case.
+#
+from apps.app_market import *
+from apps.app_settings import *
 
 class test_20(GaiaTestCase):
     _Description = "Get an app from the marketplace."
@@ -15,11 +23,17 @@ class test_20(GaiaTestCase):
         # Set up child objects...
         #
         GaiaTestCase.setUp(self)
-        self.UTILS  = TestUtils(self, 20)
-        self.Market   = app_market.main(self, self.UTILS)
+        self.UTILS      = TestUtils(self, 20)
+        self.Market     = AppMarket(self)
+        self.Settings   = AppSettings(self)
         
         self.marionette.set_search_timeout(50)
         self.lockscreen.unlock()
+        
+        #
+        # Ensure we have a connection.
+        #
+        self.Settings.trun_dataConn_on_if_required()
         
         self.UTILS.reportComment("Using app '" + self.APP_NAME + "'")
         
@@ -54,7 +68,6 @@ class test_20(GaiaTestCase):
         #
         # Find the app icon (a nice touch! :o).
         #
-        myApp = self.UTILS.findAppIcon(self.APP_NAME)
-        self.UTILS.TEST(myApp,
-            "Could not find the app icon on the homescreen.", True)
+        self.UTILS.TEST(self.UTILS.findAppIcon(self.APP_NAME),
+                        "Unable to find app '" + self.APP_NAME + "' on the homescreen!")
 
