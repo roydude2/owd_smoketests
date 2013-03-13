@@ -1,7 +1,0 @@
-#!/bin/bash
-
-x="10 13 16 20 22 27 29 32 35 39 40 42"
-
-printf "\n\n./run_tests $x\n\n"
-
-./run_tests $x

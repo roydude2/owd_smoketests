@@ -81,6 +81,13 @@ class test_35(GaiaTestCase):
             DOM.Clock.time_picker_column[1] % "hours")
         
         self.clock._scrollForward(scroller)
+        self.clock._scrollForward(scroller)
+        self.clock._scrollForward(scroller)
+        import time
+        time.sleep(2)
+        self.clock._scrollBackward(scroller)
+        self.clock._scrollBackward(scroller)
+        self.clock._scrollBackward(scroller)
         
         
         

@@ -210,36 +210,25 @@ class AppClock(GaiaTestCase):
     # Scroll forward and backward.
     #
     def _scrollForward(self, p_scroller):
-#        #
-#        # Start in the middle and flick to 'almost' the top.
-#        #
-#        x_pos   = p_scroller.size['width']  / 2
-#        y_start = p_scroller.size['height'] / 2
-#        y_end   = y_start * 0.87
-#        self.UTILS.reportComment("(" + \
-#                                 str(x_pos) + ", " + \
-#                                 str(y_start) + ", " + \
-#                                 str(x_pos) + ", " + \
-#                                 str(y_end) + ", " + \
-#                                 "300)")
-##        x_pos   = "%.0f" % x_pos
-##        y_start = "%.0f" % y_start
-##        y_end   = "%.0f" % y_end
-##        self.UTILS.reportComment("(" + \
-##                                 str(x_pos) + ", " + \
-##                                 str(y_start) + ", " + \
-##                                 str(x_pos) + ", " + \
-##                                 str(y_end) + ", " + \
-##                                 "300)")
-#        
+        #
+        # Start in the middle and flick to 'almost' the top.
+        #
+        x_pos   = p_scroller.size['width']  / 2
+        y_start = p_scroller.size['height'] / 2
+        y_end   = y_start * 0.9
         
-#        self.marionette.flick(p_scroller, x_pos, y_start, x_pos, y_end, 300)
-        self.marionette.flick(p_scroller, 50, 100, 50, 63, 300)
+        self.marionette.flick(p_scroller, x_pos, y_start, x_pos, y_end, 270)
+#        self.marionette.flick(p_scroller, 50, 100, 50, 63, 300)
 
         time.sleep(1)
         
     def _scrollBackward(self, p_scroller):
-        self.marionette.flick(p_scroller, 50, 63, 50, 100, 300)
+        x_pos   = p_scroller.size['width']  / 2
+        y_start = p_scroller.size['height'] / 2
+        y_end   = y_start / 0.9
+        
+        self.marionette.flick(p_scroller, x_pos, y_start, x_pos, y_end, 270)
+#        self.marionette.flick(p_scroller, 50, 63, 50, 100, 300)
         time.sleep(1)
         
     #

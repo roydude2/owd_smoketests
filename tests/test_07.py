@@ -17,6 +17,7 @@ class test_7(GaiaTestCase):
     _Description = "Create a contact via the contacts app."
  
     def setUp(self):
+            
         #
         # Set up child objects...
         #
