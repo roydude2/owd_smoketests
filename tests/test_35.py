@@ -55,7 +55,6 @@ class test_35(GaiaTestCase):
         self.UTILS.reportResults()
         
     def test_run(self):
-        return
         #
         # Launch clock app.
         #
