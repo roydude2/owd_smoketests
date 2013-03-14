@@ -242,10 +242,16 @@ class TestUtils(GaiaTestCase):
     #
     # Quit this test suite.
     #
-    def quitTest(self):
+    def quitTest(self, p_msg=False):
         self.screenShotOnErr()
-        self.reportError("CANNOT CONTINUE PAST THIS ERROR - ABORTING THIS TEST!")
+        if not p_msg:
+            msg = "CANNOT CONTINUE PAST THIS ERROR - ABORTING THIS TEST!"
+        else:
+            msg = p_msg
+
+        self.reportError(msg)
         sys.exit("Fatal error, quitting this test.")
+        
 
     #
     # Test that p_result is true.
@@ -303,14 +309,20 @@ class TestUtils(GaiaTestCase):
     # Wait for an element to be displayed, then return the element.
     #
     def get_element(self, *p_element):
-        self.wait_for_element_displayed(*p_element)
-        el = self.marionette.find_element(*p_element)
-        return el
+        try:
+            self.wait_for_element_displayed(*p_element)
+            el = self.marionette.find_element(*p_element)
+            return el
+        except:
+            return False
         
     def get_elements(self, *p_elements):
-        self.wait_for_element_displayed(*p_elements)
-        els = self.marionette.find_elements(*p_elements)
-        return els
+        try:
+            self.wait_for_element_displayed(*p_elements)
+            els = self.marionette.find_elements(*p_elements)
+            return els
+        except:
+            return False
     
     ##
     ## Quickly install an app.
@@ -367,14 +379,16 @@ class TestUtils(GaiaTestCase):
     def scrollHomescreenLeft(self):
         self.marionette.execute_script('window.wrappedJSObject.GridManager.goToPreviousPage()')
     
-    #
-    # Scroll around the homescreen until we find our app icon.
-    #
-    def findAppIcon(self, p_appName):
-        self.apps.kill_all()
-        self.homescreen = self.apps.launch('Homescreen')
-        self.marionette.switch_to_frame()
-        self.marionette.switch_to_frame(self.homescreen.frame)
+    def findAppIcon(self, p_appName, p_reloadHome=True):
+        #
+        # Scroll around the homescreen until we find our app icon.
+        #
+        if p_reloadHome:
+            #
+            # If this doesn't happen, it is assumed you are already
+            # in the correct iframe.
+            #
+            self.goHome()
 
         #
         # Bit long-winded, but it ensures the icon is displayed.
@@ -383,8 +397,8 @@ class TestUtils(GaiaTestCase):
         # 'span' element (otherwise we can't use what's returned
         # to find the delete icon when the homescreen is in edit mode).
         #
-        # As these dom specs are only ever useful right here, I'm not
-        # defining them in DOM.
+        # As these dom specs are only ever going to be useful here, 
+        # I'm not defining them in DOM.
         #
         for i_page in range(1, 10):
             try:
@@ -436,7 +450,8 @@ class TestUtils(GaiaTestCase):
         self.apps.kill_all()
         self.homescreen = self.apps.launch('Homescreen')
         self.marionette.switch_to_frame()
-        self.marionette.switch_to_frame(self.homescreen.frame)        
+        self.marionette.switch_to_frame(self.homescreen.frame)
+        time.sleep(1)
 
     #
     # Activate edit mode in the homescreen.
@@ -467,10 +482,7 @@ class TestUtils(GaiaTestCase):
     # Return whether an app is present on the homescreen (i.e. 'installed').
     #
     def isAppInstalled(self, p_appName):
-        self.apps.kill_all()
-        self.homescreen = self.apps.launch('Homescreen')
-        self.marionette.switch_to_frame()
-        self.marionette.switch_to_frame(self.homescreen.frame)
+        self.goHome()
 
         x = ('css selector', DOM.GLOBAL.app_icon_css % p_appName)
         try:
@@ -487,8 +499,7 @@ class TestUtils(GaiaTestCase):
         # Find the app icon.
         #
         myApp = self.findAppIcon(p_appName)
-        self.TEST(myApp,
-            "Could not find the app icon on the homescreen.", True)
+        if not myApp: return False
         
         #
         # We found it! Go into edit mode (can't be done via marionette gestures yet).
@@ -499,16 +510,9 @@ class TestUtils(GaiaTestCase):
         # Delete it (and refresh the 'myApp' object to include the new button).
         #
         # NOTE: This kind of 'element-within-an-element' isn't necessarily
-        #       appropriate for 'verify'.
+        #       appropriate for 'verify', so don't.
         #
-        self.marionette.switch_to_frame()
-        self.marionette.switch_to_frame(self.homescreen.frame)
-        myApp = self.findAppIcon(p_appName)
-        
-        #
-        # If the app wasn't found, just return.
-        #
-        if not myApp: return False
+        myApp = self.findAppIcon(p_appName, False)
         
         delete_button = myApp.find_element(*DOM.GLOBAL.app_delete_icon)
         self.marionette.tap(delete_button)

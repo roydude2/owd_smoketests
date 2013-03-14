@@ -10,96 +10,85 @@ import DOM
 #
 # Imports particular to this test case.
 #
-from apps.app_clock import *
 from apps.app_settings import *
-#from datetime 
-import datetime, time   
+from apps.app_everythingMe import *
 
-class test_35(GaiaTestCase):
-    _Description = "Setting a new alarm (will sleep for a while to give alarm time to start)."
-
+class test_39(GaiaTestCase):
+    _Description = "Install an app via 'everything.me'."
+    
+    _GROUP_NAME  = "Games"
+    _APP_NAME    = "Tetris"
+    _boolCheck   = True
+    
     def setUp(self):
         #
         # Set up child objects...
         #
         GaiaTestCase.setUp(self)
-        self.UTILS      = TestUtils(self, 35)
-        self.clock      = AppClock(self)
-        self.settings   = AppSettings(self)
-                
-        #
-        # Set timeout for element searches.
-        #
+        
+        self.UTILS      = TestUtils(self, 0)
+        self.Settings   = AppSettings(self)
+        self.EME        = AppEverythingMe(self)
+        
         self.marionette.set_search_timeout(50)
         self.lockscreen.unlock()
         
         #
-        # Delete all previous alarms.
+        # Make sure 'things' are as we expect them to be first.
         #
-        if not self.clock.deleteAllAlarms():
-            self.UTILS.reportComment("(Couldn't delete previous alarms - problem with external 'gaiatest' script.)")
-
+        self.data_layer.disable_wifi()
+        self.Settings.trun_dataConn_on_if_required()
+        
         #
-        # Set the volume to be low (no need to wake up the office! ;o)
+        # Make sure our app isn't installed already.
         #
-        self.settings.setAlarmVolume(1)
-
-        #        
-        # Make sure the date and timezone are correct before setting alarms.
+        if self.UTILS.isAppInstalled(self._APP_NAME):
+            self.UTILS.uninstallApp(self._APP_NAME)
+            
         #
-        _continent  = self.UTILS.get_os_variable("MY_CONTINENT", "Your continent for setting timezone.")
-        _city       = self.UTILS.get_os_variable("MY_CITY", "Your continent for setting timezone.")
-        self.data_layer.set_setting('time.timezone', _continent + "/" + _city)
-        self.UTILS.setTimeToNow()
-
+        # Don't prompt me for geolocation (this was broken recently in Gaia, so 'try' it).
+        #
+        try:
+            self.apps.set_permission('Homescreen', 'geolocation', 'deny')
+        except:
+            self.UTILS.reportComment("(Just FYI) Unable to automatically set Homescreen geolocation permission.")
 
     def tearDown(self):
         self.UTILS.reportResults()
         
     def test_run(self):
-    
         #
-        # Launch clock app.
+        # Launch the 'everything.me' app.
         #
-        self.clock.launch()
-        
-        self.clock.deleteAllAlarms()        
-        return
-    
-    
-    
-    
+        self.UTILS.TEST(self.EME.launch(), "No application icons found.", True)
         
         #
-        # Create an alarm that is 1 minute in the future.
+        # Pick a group.
         #
-        _mins_to_wait = 1
-        
-        # (Make sure we're not about to do this at the end of a minute.)
-        now_secs = time.time() / 60
-        if now_secs > 45:
-            time.sleep(16)
-        
-        t = datetime.datetime.now() + datetime.timedelta(minutes=_mins_to_wait)
-        
-        _hour   = t.hour
-        _minute = t.minute
-        _title  = "Test 35 alarm"
-
-        self.clock.createAlarm(_hour, _minute, _title)
+        self.UTILS.TEST(self.EME.pickGroup(self._GROUP_NAME),
+                        "Cannot find group '" + self._GROUP_NAME + "' in EverythingME.",
+                        True)
 
         #
-        # Return to the main screen (since this is where the user will
-        # most likely be when the alarm goes off).
+        # Add the app to the homescreen.
+        #
+        self.UTILS.TEST(self.EME.addAppToHomescreen(self._APP_NAME),
+                        "Unable to add application '" + self._APP_NAME + "' to the homescreen.",
+                        True)
+        
+        #
+        # Go back to the homescreen and check it's installed.
         #
         self.UTILS.goHome()
+        self.UTILS.scrollHomescreenRight()
+        self.UTILS.TEST(self.UTILS.launchAppViaHomescreen(self._APP_NAME), 
+                        self._APP_NAME + " not installed.", True)
         
         #
-        # Check the statusbar icon exists.
+        # Give it 10 seconds to start up, switch to the frame for it and grab a screenshot.
         #
-        self.UTILS.TEST(self.clock.checkStatusbarIcon(), "Alarm icon not present in statusbar.")
-
-        #
-        # Wait for the alarm to start.
-        #
-        self.clock.checkAlarmDetails(_hour, _minute, _title)
+        time.sleep(10)
+        self.marionette.switch_to_frame()
+        self.UTILS.switchToFrame("src", "https://aduros.com/block-dream")
+        x = self.UTILS.screenShot("_" + self._APP_NAME)
+        self.UTILS.reportComment("NOTE: Please check the game screenshot in " + x)

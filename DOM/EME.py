@@ -1,4 +1,5 @@
 here_check              = ('id', 'shortcuts-items')
-icons_groups            = ('xpath', ".//*[@id='shortcuts-items']/documentfragment/li")
+groups                  = ('xpath', "//*[@id='shortcuts-items']//li")
+apps                    = ('xpath', "//li[@class='cloud']")
 back_btn                = ('id', 'button-clear')
 add_app_to_homescreen   = ('id', 'modal-dialog-confirm-ok')

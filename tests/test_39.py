@@ -16,8 +16,8 @@ from apps.app_everythingMe import *
 class test_39(GaiaTestCase):
     _Description = "Install an app via 'everything.me'."
     
+    _GROUP_NAME  = "Games"
     _APP_NAME    = "Tetris"
-    _APP_ID      = "app_807"
     _boolCheck   = True
     
     def setUp(self):
@@ -51,8 +51,7 @@ class test_39(GaiaTestCase):
         try:
             self.apps.set_permission('Homescreen', 'geolocation', 'deny')
         except:
-            self.UTILS.reportComment(
-                "Couldn't automatically set Homescreen geolocation permission (problem with gaiatest script: \"self.apps.set_permission('Homescreen', 'geolocation', 'deny')\").")
+            self.UTILS.reportComment("(Just FYI) Unable to automatically set Homescreen geolocation permission.")
 
     def tearDown(self):
         self.UTILS.reportResults()
@@ -65,20 +64,25 @@ class test_39(GaiaTestCase):
         
         #
         # Pick a group.
-        # At the mercy of dev here - the word "Games" isn't in the html, so hopefully it will
-        # always just be list item '1'.
-        self.EME.pickGroup(1)
-        
-        # Again, at the mercy of dev - app names do not apear in the html dump, so
-        # I have no choice but to assume this ID will always match our app.
-        self.EME.addAppToHomescreen(self._APP_ID)
+        #
+        self.UTILS.TEST(self.EME.pickGroup(self._GROUP_NAME),
+                        "Cannot find group '" + self._GROUP_NAME + "' in EverythingME.",
+                        True)
+
+        #
+        # Add the app to the homescreen.
+        #
+        self.UTILS.TEST(self.EME.addAppToHomescreen(self._APP_NAME),
+                        "Unable to add application '" + self._APP_NAME + "' to the homescreen.",
+                        True)
         
         #
         # Go back to the homescreen and check it's installed.
         #
         self.UTILS.goHome()
-        self.UTILS.TEST(self.UTILS.isAppInstalled(self._APP_NAME), self._APP_NAME + " not installed.", True)
-        self.UTILS.launchAppViaHomescreen(self._APP_NAME)
+        self.UTILS.scrollHomescreenRight()
+        self.UTILS.TEST(self.UTILS.launchAppViaHomescreen(self._APP_NAME), 
+                        self._APP_NAME + " not installed.", True)
         
         #
         # Give it 10 seconds to start up, switch to the frame for it and grab a screenshot.
@@ -86,6 +90,5 @@ class test_39(GaiaTestCase):
         time.sleep(10)
         self.marionette.switch_to_frame()
         self.UTILS.switchToFrame("src", "https://aduros.com/block-dream")
-#        self.UTILS.connect_to_iframe("https://aduros.com/block-dream")
         x = self.UTILS.screenShot("_" + self._APP_NAME)
         self.UTILS.reportComment("NOTE: Please check the game screenshot in " + x)

@@ -68,10 +68,10 @@ class test_35(GaiaTestCase):
         #
         # (Make sure we're not about to do this at the end of a minute.)
         #
-        import time
-        now_secs = time.time() / 60
-        if now_secs > 45:
-            time.sleep(16)
+        now_secs = time.strftime("%S", time.gmtime())
+        diff_s   = 60 - int(now_secs)
+        if diff_s <= 15:
+            time.sleep(diff_s)
         
         t = datetime.datetime.now() + datetime.timedelta(minutes=1)
         

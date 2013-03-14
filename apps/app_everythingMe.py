@@ -27,7 +27,6 @@ class AppEverythingMe(GaiaTestCase):
         # Go to the homescreen.
         #
         self.UTILS.goHome()
-        time.sleep(2)
         
         #
         # Scroll to the left to expose the 'everything.me' screen.
@@ -37,8 +36,9 @@ class AppEverythingMe(GaiaTestCase):
             self.UTILS.scrollHomescreenLeft()
 
         try:
-            x = self.UTILS.get_elements(*self.UTILS.verify("DOM.EME.icons_groups"))
+            x = self.UTILS.get_elements(*self.UTILS.verify("DOM.EME.groups"))
             if len(x) > 0:
+                time.sleep(2)
                 return True
             else:
                 return False
@@ -48,19 +48,30 @@ class AppEverythingMe(GaiaTestCase):
     #
     # Pick a group from the main icons.
     #
-    def pickGroup(self, p_num):
-        x = self.UTILS.get_elements(*self.UTILS.verify("DOM.EME.icons_groups"))
-        self.marionette.tap(x[p_num])
+    def pickGroup(self, p_name):
+        x = self.UTILS.get_elements(*self.UTILS.verify("DOM.EME.groups"))
+        for groupLink in x:
+            if groupLink.get_attribute("data-query") == p_name:
+                self.marionette.tap(groupLink)
+                return True
+        
+        return False
+        
 
     #
     # Pick an app from the apps listed.
     # Since the app names aren't present in the html I have to depend on
     # a unique id number.
     #
-    def addAppToHomescreen(self, p_num):
-        x = self.UTILS.get_element('id', p_num)
-        self.marionette.long_press(x)
-        self.marionette.switch_to_frame()
-        x = self.UTILS.get_element(*self.UTILS.verify("DOM.EME.add_app_to_homescreen"))
-        self.marionette.tap(x)
+    def addAppToHomescreen(self, p_name):
+        x = self.UTILS.get_elements(*self.UTILS.verify("DOM.EME.apps"))
+        for appLink in x:
+            if appLink.get_attribute("data-name") == p_name:
+                self.marionette.long_press(appLink)
+                self.marionette.switch_to_frame()
+                x = self.UTILS.get_element(*self.UTILS.verify("DOM.EME.add_app_to_homescreen"))
+                self.marionette.tap(x)
+                return True
+        
+        return False
 

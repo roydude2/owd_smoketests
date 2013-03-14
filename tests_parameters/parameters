@@ -12,13 +12,6 @@
 
 
 #
-# Test number: 00
-# Test desc. :  "Setting a new alarm (will sleep for a while to give alarm time to start)."
-#
-export MY_CONTINENT=		# Your continent for setting timezone.
-export MY_CITY=		# Your continent for setting timezone.
-
-#
 # Test number: 09
 # Test desc. :  "Send an SMS to a contact from the contacts app."
 #

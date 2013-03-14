@@ -191,15 +191,21 @@ class AppClock(GaiaTestCase):
         self.marionette.switch_to_frame()
         
         retries = 40
-        while retries >= 0:
-            retries = retries - 1
-            try:
-                self.UTILS.switchToFrame(*DOM.Clock.alarm_alert_iframe)
+        while retries >= 0:            
+            if self.UTILS.switchToFrame(*DOM.Clock.alarm_alert_iframe, p_quitOnError=False):
                 break
-            except:
-                time.sleep(3)
             
-        
+            time.sleep(2)
+            retries = retries - 1
+                
+                
+        if retries <= 0:
+            msg =   "Cannot find 'DOM.Clock.alarm_alert_iframe' ('" + \
+                    DOM.Clock.alarm_alert_iframe[0] + "', '" + \
+                    DOM.Clock.alarm_alert_iframe[1] + "')."
+            self.UTILS.quitTest(msg)
+            
+            
         #
         # Sort the time out into 12 hour format.
         #
@@ -233,13 +239,13 @@ class AppClock(GaiaTestCase):
         # The idea is to make each step increment
         # the scroller by 1 element.
         #
-        x = float(len(p_scroller.find_elements("class name", "picker-unit"))) / 100
+        x = float(len(p_scroller.find_elements("class name", "picker-unit")))
         
         #
         # This is a little formula I worked out - seems to work, but it's
         # not perfect (and I've only tested it on the scrollers on my Ungai).
         #
-        x = 1 - ((1/(x * 0.8))/100)
+        x = 1 - ((1/((x/100)*0.8))/100)
         
         return x
         
