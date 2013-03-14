@@ -28,11 +28,31 @@ class AppClock(GaiaTestCase):
         self.wait_for_element_not_displayed(*DOM.GLOBAL.loading_overlay)
 
     def deleteAllAlarms(self):
-        try:
-            self.data_layer.delete_all_alarms()
-            return True
-        except:
-            return False
+        #
+        # Deletes all current alarms.
+        #
+        # "self.data_layer.delete_all_alarms()" isn't workng at the moment, so...
+        #
+        while True:
+            try:
+                x = self.marionette.find_elements(*DOM.Clock.alarm_preview_alarms)
+            except:
+                #
+                # No alarms returned, so just move on...
+                #
+                break
+            else:
+                if len(x) <= 0: break
+                
+                #
+                # Some alarms - delete the first one (we need to reload the
+                # list each time because it changes everytime we delete
+                # an alarm).
+                #
+                self.marionette.tap(x[0])
+                x = self.UTILS.get_element(*DOM.Clock.alarm_delete_button)
+                self.marionette.tap(x)
+                time.sleep(1)
         
     #
     # Takes an hour and returns array "hour" (12 hour format) and "ampm".
@@ -95,6 +115,7 @@ class AppClock(GaiaTestCase):
         # Set the label.
         #
         x = self.UTILS.get_element(*self.UTILS.verify("DOM.Clock.alarm_label"))
+        x.clear()
         x.send_keys(p_label)
         
         #
@@ -117,11 +138,8 @@ class AppClock(GaiaTestCase):
     #
     def checkAlarmPreview(self, p_hour, p_min, p_ampm, p_label, p_repeat):
         #
-        # Make sure we're looking at the clock face.
-        #
-        self.launch()
-        
         # Put the time in a format we can compare easily with.
+        #
         p_time = str(p_hour) + ":" + str(p_min).zfill(2)
         
         alarms = self.UTILS.get_elements(*self.UTILS.verify("DOM.Clock.alarm_preview_alarms"))

@@ -5,12 +5,14 @@ time_picker_curr_val    = ("class name", "picker-unit active")
 time_picker_ampm        = ('xpath', "//div[@id='value-picker-hour24-state']")
 alarm_label             = ("name", "alarm.label")
 alarm_done              = ('id', 'alarm-done')
+alarm_delete_button     = ("id", "alarm-delete")
 
 alarm_preview_alarms    = ('id', 'alarm-item')
 alarm_preview_time      = ("class name", "time")
 alarm_preview_ampm      = ("class name", "hour24-state")
 alarm_preview_label     = ("class name", "label")
 alarm_preview_repeat    = ("class name", "repeat")
+
 
 alarm_notifier          = ('id', 'statusbar-alarm')
 

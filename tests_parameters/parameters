@@ -12,6 +12,13 @@
 
 
 #
+# Test number: 00
+# Test desc. :  "Setting a new alarm (will sleep for a while to give alarm time to start)."
+#
+export MY_CONTINENT=		# Your continent for setting timezone.
+export MY_CITY=		# Your continent for setting timezone.
+
+#
 # Test number: 09
 # Test desc. :  "Send an SMS to a contact from the contacts app."
 #
@@ -67,3 +74,10 @@ export GMAIL_2_PASS=		# Gmail 2 password
 export WIFI_TEST_27=		# Name of wifi to connect to (case sensitive!)
 export USERNAME_27=		# Wifi username
 export PASSWORD_27=		# Wifi password
+
+#
+# Test number: 35
+# Test desc. :  "Setting a new alarm (will sleep for a while to give alarm time to start)."
+#
+export MY_CONTINENT=		# Your continent for setting timezone.
+export MY_CITY=		# Your continent for setting timezone.

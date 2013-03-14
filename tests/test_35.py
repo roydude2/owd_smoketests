@@ -34,12 +34,6 @@ class test_35(GaiaTestCase):
         self.lockscreen.unlock()
         
         #
-        # Delete all previous alarms.
-        #
-        if not self.clock.deleteAllAlarms():
-            self.UTILS.reportComment("(Couldn't delete previous alarms - problem with external 'gaiatest' script.)")
-
-        #
         # Set the volume to be low (no need to wake up the office! ;o)
         #
         self.settings.setAlarmVolume(1)
@@ -47,31 +41,39 @@ class test_35(GaiaTestCase):
         #        
         # Make sure the date and timezone are correct before setting alarms.
         #
-#        self.data_layer.set_setting('time.timezone', 'Europe/Madrid')
-#        self.data_layer.set_time(20130314133200)
+        _continent  = self.UTILS.get_os_variable("MY_CONTINENT", "Your continent for setting timezone.")
+        _city       = self.UTILS.get_os_variable("MY_CITY", "Your continent for setting timezone.")
+        self.data_layer.set_setting('time.timezone', _continent + "/" + _city)
+        self.UTILS.setTimeToNow()
 
 
     def tearDown(self):
         self.UTILS.reportResults()
         
     def test_run(self):
+    
         #
         # Launch clock app.
         #
         self.clock.launch()
         
         #
+        # Delete all previous alarms.
+        #
+        #
+        self.clock.deleteAllAlarms() 
+
+        #
         # Create an alarm that is 1 minute in the future.
         #
-        _mins_to_wait = 1
-        
         # (Make sure we're not about to do this at the end of a minute.)
+        #
         import time
         now_secs = time.time() / 60
         if now_secs > 45:
             time.sleep(16)
         
-        t = datetime.datetime.now() + datetime.timedelta(minutes=_mins_to_wait)
+        t = datetime.datetime.now() + datetime.timedelta(minutes=1)
         
         _hour   = t.hour
         _minute = t.minute

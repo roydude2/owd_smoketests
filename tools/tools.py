@@ -350,6 +350,9 @@ class TestUtils(GaiaTestCase):
                 
         return False
         
+    def setTimeToNow(self):
+        self.parent.data_layer.set_time(time.time() * 1000)
+        
     #
     # Scroll to next page (right).
     # Should change this to use marionette.flick() when it works.

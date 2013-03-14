@@ -13,7 +13,7 @@ import DOM
 from apps.app_clock import *
 from apps.app_settings import *
 #from datetime 
-import datetime
+import datetime, time   
 
 class test_35(GaiaTestCase):
     _Description = "Setting a new alarm (will sleep for a while to give alarm time to start)."
@@ -44,106 +44,62 @@ class test_35(GaiaTestCase):
         #
         self.settings.setAlarmVolume(1)
 
+        #        
+        # Make sure the date and timezone are correct before setting alarms.
+        #
+        _continent  = self.UTILS.get_os_variable("MY_CONTINENT", "Your continent for setting timezone.")
+        _city       = self.UTILS.get_os_variable("MY_CITY", "Your continent for setting timezone.")
+        self.data_layer.set_setting('time.timezone', _continent + "/" + _city)
+        self.UTILS.setTimeToNow()
+
+
     def tearDown(self):
         self.UTILS.reportResults()
         
-    def _calcStep(self, p_scroller):
-        #
-        # Calculates how big the step should be
-        # when 'flick'ing a scroller (based on the
-        # number of elements in the scroller).
-        # The idea is to make each step increment
-        # the scroller by 1 element.
-        #
-        x = float(len(p_scroller.find_elements("class name", "picker-unit"))) / 100
-        
-        #
-        # This is a little formula I worked out - seems to work, but it's
-        # not perfect (and I've only tested it on the scrollers on my Ungai).
-        #
-        x = 1 - ((1/(x * 0.8))/100)
-        
-        return x
-        
-        
-    def _scrollForward(self, p_scroller):
-        #
-        # Move the scroller forward one item.
-        #        
-        x = self._calcStep(p_scroller)
-        
-        x_pos   = p_scroller.size['width']  / 2
-        y_start = p_scroller.size['height'] / 2
-        y_end   = y_start * x
-        
-        self.marionette.flick(p_scroller, x_pos, y_start, x_pos, y_end, 270)
-
-        time.sleep(0.5)
-        
-    def _scrollBackward(self, p_scroller):
-        #
-        # Move the scroller back one item.
-        #        
-        x = self._calcStep(p_scroller)
-        
-        x_pos   = p_scroller.size['width']  / 2
-        y_start = p_scroller.size['height'] / 2
-        y_end   = y_start / x
-        
-        self.marionette.flick(p_scroller, x_pos, y_start, x_pos, y_end, 270)
-
-        time.sleep(0.5)
-        
-        
     def test_run(self):
+    
         #
         # Launch clock app.
         #
         self.clock.launch()
         
-        x = self.UTILS.get_element(*self.UTILS.verify("DOM.Clock.new_alarm_btn"))
-        self.marionette.tap(x)
+        self.clock.deleteAllAlarms()        
+        return
+    
+    
+    
+    
+        
+        #
+        # Create an alarm that is 1 minute in the future.
+        #
+        _mins_to_wait = 1
+        
+        # (Make sure we're not about to do this at the end of a minute.)
+        now_secs = time.time() / 60
+        if now_secs > 45:
+            time.sleep(16)
+        
+        t = datetime.datetime.now() + datetime.timedelta(minutes=_mins_to_wait)
+        
+        _hour   = t.hour
+        _minute = t.minute
+        _title  = "Test 35 alarm"
 
-        import time
-        time.sleep(2)
+        self.clock.createAlarm(_hour, _minute, _title)
+
+        #
+        # Return to the main screen (since this is where the user will
+        # most likely be when the alarm goes off).
+        #
+        self.UTILS.goHome()
         
-        p_component = "hours"
-        
-        scroller = self.UTILS.get_element(
-            DOM.Clock.time_picker_column[0], 
-            DOM.Clock.time_picker_column[1] % p_component)
-        
-        self._scrollForward(scroller)
-        self._scrollForward(scroller)
-        self._scrollForward(scroller)
-        self._scrollBackward(scroller)
-        self._scrollBackward(scroller)
-        self._scrollBackward(scroller)
-        
-        p_component = "minutes"
-        
-        scroller = self.UTILS.get_element(
-            DOM.Clock.time_picker_column[0], 
-            DOM.Clock.time_picker_column[1] % p_component)
-        
-        self._scrollForward(scroller)
-        self._scrollForward(scroller)
-        self._scrollForward(scroller)
-        self._scrollBackward(scroller)
-        self._scrollBackward(scroller)
-        self._scrollBackward(scroller)
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
+        #
+        # Check the statusbar icon exists.
+        #
+        self.UTILS.TEST(self.clock.checkStatusbarIcon(), "Alarm icon not present in statusbar.")
+
+        #
+        # Wait for the alarm to start.
+        #
+        self.clock.checkAlarmDetails(_hour, _minute, _title)
