@@ -73,8 +73,6 @@ class AppVideo(GaiaTestCase):
         #
         # Wait for the video to start playing before returning.
         #
-        self.UTILS.reportError("ROY - does this need to be checked like this?")
-#        self.wait_for_element_displayed(*DOM.Video.video_frame)
         self.wait_for_element_displayed(*DOM.Video.video_loaded)
 
         #
@@ -82,7 +80,7 @@ class AppVideo(GaiaTestCase):
         # it finishes the player closes (and marionette crashes).
         #
         self.UTILS.reportComment(
-            "BUG IN VIDEO PLAYER: Sometimes crashes after playing a video! " + 
+            "BUG IN VIDEO PLAYER: Sometimes crashes after playing a video. " + 
             "If you see an error dumped by Marionette here, it's probably because of that.")
         #x=self.marionette.find_element(*DOM.Video.video_loaded)
         #self.marionette.tap(x)

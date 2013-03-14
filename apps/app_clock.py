@@ -134,13 +134,14 @@ class AppClock(GaiaTestCase):
             alarm_repeat = alarm.find_element(*self.UTILS.verify("DOM.Clock.alarm_preview_repeat")).text
             
             if  p_time      == alarm_time   and \
-                p_ampm      == alarm_ampm   and \
-                p_label     == alarm_label  and \
-                p_repeat    == alarm_repeat:
+                p_ampm      == alarm_ampm:
                     foundBool = True
+                    self.UTILS.TEST(p_label == alarm_label, 
+                                    "Alarm description is incorrect in Clock screen preview.")
                     break
-        
-        self.UTILS.TEST(foundBool, "Alarm details not displayed correctly on the Clock screen.")
+                
+        self.UTILS.TEST(foundBool, 
+                        "Alarm preview not found in Clock screen for " + p_time + p_ampm + ".")
              
              
     def checkStatusbarIcon(self):
@@ -206,30 +207,52 @@ class AppClock(GaiaTestCase):
         x = self.UTILS.get_element(*self.UTILS.verify("DOM.Clock.alarm_alert_close"))
         self.marionette.tap(x)
 
-    #
-    # Scroll forward and backward.
-    #
+    def _calcStep(self, p_scroller):
+        #
+        # Calculates how big the step should be
+        # when 'flick'ing a scroller (based on the
+        # number of elements in the scroller).
+        # The idea is to make each step increment
+        # the scroller by 1 element.
+        #
+        x = float(len(p_scroller.find_elements("class name", "picker-unit"))) / 100
+        
+        #
+        # This is a little formula I worked out - seems to work, but it's
+        # not perfect (and I've only tested it on the scrollers on my Ungai).
+        #
+        x = 1 - ((1/(x * 0.8))/100)
+        
+        return x
+        
+        
     def _scrollForward(self, p_scroller):
         #
-        # Start in the middle and flick to 'almost' the top.
-        #
+        # Move the scroller forward one item.
+        #        
+        x = self._calcStep(p_scroller)
+        
         x_pos   = p_scroller.size['width']  / 2
         y_start = p_scroller.size['height'] / 2
-        y_end   = y_start * 0.9
+        y_end   = y_start * x
         
         self.marionette.flick(p_scroller, x_pos, y_start, x_pos, y_end, 270)
-#        self.marionette.flick(p_scroller, 50, 100, 50, 63, 300)
 
-        time.sleep(1)
+        time.sleep(0.5)
         
     def _scrollBackward(self, p_scroller):
+        #
+        # Move the scroller back one item.
+        #        
+        x = self._calcStep(p_scroller)
+        
         x_pos   = p_scroller.size['width']  / 2
         y_start = p_scroller.size['height'] / 2
-        y_end   = y_start / 0.9
+        y_end   = y_start / x
         
         self.marionette.flick(p_scroller, x_pos, y_start, x_pos, y_end, 270)
-#        self.marionette.flick(p_scroller, 50, 63, 50, 100, 300)
-        time.sleep(1)
+
+        time.sleep(0.5)
         
     #
     # Set the time using the scroller.

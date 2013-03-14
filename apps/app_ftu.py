@@ -55,7 +55,6 @@ class AppFTU(GaiaTestCase):
         else:
             # Loop options until we find the match
             for li in options:
-                self.UT
                 if li.text == match_string:
                     li.click()
                     break

@@ -113,9 +113,6 @@ SMOKETESTS COVERED:
     <td  align=center>32</td><td  align=left>Use Data Connection to download packaged app, then delete it.</td>
   </tr>
   <tr>
-    <td  align=center>33</td><td  align=left>Basic calculator test.</td>
-  </tr>
-  <tr>
     <td  align=center>34</td><td  align=left>Add calendar event.</td>
   </tr>
   <tr>

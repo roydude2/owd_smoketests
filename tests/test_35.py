@@ -13,7 +13,7 @@ import DOM
 from apps.app_clock import *
 from apps.app_settings import *
 #from datetime 
-import datetime
+import datetime, time   
 
 class test_35(GaiaTestCase):
     _Description = "Setting a new alarm (will sleep for a while to give alarm time to start)."
@@ -44,10 +44,18 @@ class test_35(GaiaTestCase):
         #
         self.settings.setAlarmVolume(1)
 
+        #        
+        # Make sure the date and timezone are correct before setting alarms.
+        #
+#        self.data_layer.set_setting('time.timezone', 'Europe/Madrid')
+#        self.data_layer.set_time(20130314133200)
+
+
     def tearDown(self):
         self.UTILS.reportResults()
         
     def test_run(self):
+        return
         #
         # Launch clock app.
         #

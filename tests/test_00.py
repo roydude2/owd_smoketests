@@ -47,6 +47,54 @@ class test_35(GaiaTestCase):
     def tearDown(self):
         self.UTILS.reportResults()
         
+    def _calcStep(self, p_scroller):
+        #
+        # Calculates how big the step should be
+        # when 'flick'ing a scroller (based on the
+        # number of elements in the scroller).
+        # The idea is to make each step increment
+        # the scroller by 1 element.
+        #
+        x = float(len(p_scroller.find_elements("class name", "picker-unit"))) / 100
+        
+        #
+        # This is a little formula I worked out - seems to work, but it's
+        # not perfect (and I've only tested it on the scrollers on my Ungai).
+        #
+        x = 1 - ((1/(x * 0.8))/100)
+        
+        return x
+        
+        
+    def _scrollForward(self, p_scroller):
+        #
+        # Move the scroller forward one item.
+        #        
+        x = self._calcStep(p_scroller)
+        
+        x_pos   = p_scroller.size['width']  / 2
+        y_start = p_scroller.size['height'] / 2
+        y_end   = y_start * x
+        
+        self.marionette.flick(p_scroller, x_pos, y_start, x_pos, y_end, 270)
+
+        time.sleep(0.5)
+        
+    def _scrollBackward(self, p_scroller):
+        #
+        # Move the scroller back one item.
+        #        
+        x = self._calcStep(p_scroller)
+        
+        x_pos   = p_scroller.size['width']  / 2
+        y_start = p_scroller.size['height'] / 2
+        y_end   = y_start / x
+        
+        self.marionette.flick(p_scroller, x_pos, y_start, x_pos, y_end, 270)
+
+        time.sleep(0.5)
+        
+        
     def test_run(self):
         #
         # Launch clock app.
@@ -55,39 +103,45 @@ class test_35(GaiaTestCase):
         
         x = self.UTILS.get_element(*self.UTILS.verify("DOM.Clock.new_alarm_btn"))
         self.marionette.tap(x)
-        
-        
-        t = datetime.datetime.now() + datetime.timedelta(minutes=3)
-        
-        _hour   = t.hour
-        _minute = t.minute
-        _title  = "Test 35 alarm"
 
-        #
-        # Sort the time out into 12 hour format.
-        #
-        x = self.clock.switch_24_12(_hour)
-        t_hour = x[0]
-        t_ampm = x[1]
-
-        #
-        # Set the hour.
-        #
-        self.clock._select("hours", t_hour)
+        import time
+        time.sleep(2)
         
+        p_component = "hours"
         
         scroller = self.UTILS.get_element(
             DOM.Clock.time_picker_column[0], 
-            DOM.Clock.time_picker_column[1] % "hours")
+            DOM.Clock.time_picker_column[1] % p_component)
         
-        self.clock._scrollForward(scroller)
-        self.clock._scrollForward(scroller)
-        self.clock._scrollForward(scroller)
-        import time
-        time.sleep(2)
-        self.clock._scrollBackward(scroller)
-        self.clock._scrollBackward(scroller)
-        self.clock._scrollBackward(scroller)
+        self._scrollForward(scroller)
+        self._scrollForward(scroller)
+        self._scrollForward(scroller)
+        self._scrollBackward(scroller)
+        self._scrollBackward(scroller)
+        self._scrollBackward(scroller)
+        
+        p_component = "minutes"
+        
+        scroller = self.UTILS.get_element(
+            DOM.Clock.time_picker_column[0], 
+            DOM.Clock.time_picker_column[1] % p_component)
+        
+        self._scrollForward(scroller)
+        self._scrollForward(scroller)
+        self._scrollForward(scroller)
+        self._scrollBackward(scroller)
+        self._scrollBackward(scroller)
+        self._scrollBackward(scroller)
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
         
         
         
