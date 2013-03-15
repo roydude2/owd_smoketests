@@ -12,11 +12,13 @@ import DOM
 #
 from apps.app_market import *
 from apps.app_settings import *
+from marionette.keys import Keys
 
 class test_20(GaiaTestCase):
     _Description = "Get an app from the marketplace."
     
-    APP_NAME = 'Wikipedia'
+    APP_NAME    = 'Wikipedia'
+    APP_AUTHOR  = 'tfinc'
 
     def setUp(self):
         #
@@ -56,10 +58,11 @@ class test_20(GaiaTestCase):
         self.Market.launch()
         
         #
-        # Install app.
+        # Install our app.
         #
-        self.Market.install_app(self.APP_NAME)
-
+        self.UTILS.TEST(self.Market.install_app(self.APP_NAME, self.APP_AUTHOR),
+                        "Failed to install app.", True)
+        
         #
         # Verify installation.
         #

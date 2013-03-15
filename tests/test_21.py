@@ -12,19 +12,21 @@ import DOM
 #
 from apps.app_market import *
 from apps.app_settings import *
+from marionette.keys import Keys
 
 class test_21(GaiaTestCase):
     _Description = "Get an app from the marketplace and run it."
     
-    APP_NAME = 'Wikipedia'
+    APP_NAME    = 'Wikipedia'
+    APP_AUTHOR  = 'tfinc'
 
     def setUp(self):
         #
         # Set up child objects...
         #
         GaiaTestCase.setUp(self)
-        self.UTILS  = TestUtils(self, 21)
-        self.Market = AppMarket(self)
+        self.UTILS      = TestUtils(self, 21)
+        self.Market     = AppMarket(self)
         self.Settings   = AppSettings(self)
         
         self.marionette.set_search_timeout(50)
@@ -56,28 +58,18 @@ class test_21(GaiaTestCase):
         self.Market.launch()
         
         #
-        # Install app.
-        # NOTE: At the moment this just installs the first app it finds (Wikipedia)!
-        # Once marionette gestures are fixed (or someone removes that slider that reveals the
-        # search box) then fix this.
-        self.Market.install_app(self.APP_NAME)
-
-
+        # Install our app.
+        #
+        self.UTILS.TEST(self.Market.install_app(self.APP_NAME, self.APP_AUTHOR),
+                        "Failed to install app.", True)
+        
         #
         # Verify installation.
         #
         self.Market.verify_app_installed(self.APP_NAME)
         
         #
-        # Go home then run the new app.
+        # Launch the app from the homescreen.
         #
-        self.UTILS.goHome()
-        
-        self.app = self.apps.launch(self.APP_NAME)
-        self.wait_for_element_not_displayed(*DOM.GLOBAL.loading_overlay)
-        
-        self.wait_for_element_displayed(*self.UTILS.verify("DOM.GLOBAL.app_titlebar_name", 20))
-        x = self.marionette.find_element(*self.UTILS.verify("DOM.GLOBAL.app_titlebar_name"))
-        self.UTILS.TEST(x.get_attribute("title") == "Wikipedia homepage",
-            "Application did not have the expected title - please check the screenshot matches '" + self.APP_NAME  + "'")
-        
+        self.UTILS.launchAppViaHomescreen(self.APP_NAME)
+

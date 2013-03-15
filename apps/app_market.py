@@ -26,19 +26,63 @@ class AppMarket(GaiaTestCase):
         self.apps.kill_all()
         self.app = self.apps.launch('Marketplace')
         self.wait_for_element_not_displayed(*DOM.GLOBAL.loading_overlay)
+        
+    def searchForApp(self, p_app):
+        #
+        # Search for an app in the market.
+        #
+        from marionette.keys import Keys
+
+        search_field = ("id", "search-q")
+        
+        #
+        # Scroll a little to make the search area visible.
+        #
+        self.marionette.execute_script('window.scrollTo(0, 10)')        
+        
+        x = self.marionette.find_element(*search_field)
+        x.send_keys(p_app)
+        x.send_keys(Keys.RETURN)
+
+    def selectSearchResultApp(self, p_app, p_author):
+        #
+        # Select the application we want from the list returned by
+        # self.searchForApp().
+        #
+        self._search_results_area_locator = ('id', 'search-results')
+        self._search_result_locator = ('css selector', '#search-results li.item')
+        self._app_name_locator = ('xpath', '//h3')
+        self._author_locator = ('css selector', '.author.lineclamp.vital')
+        
+        self.wait_for_element_displayed(*self._search_results_area_locator)
+        results = self.marionette.find_elements(*self._search_result_locator)
+        
+        if len(results) <= 0:
+            return False
+        
+        for app in results:
+            if  app.find_element(*self._app_name_locator).text == p_app and \
+                app.find_element(*self._author_locator).text == p_author:
+                self.marionette.tap(app)
+                return True
+            
+        return False
+
 
     #
     # Install an app.
     #
-    def install_app(self, p_app):
-        #
-        # Because of the change to the search (and the fact that I can't get Marionette 'flick()' to work!)
-        # just grab the first app on the screen.
-        #
-        x = self.UTILS.get_elements(*self.UTILS.verify("DOM.Market.featured_apps"))
-
-        self.marionette.tap(x[0])   
+    def install_app(self, p_app, p_author):
+        self.searchForApp(p_app)
         
+        if not self.selectSearchResultApp(p_app, p_author):
+            self.UTILS.reportError("App '" + p_app + "' with author '" + \
+                                   p_author + "' not found in the market.")
+            return False
+        
+        #
+        # Click to install the app.
+        #
         x = self.UTILS.get_element(*self.UTILS.verify("DOM.Market.app_details_header"))
         self.UTILS.TEST(x.text == p_app, "Expected title in app details to be '" + p_app + "', but was '" + x.text + "'.")
         
@@ -46,7 +90,7 @@ class AppMarket(GaiaTestCase):
         self.marionette.tap(x)
 
         #
-        # Confirm the installation of the web app.
+        # Confirm the installation of the app.
         #
         self.marionette.switch_to_frame()
 
@@ -54,6 +98,8 @@ class AppMarket(GaiaTestCase):
         yes_button = self.marionette.find_element(*self.UTILS.verify("DOM.Market.confirm_install_button"))
         self.marionette.tap(yes_button)
         self.wait_for_element_not_displayed(*DOM.Market.confirm_install_button)
+        
+        return True
 
     #
     # Check the app is installed as an icon in the home screen (probably need to swipe right

@@ -10,85 +10,66 @@ import DOM
 #
 # Imports particular to this test case.
 #
+from apps.app_market import *
 from apps.app_settings import *
-from apps.app_everythingMe import *
+from marionette.keys import Keys
 
-class test_39(GaiaTestCase):
-    _Description = "Install an app via 'everything.me'."
+class test_21(GaiaTestCase):
+    _Description = "Get an app from the marketplace and run it."
     
-    _GROUP_NAME  = "Games"
-    _APP_NAME    = "Tetris"
-    _boolCheck   = True
-    
+    APP_NAME    = 'Wikipedia'
+    APP_AUTHOR  = 'tfinc'
+
     def setUp(self):
         #
         # Set up child objects...
         #
         GaiaTestCase.setUp(self)
-        
-        self.UTILS      = TestUtils(self, 0)
+        self.UTILS      = TestUtils(self, 21)
+        self.Market     = AppMarket(self)
         self.Settings   = AppSettings(self)
-        self.EME        = AppEverythingMe(self)
         
         self.marionette.set_search_timeout(50)
         self.lockscreen.unlock()
         
         #
-        # Make sure 'things' are as we expect them to be first.
+        # Ensure we have a connection.
         #
-        self.data_layer.disable_wifi()
         self.Settings.trun_dataConn_on_if_required()
+        
+        self.UTILS.reportComment("Using app '" + self.APP_NAME + "'")
         
         #
         # Make sure our app isn't installed already.
         #
-        if self.UTILS.isAppInstalled(self._APP_NAME):
-            self.UTILS.uninstallApp(self._APP_NAME)
-            
-        #
-        # Don't prompt me for geolocation (this was broken recently in Gaia, so 'try' it).
-        #
         try:
-            self.apps.set_permission('Homescreen', 'geolocation', 'deny')
+            self.apps.uninstall(self.APP_NAME)
         except:
-            self.UTILS.reportComment("(Just FYI) Unable to automatically set Homescreen geolocation permission.")
-
+            pass # Do nothing.
+        
     def tearDown(self):
         self.UTILS.reportResults()
         
     def test_run(self):
-        #
-        # Launch the 'everything.me' app.
-        #
-        self.UTILS.TEST(self.EME.launch(), "No application icons found.", True)
         
         #
-        # Pick a group.
+        # Launch market app.
         #
-        self.UTILS.TEST(self.EME.pickGroup(self._GROUP_NAME),
-                        "Cannot find group '" + self._GROUP_NAME + "' in EverythingME.",
-                        True)
+        self.Market.launch()
+        
+        #
+        # Install our app.
+        #
+        self.UTILS.TEST(self.Market.install_app(self.APP_NAME, self.APP_AUTHOR),
+                        "Failed to install app.", True)
+        
+        #
+        # Verify installation.
+        #
+        self.Market.verify_app_installed(self.APP_NAME)
+        
+        #
+        # Launch the app from the homescreen.
+        #
+        self.UTILS.launchAppViaHomescreen(self.APP_NAME)
 
-        #
-        # Add the app to the homescreen.
-        #
-        self.UTILS.TEST(self.EME.addAppToHomescreen(self._APP_NAME),
-                        "Unable to add application '" + self._APP_NAME + "' to the homescreen.",
-                        True)
-        
-        #
-        # Go back to the homescreen and check it's installed.
-        #
-        self.UTILS.goHome()
-        self.UTILS.scrollHomescreenRight()
-        self.UTILS.TEST(self.UTILS.launchAppViaHomescreen(self._APP_NAME), 
-                        self._APP_NAME + " not installed.", True)
-        
-        #
-        # Give it 10 seconds to start up, switch to the frame for it and grab a screenshot.
-        #
-        time.sleep(10)
-        self.marionette.switch_to_frame()
-        self.UTILS.switchToFrame("src", "https://aduros.com/block-dream")
-        x = self.UTILS.screenShot("_" + self._APP_NAME)
-        self.UTILS.reportComment("NOTE: Please check the game screenshot in " + x)

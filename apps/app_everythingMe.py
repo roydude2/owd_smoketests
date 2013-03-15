@@ -31,9 +31,10 @@ class AppEverythingMe(GaiaTestCase):
         #
         # Scroll to the left to expose the 'everything.me' screen.
         #
-        x = self.marionette.find_element(*self.UTILS.verify("DOM.EME.here_check"))
-        while not x.is_displayed():
-            self.UTILS.scrollHomescreenLeft()
+        self.UTILS.scrollHomescreenLeft()
+#        x = self.marionette.find_element(*self.UTILS.verify("DOM.EME.here_check"))
+#        while not x.is_displayed():
+#            self.UTILS.scrollHomescreenLeft()
 
         try:
             x = self.UTILS.get_elements(*self.UTILS.verify("DOM.EME.groups"))
@@ -71,6 +72,14 @@ class AppEverythingMe(GaiaTestCase):
                 self.marionette.switch_to_frame()
                 x = self.UTILS.get_element(*self.UTILS.verify("DOM.EME.add_app_to_homescreen"))
                 self.marionette.tap(x)
+                
+                # This isn't obvious, but you need to scroll the screen right
+                # to reset the position for finding the app later, so I'm
+                # doing it here.
+                time.sleep(2)
+                self.UTILS.goHome()
+                self.UTILS.scrollHomescreenRight()
+
                 return True
         
         return False

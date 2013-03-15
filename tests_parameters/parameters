@@ -72,5 +72,5 @@ export PASSWORD_27=		# Wifi password
 # Test number: 35
 # Test desc. :  "Setting a new alarm (will sleep for a while to give alarm time to start)."
 #
-export MY_CONTINENT=		# Your continent for setting timezone.
-export MY_CITY=		# Your continent for setting timezone.
+export YOUR_CONTINENT=		# YOUR continent (for setting timezone).
+export YOUR_CITY=		# YOUR city (for setting timezone).

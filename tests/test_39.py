@@ -79,8 +79,6 @@ class test_39(GaiaTestCase):
         #
         # Go back to the homescreen and check it's installed.
         #
-        self.UTILS.goHome()
-        self.UTILS.scrollHomescreenRight()
         self.UTILS.TEST(self.UTILS.launchAppViaHomescreen(self._APP_NAME), 
                         self._APP_NAME + " not installed.", True)
         
