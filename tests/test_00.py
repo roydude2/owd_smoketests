@@ -32,44 +32,24 @@ class test_21(GaiaTestCase):
         self.marionette.set_search_timeout(50)
         self.lockscreen.unlock()
         
-        #
-        # Ensure we have a connection.
-        #
-        self.Settings.trun_dataConn_on_if_required()
-        
-        self.UTILS.reportComment("Using app '" + self.APP_NAME + "'")
-        
-        #
-        # Make sure our app isn't installed already.
-        #
-        try:
-            self.apps.uninstall(self.APP_NAME)
-        except:
-            pass # Do nothing.
         
     def tearDown(self):
         self.UTILS.reportResults()
         
     def test_run(self):
         
-        #
-        # Launch market app.
-        #
         self.Market.launch()
         
-        #
-        # Install our app.
-        #
-        self.UTILS.TEST(self.Market.install_app(self.APP_NAME, self.APP_AUTHOR),
-                        "Failed to install app.", True)
+        self.UTILS.goHome()
         
-        #
-        # Verify installation.
-        #
-        self.Market.verify_app_installed(self.APP_NAME)
+        self.UTILS.scrollHomescreenRight()
         
-        #
-        # Launch the app from the homescreen.
-        #
-        self.UTILS.launchAppViaHomescreen(self.APP_NAME)
+#        self.homescreen = self.apps.launch('Homescreen')
+#        self.marionette.switch_to_frame()
+#        x = self.homescreen.frame
+#        self.UTILS.reportComment("src: " + x.get_attribute("src"))
+#        self.UTILS.reportComment("id : " + x.get_attribute("id"))
+#        self.marionette.switch_to_frame(self.homescreen.frame)
+        
+
 

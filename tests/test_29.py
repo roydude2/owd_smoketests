@@ -63,17 +63,23 @@ class test_29(GaiaTestCase):
         #
         # Flick it up (not working currently - retry when marionette toch is working).
         #
-        #x = self.UTILS.get_element(*self.test_apps[0]["card"])
-        #x_x = int(x.size['width'] / 2)
-        #x_y = int(x.size['height'] / 2)
-        #self.marionette.flick(x, x_x, x_y, x_x, 0, 1000)
+#        x = self.UTILS.get_element(*self.test_apps[len(self.test_apps)-1]["card"])
+#        els = self.marionette.find_elements(*DOM.Home.app_cards)
+#        for x in els:            
+#            x_x = int(x.size['width'] / 2)
+#            x_y = int(x.size['height'] / 2)
+#            self.marionette.flick(x, x_x, x_y, x_x, -100, 1000)
         
         #
         # For now just click the close_button
         #
+        self.UTILS.reportComment("(Didn't drag the app 'up' to close it, I just clicked the 'close' button.)")
         i = 0
         for app in self._test_apps:
             x = self.UTILS.get_element(*self.test_apps[i]["close_button"])
+            
+            self.UTILS.TEST(x, "No applications found to close!", True)
+            
             self.marionette.tap(x)
             time.sleep(1)
             i = i + 1

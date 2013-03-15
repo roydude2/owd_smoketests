@@ -38,7 +38,10 @@ class TestUtils(GaiaTestCase):
     # Get a variable from the OS.
     #
     def get_os_variable(self, p_name, p_msg):
-        return os.environ[p_name]
+        if p_name == "ENTER":
+            return ""
+        else:
+            return os.environ[p_name]
     
     #
     # Get a DOM element - includes a check that the element is still
@@ -448,9 +451,10 @@ class TestUtils(GaiaTestCase):
     #
     def goHome(self):
         self.apps.kill_all()
-        self.homescreen = self.apps.launch('Homescreen')
+#        self.homescreen = self.apps.launch('Homescreen')
         self.marionette.switch_to_frame()
-        self.marionette.switch_to_frame(self.homescreen.frame)
+#        self.marionette.switch_to_frame(self.homescreen.frame)
+        self.switchToFrame(*DOM.GLOBAL.homescreen_iframe)
         time.sleep(1)
 
     #
@@ -468,8 +472,7 @@ class TestUtils(GaiaTestCase):
     # Launch an app via the homescreen.
     #
     def launchAppViaHomescreen(self, p_name):
-        if self.isAppInstalled(p_name):
-            self.findAppIcon(p_name)
+        if self.findAppIcon(p_name):
             time.sleep(1)
             x = ('css selector', DOM.GLOBAL.app_icon_css % p_name)
             myApp = self.marionette.find_element(*x)
@@ -482,7 +485,8 @@ class TestUtils(GaiaTestCase):
     # Return whether an app is present on the homescreen (i.e. 'installed').
     #
     def isAppInstalled(self, p_appName):
-        self.goHome()
+        self.marionette.switch_to_frame()
+        self.switchToFrame(*DOM.GLOBAL.homescreen_iframe)
 
         x = ('css selector', DOM.GLOBAL.app_icon_css % p_appName)
         try:
@@ -496,10 +500,15 @@ class TestUtils(GaiaTestCase):
     #
     def uninstallApp(self, p_appName):
         #
+        # Verify that the app is installed.
+        #
+        if not self.isAppInstalled(p_appName):
+            return False
+        
+        #
         # Find the app icon.
         #
         myApp = self.findAppIcon(p_appName)
-        if not myApp: return False
         
         #
         # We found it! Go into edit mode (can't be done via marionette gestures yet).
@@ -527,6 +536,8 @@ class TestUtils(GaiaTestCase):
         #
         # Once it's gone, go home and check the icon is no longer there.
         #
+        time.sleep(2)
+        self.touchHomeButton()
         self.touchHomeButton()
         self.TEST(not self.isAppInstalled(p_appName), "App is still installed after deletion.")
         

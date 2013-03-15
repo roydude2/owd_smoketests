@@ -42,7 +42,7 @@ class test_41(GaiaTestCase):
         # Set up to use data connection.
         #
         self.data_layer.disable_wifi()
-        self.settings.trun_dataConn_on_if_required()
+        self.settings.turn_dataConn_on_if_required()
         
         #
         # You must be logged into facebook already to run this test

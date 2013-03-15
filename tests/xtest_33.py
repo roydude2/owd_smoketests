@@ -28,12 +28,6 @@ class test_33(GaiaTestCase):
         self.marionette.set_search_timeout(50)
         self.lockscreen.unlock()
         
-        #
-        # Sometimes the calcultaor gets uninstalled!
-        #
-        self.UTILS.TEST(self.UTILS.findAppIcon("Calculator"),
-                        "Calculator isn't installed!", True)
-        
     def tearDown(self):
         self.UTILS.reportResults()
         
@@ -59,4 +53,5 @@ class test_33(GaiaTestCase):
         Answer = self.UTILS.get_element(*self.UTILS.verify("DOM.Calculator.display"))
         
         self.UTILS.TEST(Answer.text == "15", "Expected answer to be 15, but it was " + Answer.text + ".")
+        
         

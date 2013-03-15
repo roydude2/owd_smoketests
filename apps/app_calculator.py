@@ -2,6 +2,7 @@ import DOM, time
 from gaiatest   import GaiaTestCase
 from tools      import TestUtils
 from marionette import Marionette
+from apps.app_market import *
 
 class AppCalculator(GaiaTestCase):
     
@@ -12,6 +13,7 @@ class AppCalculator(GaiaTestCase):
     def __init__(self, p_parent):
         self.apps       = p_parent.apps
         self.data_layer = p_parent.data_layer
+        self.Market     = AppMarket(p_parent)
 
         # Just so I get 'autocomplete' in my IDE!
         self.marionette = Marionette()
@@ -19,7 +21,19 @@ class AppCalculator(GaiaTestCase):
         if True:
             self.marionette = p_parent.marionette
             self.UTILS      = p_parent.UTILS
-
+        
+        #
+        # Sometimes the calcultaor gets uninstalled!
+        #
+        if not self.UTILS.isAppInstalled("Calculator"):
+            self.UTILS.reportComment("Calculator was installed automatically because it was missing.")
+            
+            #
+            # There are a few 'Calculator' apps, so make sure we get the correct
+            # one.
+            #
+            self.Market.launch()
+            self.Market.install_app("Calculator", "ndesaulniers")
 
 
     def launch(self):

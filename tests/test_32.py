@@ -35,23 +35,19 @@ class test_32(GaiaTestCase):
         #
         # Uninstall the app (if need be).
         #
-        try: self.apps.uninstall(self._appName)
-        except: pass #(ignore any exceptions)
+        if self.UTILS.findAppIcon(self._appName):
+            self.UTILS.uninstallApp(self._appName)
         
         #
         # Ensure we have a connection without wifi.
         #
         self.data_layer.disable_wifi()
-        self.Settings.trun_dataConn_on_if_required()
+        self.Settings.turn_dataConn_on_if_required()
         
     def tearDown(self):
         self.UTILS.reportResults()
         
     def test_run(self):
-        
-        self.UTILS.TEST(
-            self.data_layer.get_setting("ril.data.enabled"),    
-            "Data connection is OFF! Please run this again (I currently cannot force it to be off before I toggle it).", True)
         
         #
         # Open the browser app.
@@ -91,7 +87,7 @@ class test_32(GaiaTestCase):
         #
         # Go back to the home page and check the app is installed.
         #
-        self.UTILS.TEST(self.UTILS.isAppInstalled(self._appName), "App icon not found in homescreen.")
+        self.UTILS.TEST(self.UTILS.findAppIcon(self._appName), "App icon not found in homescreen.")
                 
         #
         # Remove the app.

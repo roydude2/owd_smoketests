@@ -18,7 +18,7 @@ class test_39(GaiaTestCase):
     
     _GROUP_NAME  = "Games"
     _APP_NAME    = "Tetris"
-    _boolCheck   = True
+    _APP_FRAME   = ("src", "https://aduros.com/block-dream")
     
     def setUp(self):
         #
@@ -37,13 +37,12 @@ class test_39(GaiaTestCase):
         # Make sure 'things' are as we expect them to be first.
         #
         self.data_layer.disable_wifi()
-        self.Settings.trun_dataConn_on_if_required()
+        self.Settings.turn_dataConn_on_if_required()
         
         #
         # Make sure our app isn't installed already.
         #
-        if self.UTILS.isAppInstalled(self._APP_NAME):
-            self.UTILS.uninstallApp(self._APP_NAME)
+        self.UTILS.uninstallApp(self._APP_NAME)
             
         #
         # Don't prompt me for geolocation (this was broken recently in Gaia, so 'try' it).
@@ -87,6 +86,6 @@ class test_39(GaiaTestCase):
         #
         time.sleep(10)
         self.marionette.switch_to_frame()
-        self.UTILS.switchToFrame("src", "https://aduros.com/block-dream")
+        self.UTILS.switchToFrame(*self._APP_FRAME)
         x = self.UTILS.screenShot("_" + self._APP_NAME)
         self.UTILS.reportComment("NOTE: Please check the game screenshot in " + x)

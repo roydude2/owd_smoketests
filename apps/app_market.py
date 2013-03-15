@@ -20,12 +20,23 @@ class AppMarket(GaiaTestCase):
             self.marionette = p_parent.marionette
             self.UTILS      = p_parent.UTILS
 
-
-
-    def launch(self):
+    #
+    # Sometimes the market doesn't load 1st time (just when automated
+    # for some reason). So check and try again if necessary.
+    #
+    def launchMe(self):
         self.apps.kill_all()
         self.app = self.apps.launch('Marketplace')
         self.wait_for_element_not_displayed(*DOM.GLOBAL.loading_overlay)
+
+    def launch(self):
+        self.launchMe()
+        
+        try:
+            self.wait_for_element_present(*DOM.Market.search_query)
+        except:
+            self.launchMe()
+            
         
     def searchForApp(self, p_app):
         #
@@ -101,15 +112,6 @@ class AppMarket(GaiaTestCase):
         
         return True
 
-    #
-    # Check the app is installed as an icon in the home screen (probably need to swipe right
-    # to actually see it physically).
-    #
-    def verify_app_installed(self, p_app):            
-        #
-        # Go back to the home page and check the app is installed.
-        #
-        self.UTILS.TEST(self.UTILS.isAppInstalled(p_app), "App icon not found in homescreen.")
         
         
     

@@ -35,17 +35,14 @@ class test_21(GaiaTestCase):
         #
         # Ensure we have a connection.
         #
-        self.Settings.trun_dataConn_on_if_required()
+        self.Settings.turn_dataConn_on_if_required()
         
         self.UTILS.reportComment("Using app '" + self.APP_NAME + "'")
         
         #
         # Make sure our app isn't installed already.
         #
-        try:
-            self.apps.uninstall(self.APP_NAME)
-        except:
-            pass # Do nothing.
+        self.UTILS.uninstallApp(self.APP_NAME)
         
     def tearDown(self):
         self.UTILS.reportResults()
@@ -64,12 +61,8 @@ class test_21(GaiaTestCase):
                         "Failed to install app.", True)
         
         #
-        # Verify installation.
-        #
-        self.Market.verify_app_installed(self.APP_NAME)
-        
-        #
         # Launch the app from the homescreen.
         #
-        self.UTILS.launchAppViaHomescreen(self.APP_NAME)
+        self.UTILS.TEST(self.UTILS.launchAppViaHomescreen(self.APP_NAME),
+                        "Could not launch app from homescreen.")
 

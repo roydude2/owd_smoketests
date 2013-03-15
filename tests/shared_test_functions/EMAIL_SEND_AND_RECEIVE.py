@@ -72,7 +72,7 @@ class main():
         #
         # Make sure we have some data connectivity.
         #
-        self.settings.trun_dataConn_on_if_required()
+        self.settings.turn_dataConn_on_if_required()
         
     def run(self):
 

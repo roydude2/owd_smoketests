@@ -43,7 +43,7 @@ class AppSettings(GaiaTestCase):
         self.marionette.tap(x)
         self.wait_for_element_displayed(*self.UTILS.verify("DOM.Settings.celldata_header"))
 
-    def trun_dataConn_on_if_required(self):
+    def turn_dataConn_on_if_required(self):
         #
         # Turns data conn on via settings app, but only
         # if it's not already on.
