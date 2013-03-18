@@ -51,7 +51,7 @@ class AppFTU(GaiaTestCase):
         # Is the scroller visible?
         #
         if len(options) <= 0:
-            self.UTILS.reportError("Scroller not displayed while setting '" + match_string + "'.")
+            self.UTILS.logResult(False, "Scroller not displayed while setting '" + match_string + "'.")
         else:
             # Loop options until we find the match
             for li in options:
@@ -139,7 +139,7 @@ class AppFTU(GaiaTestCase):
         try:
             x = self.marionette.find_elements(*self.UTILS.verify("DOM.FTU.wifi_networks_list"))
         except:
-            self.UTILS.reportError("No networks found in wifi screen!")
+            self.UTILS.logResult(False, "No networks found in wifi screen!")
         else:
             self.UTILS.reportComment("(Found " + str(len(x)) + " wifi networks.)")
             
@@ -149,7 +149,7 @@ class AppFTU(GaiaTestCase):
             try:
                 x= self.UTILS.get_element('id', p_wifiName)
             except:
-                self.UTILS.reportError("Could not find wifi network '" + p_wifiName + "'.")
+                self.UTILS.logResult(False, "Could not find wifi network '" + p_wifiName + "'.")
             else:
                 self.marionette.tap(x)
                 

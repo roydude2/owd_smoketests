@@ -78,7 +78,6 @@ class test_27(GaiaTestCase):
         #
         # WIFI CONNECTIVITY.
         #
-        self.UTILS.reportError("ROY")
 #        self.FTU.setNetwork(self.wifi_name, self.wifi_user, self.wifi_pass)
         self.FTU.nextScreen()
         

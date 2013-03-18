@@ -22,7 +22,8 @@ class AppEmail(GaiaTestCase):
             
 
     def launch(self):
-        self.apps.kill_all()
+        # For some reason this was causing a marionette error (just in this module).
+#        self.apps.kill_all()
         self.app = self.apps.launch('Email')
         self.wait_for_element_not_displayed(*DOM.GLOBAL.loading_overlay)
         
@@ -185,9 +186,12 @@ class AppEmail(GaiaTestCase):
         #
         # Wait for 'compose message' header.
         #
-        x = self.UTILS.get_element('xpath', DOM.GLOBAL.app_head_specific % "Compose message")
-        self.UTILS.TEST(x.is_displayed(), 
-            "Failed to arrive at 'compose' screen after clicking to compose a new email.", True)
+        try:
+            x = self.UTILS.get_element('xpath', DOM.GLOBAL.app_head_specific % "Compose message")
+        except:
+            self.UTILS.logResult(False, 
+                                 "Failed to arrive at 'compose' screen after clicking to compose a new email.")
+            self.UTILS.quitTest()
         
         #
         # Put items in the corresponsing fields.
@@ -213,7 +217,23 @@ class AppEmail(GaiaTestCase):
         #
         # Wait for inbox to re-appear.
         #
-        self.wait_for_element_displayed('xpath', DOM.GLOBAL.app_head_specific % "Inbox")
+        try:
+            self.wait_for_element_displayed('xpath', DOM.GLOBAL.app_head_specific % "Inbox")
+        except:
+            #
+            # Did the email fail to send?
+            #
+            self.marionette.switch_to_frame()
+            x = self.marionette.find_element("xpath","//*[text()='Sending email failed']")
+            if x.is_displayed():
+                self.UTILS.logResult(False, "Failed to send email.")
+            else:
+                #
+                # Doesn't look like it, but for some reason we're not back at the Inbox.
+                #
+                self.UTILS.logResult(False, "Inbox does not appear after sending an email.")
+                
+            self.UTILS.quitTest()
         
     #
     # Open a specific mail folder (must be called from "Inbox").
@@ -252,7 +272,7 @@ class AppEmail(GaiaTestCase):
             return True
             
         else:
-            self.UTILS.reportError("Unable to open a message with the subject '"  + p_subject + "' in this folder.")
+            self.UTILS.logResult(False, "Unable to open a message with the subject '"  + p_subject + "' in this folder.")
             return False
 
     

@@ -67,7 +67,7 @@ class test_31(GaiaTestCase):
         # Install the app (these DOM items are peculiar to this little dev app,
         # so dont bother putting them in the main DOM.py file).
         #
-        x = ('id', 'install-app')        
+        x = ('id', 'install-app')     
         install_btn = self.UTILS.get_element(*x)
         self.marionette.tap(install_btn)
         

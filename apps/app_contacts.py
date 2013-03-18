@@ -75,26 +75,34 @@ class AppContacts(GaiaTestCase):
         self.replaceStr(contFields['country'    ] , p_contact["adr"]["countryName"])
         self.replaceStr(contFields['comment'    ] , p_contact["comment"])
 
+    #
+    # Test for a match between an element and a string
+    # (found I was doing this rather a lot so it's better in a function).
+    #
+    def checkMatch(self, p_el, p_val, p_name):
+        test_str = str(p_el.get_attribute("value"))
+
+        self.UTILS.TEST(
+            (test_str == p_val),
+            "Expected " + p_name + " to be \"" + p_val + "\" but it was \"" + test_str + "\"."
+            )
 
     def verifyFieldContents(self, p_contact):
         #
         # Verify the contents of the contact fields in this screen (assumes
         # you are in the correct screen since this could be view or edit).
         #
-
-        #self.UTILS.reportComment("Not testing email field at the moment (it turns the screen off when automated!).")
-
         contFields = self.getContactFields()      # Get the contact's fields again.
         
-        self.UTILS.checkMatch(contFields['givenName' ] , "value", p_contact['givenName']            , "given name")
-        self.UTILS.checkMatch(contFields['familyName'] , "value", p_contact['familyName']           , "family name")
-        self.UTILS.checkMatch(contFields['tel'       ] , "value", p_contact['tel']['value']         , "telephone")
-        self.UTILS.checkMatch(contFields['email'     ] , "value", p_contact['email']['value']       , "email")
-        self.UTILS.checkMatch(contFields['street'    ] , "value", p_contact['adr']['streetAddress'] , "street")
-        self.UTILS.checkMatch(contFields['zip'       ] , "value", p_contact['adr']['postalCode']    , "zip")
-        self.UTILS.checkMatch(contFields['city'      ] , "value", p_contact['adr']['locality']      , "city")
-        self.UTILS.checkMatch(contFields['country'   ] , "value", p_contact['adr']['countryName']   , "country")
-        self.UTILS.checkMatch(contFields['comment'   ] , "value", p_contact['comment']              , "comment")
+        self.checkMatch(contFields['givenName' ] , p_contact['givenName']            , "Given name")
+        self.checkMatch(contFields['familyName'] , p_contact['familyName']           , "Family name")
+        self.checkMatch(contFields['tel'       ] , p_contact['tel']['value']         , "Telephone")
+        self.checkMatch(contFields['email'     ] , p_contact['email']['value']       , "Email")
+        self.checkMatch(contFields['street'    ] , p_contact['adr']['streetAddress'] , "Street")
+        self.checkMatch(contFields['zip'       ] , p_contact['adr']['postalCode']    , "Zip")
+        self.checkMatch(contFields['city'      ] , p_contact['adr']['locality']      , "City")
+        self.checkMatch(contFields['country'   ] , p_contact['adr']['countryName']   , "Country")
+        self.checkMatch(contFields['comment'   ] , p_contact['comment']              , "COMMENTS")
 
 
     def createNewContact(self, p_contact):
@@ -148,7 +156,7 @@ class AppContacts(GaiaTestCase):
         try:
             contact_found = self.marionette.find_element("xpath", DOM.Contacts.view_all_contact_xpath % p_contact['name'].replace(" ",""))
         except:
-            self.UTILS.reportError("Could not find '" + p_contact['name'] + "' in the contacts list!")
+            self.UTILS.logResult(False, "Could not find '" + p_contact['name'] + "' in the contacts list!")
             return 0 # (leave the function)
         
         #
@@ -157,7 +165,7 @@ class AppContacts(GaiaTestCase):
         try:
             self.marionette.tap(contact_found)
         except:
-            self.UTILS.reportError("Could not tap on '" + p_contact['name'] + "' in contacts list!")
+            self.UTILS.logResult(False, "Could not tap on '" + p_contact['name'] + "' in contacts list!")
             return 0 # (leave the function)
         
         self.wait_for_element_displayed(*self.UTILS.verify("DOM.Contacts.view_details_title"))

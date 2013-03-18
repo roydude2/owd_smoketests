@@ -91,8 +91,8 @@ class test_11(GaiaTestCase):
                 x = str(thisIMG.get_attribute('src'))
                 self.UTILS.TEST((x != ""), "Image source is empty in gallery after clicking thumbnail.")
             except: 
-                self.UTILS.reportError("No image source in gallery after clicking thumbnail.")
-        except: self.UTILS.reportError("Image not displayed as expected after clicking icon in gallery.")
+                self.UTILS.logResult(False, "No image source in gallery after clicking thumbnail.")
+        except: self.UTILS.logResult(False, "Image not displayed as expected after clicking icon in gallery.")
         
         #
         # Get a screenshot of the image from the galery thumbnail.

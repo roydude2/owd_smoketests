@@ -169,7 +169,11 @@ class AppSettings(GaiaTestCase):
     def tap_wifi_network_name(self, p_wifi_name, p_user, p_pass):
         wifi_name_element = DOM.Settings.wifi_name_xpath % p_wifi_name
         x= self.UTILS.get_element('xpath', wifi_name_element)
-        self.marionette.tap(x)
+        if x:
+            self.marionette.tap(x)
+            return True
+        else:
+            return False
         
         #
         # In case we are asked for a username and password ...

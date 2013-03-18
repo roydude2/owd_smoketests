@@ -20,8 +20,6 @@ class AppBrowser(GaiaTestCase):
             self.marionette = p_parent.marionette
             self.UTILS      = p_parent.UTILS
 
-
-
     def launch(self):
         self.apps.kill_all()
         self.app = self.apps.launch('Browser')
@@ -56,13 +54,13 @@ class AppBrowser(GaiaTestCase):
         # Switch to the browser content frame (so a snapshot on error will show the browser
         # contents).
         #
-        self.UTILS.switchToFrame("mozbrowser", "")
+        self.UTILS.switchToFrame(*DOM.Browser.website_frame)
 #        browser_frame = self.marionette.find_element(*self.UTILS.verify("DOM.Browser.browser_page_frame"))
 #        self.marionette.switch_to_frame(browser_frame)
 
         boolOK = True
         try:
-            x = self.marionette.find_element("xpath", "//*[text()='Problem loading page']")
+            x = self.marionette.find_element(*DOM.Browser.page_problem)
             if x.is_displayed():
                 boolOK = False
         except:

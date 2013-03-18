@@ -66,13 +66,19 @@ class test_35(GaiaTestCase):
         #
         # Create an alarm that is 1 minute in the future.
         #
-        # (Make sure we're not about to do this at the end of a minute.)
+        # (Make sure we're not about to do this at the end of a minute or an hour.)
         #
+        now_mins = time.strftime("%M", time.gmtime())
+        diff_m   = 60 - int(now_mins)
+        if diff_m <= 1:
+            time.sleep(60)
+        
         now_secs = time.strftime("%S", time.gmtime())
         diff_s   = 60 - int(now_secs)
         if diff_s <= 15:
             time.sleep(diff_s)
-        
+
+
         t = datetime.datetime.now() + datetime.timedelta(minutes=1)
         
         _hour   = t.hour

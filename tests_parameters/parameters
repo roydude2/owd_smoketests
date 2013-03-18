@@ -40,7 +40,7 @@ export URL_TEST_17=		# URL to test data connection with
 
 #
 # Test number: 22
-# Test desc. :  "Combination of 22 and 23 Send and receive an email between hotmail accounts (very long pauses between tests)."
+# Test desc. :  "Combination of 22 and 23 - Send and receive an email between hotmail accounts."
 #
 export HOTMAIL_1_USER=		# Hotmail 1 username
 export HOTMAIL_1_EMAIL=		# Hotmail 1 email
@@ -51,7 +51,7 @@ export HOTMAIL_2_PASS=		# Hotmail 2 password
 
 #
 # Test number: 24
-# Test desc. :  "Combination of 24 and 25 Send and receive an email between gmail accounts (very long pauses between tests)."
+# Test desc. :  "Combination of 24 and 25 - Send and receive an email between gmail accounts."
 #
 export GMAIL_1_USER=		# Gmail 1 username
 export GMAIL_1_EMAIL=		# Gmail 1 email

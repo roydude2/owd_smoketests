@@ -76,10 +76,10 @@ class AppMessages(GaiaTestCase):
         x = self.UTILS.waitForStatusBarNew(x, p_timeout)
         
         if not x:
-            self.UTILS.reportError("Failed to locate new sms before timeout!")
+            self.UTILS.logResult(False, "Failed to locate new sms before timeout!")
             errmsg = "(NOTE: If you asked the device to message itself, the return message may have just returned "
             errmsg = errmsg + "too quickly to be detected - try using the number of a different device.)"
-            self.UTILS.reportError(errmsg)
+            self.UTILS.logResult(False, errmsg)
             return False
         else:
             return True

@@ -6,44 +6,23 @@ export RESULT_FILE="/tmp/tests/B2G_tests.$(date +%Y%m%d%H%M%S)"
 export RUNTEST="./bin/run_test_case"
 export TESTDIR="./tests"
 
+
+################################################################################
 #
-# Load default environment variables (if possible).
+# FUNCTIONS
 #
-PARAM_FILE="./tests_parameters/parameters"
-if [ -f "$PARAM_FILE" ]
-then
-	. ./tests_parameters/parameters
-else
-	#
-	# The file's not there, so rebuild it.
-	#
-	./bin/rebuild_tests_parameters_file
-fi
 
 #
-# Did the caller just want to run certain tests:
+# Function to pad a number with 0's ...
 #
-TESTS="$@"
-
-# Default to all tests.
-if [ ! "$TESTS" ]
-then
-	while read line
-	do
-		TESTS="$TESTS $line"
-	done <<EOF
-	$(ls ./tests/test_[0-9][0-9].py | grep -v "test_00" | sed -e "s/^.*test_//" | sed -e "s/\..*//")
-EOF
-fi
-
-
-# Pad the number with 0's ...
 f_pad(){
         # Make sure the number is 2 digits (pad with 0).
         echo $1 | awk '{printf("%02d", $1)}'
 }
 
-# Run the test as required ...
+#
+# Function to run a test case ...
+#
 run_test(){
     FNAM=$1
     DESC=$(grep "_Description" $FNAM | head -1 | sed -e "s/^[^\"]*\"\(.*\)\"/\1/")
@@ -53,12 +32,88 @@ run_test(){
     $RUNTEST -t $CASE -d "$DESC" -f $FNAM -r $RESULT_FILE -e ${RESULT_FILE}.err
 }
 
+#
+# Function to ensure a pre-requisite installs before proceeding.
+#
+runSetup(){
+	#
+	# Run whatever script is passed in.
+	#
+	$1
+
+	#
+	# Check if it exitied correctly.
+	#
+	if [ $? -ne 0 ]
+	then
+		printf "\nProblem setting up pre-requisites - please investigate!\n\n"
+		exit 1
+	fi
+}
+
+
+################################################################################
+#
+# INITIAL SETUP OF DEPENDENCIES
+#
+
+#
+# If gaiatest is not detected, then take this as a sign that this is the first run since
+# the repo was cloned from Git. Install 'everything' + make necessary tweaks.
+#
+if [ ! -d "./gaia-ui-tests" ]
+then
+	#
+	# Setup pre-requisites.
+	#
+	runSetup ./bin/setup_python27
+
+	runSetup ./bin/setup_adb
+
+	#
+	# Remove any previous version of marionette
+	# (not using variables just to be sure!).
+	#
+	sudo rm -rf /usr/local/lib/python2.7/dist-packages/marionette* 2> /dev/null
+	sudo rm /usr/local/bin/marionette 2> /dev/null
+
+	#
+	# Setup gaiatest and Marionette.
+	#
+	runSetup ./bin/setup_gaiatest
+fi
 
 
 #
-# Some required input first ...
+# Did the caller just want to run certain tests?
 #
-printf "\n**************************\n\n"
+TESTS="$@"
+if [ ! "$TESTS" ]
+then
+	#
+	# No specific tests requested, so default to all tests.
+	#
+	while read line
+	do
+		TESTS="$TESTS $line"
+	done <<EOF
+	$(ls ./tests/test_[0-9][0-9].py | grep -v "test_00" | sed -e "s/^.*test_//" | sed -e "s/\..*//")
+EOF
+fi
+
+
+################################################################################
+#
+# SET UP REQUIRED VARIABLES
+#
+
+#
+# Load default environment variables if available in $PARAM_FILE.
+# (If $PARAM_FILE deosn't exist then rebuild it.)
+#
+PARAM_FILE="./tests_parameters/parameters"
+[ ! -f "$PARAM_FILE" ] && ./bin/rebuild_tests_parameters_file
+. $PARAM_FILE
 
 for i in $(echo $TESTS)
 do
@@ -120,48 +175,13 @@ do
 	fi
 done 
 
+
+################################################################################
+#
+# NOW RUN THE TESTS ...
+#
 [ "$gotParams" ] && printf "\n\n"
 
-
-#
-# If gaiatest is not detected, then install 'everything' + make necessary tweaks.
-#
-runSetup(){
-	#
-	# Run whatever script is passed in.
-	#
-	$1
-
-	#
-	# Check if it exitied correctly.
-	#
-	if [ $? -ne 0 ]
-	then
-		printf "\nProblem setting up pre-requisites - please investigate!\n\n"
-		exit 1
-	fi
-}
-if [ ! -d "./gaia-ui-tests" ]
-then
-	#
-	# Setup pre-requisites.
-	#
-	runSetup ./bin/setup_python27
-
-	runSetup ./bin/setup_adb
-
-	#
-	# Remove any previous version of marionette
-	# (not using variables just to be sure!).
-	#
-	sudo rm -rf /usr/local/lib/python2.7/dist-packages/marionette* 2> /dev/null
-	sudo rm /usr/local/bin/marionette 2> /dev/null
-
-	#
-	# Setup gaiatest and Marionette.
-	#
-	runSetup ./bin/setup_gaiatest
-fi
 
 #
 # Establsh connection to device.
@@ -173,6 +193,14 @@ then
 	# There was a problem connecting the device - just quit.
 	exit 1
 fi
+
+
+echo "
+(For test run details, see: \"${RESULT_FILE}_<test-case>_detail\".)
+
+ TEST                                                                                      TESTS
+ CASE  DESCRIPTION                                                                         PASSED  RESULT
+ ----  -----------                                                                         ------  ------"
 
 #
 # Now run tests as required.
@@ -195,11 +223,5 @@ else
 fi
 
 
-clear
-printf "\n\n"
-echo "*******************************************************"
-printf "\n             RESULT SUMMARY: \n\n"
-echo "*******************************************************"
-cat $RESULT_FILE
-printf "\n*******************************************************\n\n"
-printf "(These results are stored in $RESULT_FILE.)\n\n"
+
+printf "\nDONE.\n\n"

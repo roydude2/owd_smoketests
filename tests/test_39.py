@@ -36,8 +36,8 @@ class test_39(GaiaTestCase):
         #
         # Make sure 'things' are as we expect them to be first.
         #
-        self.data_layer.disable_wifi()
-        self.Settings.turn_dataConn_on_if_required()
+        self.data_layer.enable_wifi()
+        self.data_layer.enable_cell_data()
         
         #
         # Make sure our app isn't installed already.

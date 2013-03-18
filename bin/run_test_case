@@ -24,59 +24,55 @@ then
 	exit 1
 fi
 
-export TEMP_FILE="${RESULT_FILE}.in_progress"
-
+export SUM_FILE=${RESULT_FILE}_${TEST_CASE}_summary
+export DET_FILE=${RESULT_FILE}_${TEST_CASE}_detail
 
 
 #
-# Function to display the output to the screen, whilst updating the test file.
+# Run the test using 'gaiatest', ignore STDOUT (because what we want is being
+# writtin to a file), but capture STDERR.
 #
-log(){
-	echo "$1" | tee -a $RESULT_FILE
-}
+gaiatest --address localhost:2828 $TEST_FILE > /dev/null 2>$ERR_FILE
 
-
-log ""
-log ""
-log "TEST CASE  : $TEST_CASE"
-log "Description: $TEST_DESC"
-
-x=`(time gaiatest --address localhost:2828 $TEST_FILE > $TEMP_FILE 2>$ERR_FILE) 2>&1 | grep real | awk '{print $2}'`
-
-# Report comments (can be on more than one line).
-counter=0
-egrep '^==COMMENT' $TEMP_FILE | sed -e 's/^[^ ]* //' | while read line
-do
-	if [ $counter -eq 0 ]
-	then
-		counter=1
-		str1="Comments   :"
-	else
-		str1="            "
-	fi
-	log "$str1 $line"
-done
-
-log "Time taken : $x"
-log "Passed     : $(egrep '^==PASSED' $TEMP_FILE | sed -e 's/^[^ ]* //')"
-log "Failed     : $(egrep '^==FAILED' $TEMP_FILE | sed -e 's/^[^ ]* //')"
-log ""
-egrep "^==ERROR " $TEMP_FILE | sed -e "s/^[^ ]* //" | while read line
-do
-	log "    ** ERROR ** $line"
-done
-log ""
-
-if [ "$(egrep 'ERROR|Error' $ERR_FILE)" ]
+#
+# Now append any Marionette output to the details file (sometimes it contains
+# 'issues' that we don't catch).
+#
+x=$(grep -i error $ERR_FILE)
+if [ "$x" ]
 then
-	log "*******************************************************"
-	log "*    NOTE: Uncaught errors were returned by Marionette! "
-	log "*"
-	cat $ERR_FILE | while read line
-	do
-		log "*    $line"
-	done
-	log "*******************************************************"
+	echo "
+
+
+
+################################################################################
+#
+# OUTPUT FROM MARIONETTE ....
+# ===========================
+#
+
+$(cat $ERR_FILE)
+" >> $DET_FILE
+
 fi
 
-rm -f $TEMP_FILE
+
+#
+# Display the summary file.
+# If there is an 'error' in the marionette output but we think our tests
+# passed, this indicates a possible error with our test code.
+#
+cat $SUM_FILE | while read line
+do
+    printf "$line"
+    result=$(echo $line | awk '{print $NF}')
+    if [ "$result" = "Passed" ]
+    then
+        x=$(grep -i error $ERR_FILE)
+	if [ "$x" ]
+	then
+	    printf " (NOTE: possible test code error!)"
+	fi
+    fi
+    printf "\n"
+done

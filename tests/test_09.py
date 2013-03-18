@@ -116,7 +116,7 @@ class test_9(GaiaTestCase):
         #
         x = self.messages.waitForSMSNotifier(self.contact_1["name"], 180)
         
-        self.UTILS.TEST(x, "Failed to find new msg - aborting:", True)
+        self.UTILS.TEST(x, "Failed to find new msg.", True)
         
         #
         # Switch back to the sms app. (if we managed to click).

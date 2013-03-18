@@ -13,7 +13,7 @@ import DOM
 from tests.shared_test_functions import EMAIL_SEND_AND_RECEIVE
 
 class test_24_25(GaiaTestCase):
-    _Description = "Combination of 24 and 25 Send and receive an email between gmail accounts (very long pauses between tests)."
+    _Description = "Combination of 24 and 25 - Send and receive an email between gmail accounts."
     
     def setUp(self):
         #

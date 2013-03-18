@@ -1,8 +1,9 @@
-import os
-import base64
-import time
-import sys
-import DOM
+import os       , \
+       base64   , \
+       time     , \
+       datetime , \
+       sys      , \
+       DOM
 from gaiatest   import GaiaTestCase
 from marionette import Marionette
 
@@ -16,42 +17,159 @@ class TestUtils(GaiaTestCase):
         self.apps           = p_parent.apps
         self.marionette     = p_parent.marionette
         self.testNum        = str(p_testNum)
-        self._failArray     = []
+        self._resultArray   = []
         self._commentArray  = []
         self.errNum         = 0
         self.passed         = 0
         self.failed         = 0
+        self.start_time     = time.time()
         
         # Just so I get 'autocomplete' in my IDE!
         self.marionette = Marionette()
         if True:
             self.marionette = p_parent.marionette
         
-        #
-        # Use this just for IDE autocomplete - you need to comment it out when
-        # you've finished editing!
-        #
-#        self.marionette = Marionette()
 
+
+    #################################################################################
+    #
+    # Methods which deal with reporting the results.
+    #
+
+    #
+    # Add a test result to the result array.
+    #
+    def logResult(self, p_result, p_msg, p_fnam=False):
+        logMsg = p_msg
         
+        if p_fnam:
+            logMsg = logMsg + " [screenshot = " + p_fnam + "]"
+            
+        #
+        # The double brackets is intentional (add a 2 part
+        # array: true/false + message).
+        #
+        self._resultArray.append((p_result, logMsg))
+    
+    #
+    # Add a comment to the comment array.
+    #
+    def reportComment(self, p_str):
+        self._commentArray.append(p_str)
+
+    #
+    # Test that p_result is true.
+    #
+    # The main advantage to this over the standard 'assert's is that
+    # this continues past a failure if p_stop is False.
+    # However, it also takes a screenshot and dumps the html source
+    # if p_result is False.
+    #
+    def TEST(self, p_result, p_msg, p_stop = False):
+        fnam = False
+        if not p_result:
+            fnam = self.screenShotOnErr()
+            self.failed = self.failed + 1
+            self.logResult(p_result, p_msg, fnam)
+
+            if p_stop:
+                self.quitTest()
+        else:
+            self.passed = self.passed + 1
+            self.logResult(p_result, p_msg)
+        
+
+    #
+    # Create the final result file from the result and comment arrays
+    # (run only once, at the end of each test case).
+    #
+    def reportResults(self):
+        #
+        # Create output files (summary, which is displayed and
+        # details, which is not displayed).
+        #
+        test_time   = time.time() - self.start_time
+        test_time   = round(test_time, 0)
+        test_time   = str(datetime.timedelta(seconds=test_time))
+
+        test_case   = self.get_os_variable("TEST_CASE")
+        test_desc   = self.get_os_variable("TEST_DESC")
+        det_fnam    = self.get_os_variable("DET_FILE")
+        sum_fnam    = self.get_os_variable("SUM_FILE")
+        DET_FILE    = open(det_fnam, "w")
+        SUM_FILE    = open(sum_fnam, "w")
+
+        DET_FILE.write("Test case  : %s\n" % test_case)
+        DET_FILE.write("Description: %s\n" % test_desc)
+        DET_FILE.write("Time taken : %s\n" % str(test_time))
+
+        boolStart = False
+        for i in self._commentArray:
+            if not boolStart:
+                boolStart = True
+                DET_FILE.write("Comments   : %s\n" % i)
+            else:
+                DET_FILE.write("           : %s\n" % i)
+
+        x = len(self._resultArray)
+        y = x
+        res_str = "Passed"
+        if x > 0:
+            for i in self._resultArray:
+                if not i[0]:
+                    res_str = "FAILED <-- !"
+                    y = y - 1
+        
+        totals = "(%d/%d)" %(y, x)
+        SUM_FILE.write("[%s] %s %s: %s\n" % (test_case.center(4), 
+                                                  test_desc.ljust(80), 
+                                                  totals.rjust(9),  
+                                                  res_str))
+        
+        DET_FILE.write("Passed     : %s\n" % str(self.passed))
+        DET_FILE.write("Failed     : %s\n" % str(self.failed))
+        DET_FILE.write("RESULT     : %s\n" % res_str)
+        DET_FILE.write("\n")
+
+        x = len(self._resultArray)
+        boolFail = False
+        if x > 0:
+            for i in self._resultArray:
+                if i[0]:
+                    DET_FILE.write("   pass    - ")
+                else:
+                    DET_FILE.write("** FAIL ** - ")
+                
+                DET_FILE.write(i[1] + "\n")
+        
+        DET_FILE.close()
+        SUM_FILE.close()
+
+
+
+    #################################################################################
+    #
+    # Methods for general use.
+    #
+
     #
     # Get a variable from the OS.
     #
-    def get_os_variable(self, p_name, p_msg):
+    def get_os_variable(self, p_name, p_msg=False):
         if p_name == "ENTER":
             return ""
         else:
             return os.environ[p_name]
     
     #
-    # Get a DOM element - includes a check that the element is still
+    # Return a DOM element - includes a check that the element is still
     # correct and stops the test if the element has changed.
     #
     # NOTE: Do not use this for:
-    #        - Checking elements that are supposed to stop existing
-    #          (i.e. wait_for_element_NOT_exists() )
-    #        - Checking for frames.
-    #        - Checking against elements which will be in a different frame to this one.
+    #        - Elements that are supposed to stop existing
+    #          (i.e. wait_for_element_not_exists() )
+    #        - Frames.
+    #        - Elements which will be in a different frame to this one.
     #
     def verify(self, p_DOM_definition, p_timeOut=20):
         #
@@ -72,54 +190,18 @@ class TestUtils(GaiaTestCase):
 
             errMsg    = "Element definition '" + p_DOM_definition + "' (\"" + domElement[0] + "\",\"" + domElement[1] + "\") "
             errMsg    = errMsg + "is invalid."
-            self.reportError(errMsg)
+            self.logResult(False, errMsg)
             
-            self.reportError("|__ [screenhtml = " + htmlFile + "]")
-            self.reportError("|__", shotFile)
+            self.logResult(False, "|__ [screenhtml = " + htmlFile + "]")
+            self.logResult(False, "|__", shotFile)
             
             self.quitTest()
         else:
             return domElement
 
-#    #
-#    # Switch to frame (needed if accessing an app via another app, i.e.
-#    # launching Messages from Contacts).
-#    #
-#    def switchFrame(self, *p_frame):
-#        #
-#        # You have to go back to the top level before anywhere else.
-#        #
-#        self.marionette.switch_to_frame()
-#
-#        new_iframe = self.marionette.find_element(*p_frame)
-#        self.marionette.switch_to_frame(new_iframe)
-        
-#    #
-#    # Some iframes use id (such as facebook via contacts).
-#    #
-#    def connect_to_iframe_by_id(self, p_id):
-#        iframes = self.marionette.execute_script("return document.getElementsByTagName('iframe')")
-#        for idx in range(0,iframes['length']):
-#            iframe = iframes[str(idx)]
-#            if p_id == iframe.get_attribute('id'):
-#                self.marionette.switch_to_frame(iframe)
-#                return True
-#        return False
-
-        
     #
-    # Due to the lack of developer docs, this might help to provide a list
-    # of current iframes.
-    #
-    def list_iframes(self):
-        iframes = self.marionette.execute_script("return document.getElementsByTagName('iframe')")
-        for idx in range(0,iframes['length']):
-            iframe = iframes[str(idx)]
-            self.reportComment("iFrame - " + iframe.get_attribute('src'))
-
-    #
-    # Also to help with the lack of docs just now - this will loop through every
-    # iframe, report the "src", take a screenshot and capture the html in /tmp/royX.html.
+    # DEV TOOL: this will loop through every iframe, report the "src", 
+    # take a screenshot and capture the html in /tmp/royX.html.
     #
     # Because this is only meant as a dev aid (and shouldn't be in any released test
     # scripts), it reports to ERROR instead of COMMENT.
@@ -132,11 +214,13 @@ class TestUtils(GaiaTestCase):
         for idx in range(0,iframes['length']):
             self.marionette.switch_to_frame()
             iframe = iframes[str(idx)]
-            self.reportError("Frame " + str(y) + " src=\"" + iframe.get_attribute("src") + "\", id=\"" + iframe.get_attribute("id") + "\"")
             self.marionette.switch_to_frame(iframe)
             time.sleep(1)
+
+            self.logResult(False, "Frame " + str(y) + " src=\"" + iframe.get_attribute("src") + "\", id=\"" + iframe.get_attribute("id") + "\"")
             self.savePageHTML("/tmp/roy" + str(y) + ".html")
             self.screenShot("DEBUG_" + str(y))
+
             y = y + 1
         
     def switchToFrame(self, p_tag, p_str, p_quitOnError=True):
@@ -162,33 +246,21 @@ class TestUtils(GaiaTestCase):
             pass
         
         if p_quitOnError:
-            self.reportError("Could not switch to frame " + p_tag + "=\"" + p_str + "\".")
+            self.logResult(False, "Could not switch to frame " + p_tag + "=\"" + p_str + "\".")
             self.quitTest()
         else:
             return False
     
     #
-    # Connect to an iframe.
-    #
-    def connect_to_iframe(self, p_name):
-        iframes = self.marionette.execute_script("return document.getElementsByTagName('iframe')")
-        for idx in range(0,iframes['length']):
-            iframe = iframes[str(idx)]
-            if p_name == iframe.get_attribute('src'):
-                self.marionette.switch_to_frame(iframe)
-                return True
-        return False
-        
-    #
     # Wait for a statusbar setting to be displayed, then return to the
     # given frame.
     #
-    def check_statusbar_for_icon(self, p_dom, p_returnFrame=""):
+    def check_statusbar_for_icon(self, p_dom, p_returnFrame=False):
         self.marionette.switch_to_frame()
         x = self.marionette.find_element(*p_dom)
         isThere = x.is_displayed()
         
-        if p_returnFrame != "":
+        if p_returnFrame:
             self.switchToFrame(*p_returnFrame)
         
         return isThere
@@ -226,23 +298,6 @@ class TestUtils(GaiaTestCase):
         return x
 
     #
-    # Add an error to the error array.
-    #
-    def reportError(self, p_msg, p_fnam="X"):
-        logMsg = p_msg
-        
-        if p_fnam != "X":
-            logMsg = logMsg + " [screenshot = " + p_fnam + "]"
-            
-        self._failArray.append(logMsg)
-    
-    #
-    # Add a comment to the results.
-    #
-    def reportComment(self, p_str):
-        self._commentArray.append(p_str)
-
-    #
     # Quit this test suite.
     #
     def quitTest(self, p_msg=False):
@@ -252,64 +307,12 @@ class TestUtils(GaiaTestCase):
         else:
             msg = p_msg
 
-        self.reportError(msg)
-        sys.exit("Fatal error, quitting this test.")
-        
-
-    #
-    # Test that p_result is true.
-    # The advantage to this over the standard 'assert's is that
-    # this continues past a failure if p_stop is False.
-    #
-    def TEST(self, p_result, p_msg, p_stop = False):
-        if not p_result:
-            fnam = self.screenShotOnErr()
-            self.reportError(p_msg, fnam)
-            self.failed = self.failed + 1
-
-            if p_stop:
-                self.quitTest()
-        else:
-            self.passed = self.passed + 1
+        self.logResult(False, msg)
+        sys.exit(2) #"Fatal error, quitting this test.")
         
     #
-    # Test for a match between an element and a string
-    # (found I was doing this rather a lot so it's better in a function).
-    #
-    # formerly "testMatch"
-    def checkMatch(self, p_el, p_type, p_val, p_name):
-        if p_type == "value":
-            test_str = str(p_el.get_attribute("value"))
-        else:
-            test_str = str(p_el.text)
-            
-        self.TEST( 
-            (test_str == p_val), 
-            "Expected " + p_name + " to be \"" + p_val + "\" but it was \"" + test_str + "\"" 
-            )    
-
-    #
-    # Report results.
-    #
-    def reportResults(self):
-        # Summary totals.
-        print "==PASSED " + str(self.passed)
-        print "==FAILED " + str(self.failed)
-        # Deal with any assertion errors we came across.
-        x = len(self._failArray)
-        if x > 0:
-            print "==RESULT FAIL!"
-            for i in self._failArray:
-                print "==ERROR " + i
-        else:
-            print "==RESULT All tests passed."
-        
-        # Display any comments.
-        for i in self._commentArray:
-            print "==COMMENT " + i
-    
-    #
-    # Wait for an element to be displayed, then return the element.
+    # Wait for an element to be displayed, then return the element
+    # (or False).
     #
     def get_element(self, *p_element):
         try:
@@ -328,7 +331,7 @@ class TestUtils(GaiaTestCase):
             return False
     
     ##
-    ## Quickly install an app.
+    ## Quickly install an app. - CURRENTLY NEEDS MORE INFO THAN  HAVE.
     ##
     #def installAppQuick(self, p_name):
         ##
@@ -423,10 +426,10 @@ class TestUtils(GaiaTestCase):
                 pass
             
             #
-            # No such app in this page, try again.
+            # No such app in this page, try again (only scroll of we reloaded the home page).
             #
-            self.scrollHomescreenRight()
-            
+            if p_reloadHome: self.scrollHomescreenRight()
+                
         #
         # If we get here, we didn't find it!
         #
@@ -524,6 +527,9 @@ class TestUtils(GaiaTestCase):
         myApp = self.findAppIcon(p_appName, False)
         
         delete_button = myApp.find_element(*DOM.GLOBAL.app_delete_icon)
+        
+        if not delete_button: return False
+        
         self.marionette.tap(delete_button)
         
         #

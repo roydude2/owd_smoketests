@@ -38,18 +38,4 @@ class test_21(GaiaTestCase):
         
     def test_run(self):
         
-        self.Market.launch()
-        
-        self.UTILS.goHome()
-        
-        self.UTILS.scrollHomescreenRight()
-        
-#        self.homescreen = self.apps.launch('Homescreen')
-#        self.marionette.switch_to_frame()
-#        x = self.homescreen.frame
-#        self.UTILS.reportComment("src: " + x.get_attribute("src"))
-#        self.UTILS.reportComment("id : " + x.get_attribute("id"))
-#        self.marionette.switch_to_frame(self.homescreen.frame)
-        
-
-
+        self.UTILS.findAppIcon("Wikipedia")

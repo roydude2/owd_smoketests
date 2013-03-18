@@ -140,7 +140,7 @@ class AppCalendar(GaiaTestCase):
             #
             event_objects = self.marionette.find_elements('xpath', viewStr[0])
         except:
-            self.UTILS.reportError("Couldn't find ANY events for hour " + p_hour24 + " in " + p_view + " view.")
+            self.UTILS.logResult(False, "Couldn't find ANY events for hour " + p_hour24 + " in " + p_view + " view.")
             return False
         else:
             for event_object in event_objects:

@@ -95,10 +95,10 @@ SMOKETESTS COVERED:
     <td  align=center>21</td><td  align=left>Get an app from the marketplace and run it.</td>
   </tr>
   <tr>
-    <td  align=center>22</td><td  align=left>Combination of 22 and 23 Send and receive an email between hotmail accounts (very long pauses between tests).</td>
+    <td  align=center>22</td><td  align=left>Combination of 22 and 23 - Send and receive an email between hotmail accounts.</td>
   </tr>
   <tr>
-    <td  align=center>24</td><td  align=left>Combination of 24 and 25 Send and receive an email between gmail accounts (very long pauses between tests).</td>
+    <td  align=center>24</td><td  align=left>Combination of 24 and 25 - Send and receive an email between gmail accounts.</td>
   </tr>
   <tr>
     <td  align=center>27</td><td  align=left>First time use screens.</td>

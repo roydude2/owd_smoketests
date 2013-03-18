@@ -35,6 +35,7 @@ class test_21(GaiaTestCase):
         #
         # Ensure we have a connection.
         #
+        #self.data_layer.disable_wifi()
         self.Settings.turn_dataConn_on_if_required()
         
         self.UTILS.reportComment("Using app '" + self.APP_NAME + "'")

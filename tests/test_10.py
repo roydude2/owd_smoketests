@@ -66,7 +66,7 @@ class test_10(GaiaTestCase):
         # Then open the bar and click on the new message notification.
         #
         x = self.messages.waitForSMSNotifier(self.target_telNum, 180)
-        self.UTILS.TEST(x, "Failed to find new msg - aborting:", True)
+        self.UTILS.TEST(x, "Failed to find new msg.", True)
         
         self.messages.clickSMSNotifier(self.target_telNum)
 

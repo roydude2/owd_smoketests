@@ -87,7 +87,7 @@ class AppMarket(GaiaTestCase):
         self.searchForApp(p_app)
         
         if not self.selectSearchResultApp(p_app, p_author):
-            self.UTILS.reportError("App '" + p_app + "' with author '" + \
+            self.UTILS.logResult(False, "App '" + p_app + "' with author '" + \
                                    p_author + "' not found in the market.")
             return False
         
@@ -98,6 +98,9 @@ class AppMarket(GaiaTestCase):
         self.UTILS.TEST(x.text == p_app, "Expected title in app details to be '" + p_app + "', but was '" + x.text + "'.")
         
         x = self.UTILS.get_element(*self.UTILS.verify("DOM.Market.install_button"))
+        
+        # Sometimes this needs to be clicked ... sometimes tapped ... just do 'everything'!
+        x.click()
         self.marionette.tap(x)
 
         #

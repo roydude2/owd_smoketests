@@ -13,14 +13,14 @@ import DOM
 from tests.shared_test_functions import EMAIL_SEND_AND_RECEIVE
 
 class test_22_23(GaiaTestCase):
-    _Description = "Combination of 22 and 23 Send and receive an email between hotmail accounts (very long pauses between tests)."
+    _Description = "Combination of 22 and 23 - Send and receive an email between hotmail accounts."
     
     def setUp(self):
         #
         # Set up child objects...
         #
         GaiaTestCase.setUp(self)
-        self.UTILS  = TestUtils(self, 24)
+        self.UTILS  = TestUtils(self, 22)
         
         #
         # Establish parameters.
