@@ -1,0 +1,18 @@
+#!/bin/bash
+
+num=${1:?"Syntax: $0 <test number>"}
+
+ls -lt /tmp/tests | egrep -v "^total" | awk '{print $NF}' | while read dirnam
+do
+	fulldir="/tmp/tests/$dirnam"
+	if [ -f "$fulldir/${num}_detail" ]
+	then
+		cat $fulldir/${num}_detail
+		exit
+	fi
+	if [ -f "$fulldir/0${num}_detail" ]
+	then
+		cat $fulldir/0${num}_detail
+		exit
+	fi
+done
