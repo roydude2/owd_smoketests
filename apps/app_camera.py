@@ -37,7 +37,8 @@ class AppCamera(GaiaTestCase):
         
     def switchSource(self):
         switchBTN = self.UTILS.get_element(*self.UTILS.verify("DOM.Camera.switch_source_btn"))
-        self.marionette.tap(switchBTN)        
+        self.UTILS.TEST(switchBTN, "Source switch buttons is available.", True)
+        self.marionette.tap(switchBTN)      
         self.wait_for_element_present(*self.UTILS.verify("DOM.Camera.capture_button_enabled"))
 
     #

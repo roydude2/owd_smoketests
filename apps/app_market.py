@@ -49,7 +49,7 @@ class AppMarket(GaiaTestCase):
         #
         self.marionette.execute_script('window.scrollTo(0, 10)')        
         
-        x = self.marionette.find_element(*self.UTILS.verify(DOM.Market.search_query))
+        x = self.marionette.find_element(*self.UTILS.verify("DOM.Market.search_query"))
         x.send_keys(p_app)
         x.send_keys(Keys.RETURN)
 

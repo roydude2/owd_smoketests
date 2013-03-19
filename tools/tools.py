@@ -341,6 +341,10 @@ class TestUtils(GaiaTestCase):
             el = self.marionette.find_element(*p_element)
             return el
         except:
+            self.logResult(False, 
+                           "Element (\"" + \
+                           p_element[0] + "\", \"" + \
+                           p_element[1] + "\") not displayed before timeout.")
             return False
         
     def get_elements(self, *p_elements):

@@ -203,22 +203,11 @@ printf "\n\n(For test run details, see '*_detail' files in \"${RESULT_DIR}\".)\n
 #
 # Now run tests as required.
 #
-if [ ! "$TESTS" ]
-then
-    ls ./tests/test_*.py | while read fnam
-    do
-        run_test $fnam
-    done
-else
-    file_list=""
-    
-    for i in $(echo $TESTS)
-    do
+for i in $(echo $TESTS)
+do
 	x=$(f_pad $i)
-        
-        run_test ./tests/test_${x}.py
-    done
-fi
+	run_test ./tests/test_${x}.py
+done
 
 
 

@@ -59,7 +59,7 @@ class main():
         # LANGUAGE.
         #
         self.UTILS.TEST(self.FTU.setLanguage(self.LANG), 
-            "Language '" + self.LANG + "' is available.", True)
+            "Language '" + self.LANG + "' is available on this device.", True)
         self.FTU.nextScreen()
         
         #
