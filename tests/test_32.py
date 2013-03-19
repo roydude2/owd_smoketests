@@ -25,7 +25,7 @@ class test_32(GaiaTestCase):
         # Set up child objects...
         #
         GaiaTestCase.setUp(self)
-        self.UTILS      = TestUtils(self, 32)
+        self.UTILS      = TestUtils(self)
         self.Settings   = AppSettings(self)
         self.Browser    = AppBrowser(self)
         
@@ -41,7 +41,8 @@ class test_32(GaiaTestCase):
         #
         # Ensure we have a connection without wifi.
         #
-        self.data_layer.disable_wifi()
+        self.UTILS.logComment("Not disabling wifi currently.")
+#        self.data_layer.disable_wifi()
         self.Settings.turn_dataConn_on_if_required()
         
     def tearDown(self):
@@ -58,11 +59,6 @@ class test_32(GaiaTestCase):
         # Open our URL.
         #
         self.Browser.open_url(self._URL)
-
-        #
-        # Check the page didn't have a problem.
-        #
-        self.Browser.check_page_loaded()
         
         #
         # Install the app.
@@ -87,7 +83,7 @@ class test_32(GaiaTestCase):
         #
         # Go back to the home page and check the app is installed.
         #
-        self.UTILS.TEST(self.UTILS.findAppIcon(self._appName), "App icon not found in homescreen.")
+        self.UTILS.TEST(self.UTILS.findAppIcon(self._appName), "App icon is present in the homescreen.")
                 
         #
         # Remove the app.

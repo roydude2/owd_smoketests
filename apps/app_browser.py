@@ -15,7 +15,7 @@ class AppBrowser(GaiaTestCase):
 
         # Just so I get 'autocomplete' in my IDE!
         self.marionette = Marionette()
-        self.UTILS      = TestUtils(self, 00)        
+        self.UTILS      = TestUtils(self)        
         if True:
             self.marionette = p_parent.marionette
             self.UTILS      = p_parent.UTILS
@@ -25,12 +25,18 @@ class AppBrowser(GaiaTestCase):
         self.app = self.apps.launch('Browser')
         self.wait_for_element_not_displayed(*DOM.GLOBAL.loading_overlay)
 
-    #
-    # Open url.
-    #
+    def is_throbber_visible(self):
+        #
+        # Just checks that the animated wait icon is still present.
+        #
+        return self.marionette.find_element(*self.UTILS.verify("DOM.Browser.throbber")).get_attribute('class') == 'loading'
+    
     def open_url(self, p_url):
+        #
+        # Open url.
+        #
         x=self.UTILS.get_element(*self.UTILS.verify("DOM.Browser.url_input"))
-        self.UTILS.reportComment("Using URL " + p_url)
+        self.UTILS.logComment("Using URL " + p_url)
         x.send_keys(p_url)
         
         x=self.UTILS.get_element(*self.UTILS.verify("DOM.Browser.url_go_button"))
@@ -42,28 +48,36 @@ class AppBrowser(GaiaTestCase):
         self.wait_for_element_displayed(*self.UTILS.verify("DOM.Browser.throbber"))
         self.wait_for_condition(lambda m: not self.is_throbber_visible(), timeout=120)
     
-    def is_throbber_visible(self):
-        return self.marionette.find_element(*self.UTILS.verify("DOM.Browser.throbber")).get_attribute('class') == 'loading'
-    
+        self.UTILS.TEST(self.check_page_loaded(p_url), "Web page loaded correctly.")
     
     #
     # Check the page didn't have a problem.
     #
-    def check_page_loaded(self):
+    def check_page_loaded(self, p_url):
         #
-        # Switch to the browser content frame (so a snapshot on error will show the browser
-        # contents).
+        # Switch to the browser content frame and check the contents.
         #
-        self.UTILS.switchToFrame(*DOM.Browser.website_frame)
-#        browser_frame = self.marionette.find_element(*self.UTILS.verify("DOM.Browser.browser_page_frame"))
-#        self.marionette.switch_to_frame(browser_frame)
+        # The "src" will have the protocol on the front, such as "http://" or "https://" or whatever.
+        # It could also expand to have more on the end of the url, which basically makes it a bit
+        # unpredictable, so I'm using the class name.
+        # However, if you decide to use it in the future, here's how:
+#        iframe_dom = ("xpath", "//iframe[contains(@src,'%s')]" % p_url)
+#        ... do the 'wait_for_element...' part. If that passes:
+#        x = self.marionette.find_element(*iframe_dom)
+#        self.UTILS.switchToFrame("src", x.get_attribute("src"))        iframe_dom = ("class name", "browser-tab")
 
-        boolOK = True
+        iframe_dom = ("xpath", "//iframe[@class='browser-tab']")
+        try:
+            self.wait_for_element_present(*iframe_dom)
+        except:
+            self.UTILS.logResult(False, "Unable to locate browser page frame based on url '%s'." % p_url)
+            return False
+
+        self.UTILS.switchToFrame("class", "browser-tab")
+
         try:
             x = self.marionette.find_element(*DOM.Browser.page_problem)
             if x.is_displayed():
-                boolOK = False
+                return False
         except:
-            boolOK = True
-        
-        self.UTILS.TEST(boolOK, "Had a problem loading the page.")
+            return True

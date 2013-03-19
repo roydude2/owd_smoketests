@@ -17,7 +17,7 @@ class AppCalculator(GaiaTestCase):
 
         # Just so I get 'autocomplete' in my IDE!
         self.marionette = Marionette()
-        self.UTILS      = TestUtils(self, 00)        
+        self.UTILS      = TestUtils(self)        
         if True:
             self.marionette = p_parent.marionette
             self.UTILS      = p_parent.UTILS
@@ -26,7 +26,7 @@ class AppCalculator(GaiaTestCase):
         # Sometimes the calcultaor gets uninstalled!
         #
         if not self.UTILS.isAppInstalled("Calculator"):
-            self.UTILS.reportComment("Calculator was installed automatically because it was missing.")
+            self.UTILS.logComment("Calculator was installed automatically because it was missing.")
             
             #
             # There are a few 'Calculator' apps, so make sure we get the correct

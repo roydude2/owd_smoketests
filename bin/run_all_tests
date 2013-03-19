@@ -2,9 +2,11 @@
 
 mkdir /tmp/tests 2>/dev/null
 
-export RESULT_FILE="/tmp/tests/B2G_tests.$(date +%Y%m%d%H%M%S)"
+export RESULT_DIR="/tmp/tests/B2G_tests.$(date +%Y%m%d%H%M%S)"
 export RUNTEST="./bin/run_test_case"
 export TESTDIR="./tests"
+
+[ ! -d "$RESULT_DIR" ] && mkdir -p $RESULT_DIR
 
 
 ################################################################################
@@ -24,12 +26,13 @@ f_pad(){
 # Function to run a test case ...
 #
 run_test(){
-    FNAM=$1
-    DESC=$(grep "_Description" $FNAM | head -1 | sed -e "s/^[^\"]*\"\(.*\)\"/\1/")
-    DESC=${DESC:-"(no description found!)"}
-    CASE=$(echo ${FNAM%.py} | sed -e "s/^.*_//")
-    
-    $RUNTEST -t $CASE -d "$DESC" -f $FNAM -r $RESULT_FILE -e ${RESULT_FILE}.err
+    export TEST_FILE=$1
+    export TEST_NUM=$(echo ${TEST_FILE%.py} | sed -e "s/^.*_//")
+
+    TEST_DESC=$(grep "_Description" $TEST_FILE | head -1 | sed -e "s/^[^\"]*\"\(.*\)\"/\1/")
+    export TEST_DESC=${TEST_DESC:-"(no description found!)"}
+
+    $RUNTEST 
 }
 
 #
@@ -195,12 +198,7 @@ then
 fi
 
 
-echo "
-(For test run details, see: \"${RESULT_FILE}_<test-case>_detail\".)
-
- TEST                                                                                      TESTS
- CASE  DESCRIPTION                                                                         PASSED  RESULT
- ----  -----------                                                                         ------  ------"
+printf "\n\n(For test run details, see '*_detail' files in \"${RESULT_DIR}\".)\n\n"
 
 #
 # Now run tests as required.

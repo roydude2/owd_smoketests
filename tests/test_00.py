@@ -25,7 +25,7 @@ class test_21(GaiaTestCase):
         # Set up child objects...
         #
         GaiaTestCase.setUp(self)
-        self.UTILS      = TestUtils(self, 21)
+        self.UTILS      = TestUtils(self)
         self.Market     = AppMarket(self)
         self.Settings   = AppSettings(self)
         

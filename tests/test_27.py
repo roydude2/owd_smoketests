@@ -22,7 +22,7 @@ class test_27(GaiaTestCase):
         # Set up child objects...
         #
         GaiaTestCase.setUp(self)
-        self.UTILS      = TestUtils(self, 27)
+        self.UTILS      = TestUtils(self)
         self.FTU        = AppFTU(self)
         self.wifi_name  = self.UTILS.get_os_variable("WIFI_TEST_27", "Name of wifi to connect to (case sensitive!)")
         self.wifi_user  = self.UTILS.get_os_variable("USERNAME_27", "Wifi username")
@@ -38,12 +38,12 @@ class test_27(GaiaTestCase):
         self.city      = "Madrid"
         self.language  = "English (US)"
         
-        self.UTILS.reportComment("Using wifi name: " + self.wifi_name)
-        self.UTILS.reportComment("Using wifi user: " + self.wifi_user)
-        self.UTILS.reportComment("Using wifi pass: " + self.wifi_pass)
-        self.UTILS.reportComment("Using continent: " + self.continent)
-        self.UTILS.reportComment("Using city     : " + self.city)
-        self.UTILS.reportComment("Using language : " + self.language)
+        self.UTILS.logComment("Using wifi name: " + self.wifi_name)
+        self.UTILS.logComment("Using wifi user: " + self.wifi_user)
+        self.UTILS.logComment("Using wifi pass: " + self.wifi_pass)
+        self.UTILS.logComment("Using continent: " + self.continent)
+        self.UTILS.logComment("Using city     : " + self.city)
+        self.UTILS.logComment("Using language : " + self.language)
         
         #
         # Turn off wifi and dataconn.

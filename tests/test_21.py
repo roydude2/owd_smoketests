@@ -25,7 +25,7 @@ class test_21(GaiaTestCase):
         # Set up child objects...
         #
         GaiaTestCase.setUp(self)
-        self.UTILS      = TestUtils(self, 21)
+        self.UTILS      = TestUtils(self)
         self.Market     = AppMarket(self)
         self.Settings   = AppSettings(self)
         
@@ -38,7 +38,7 @@ class test_21(GaiaTestCase):
         #self.data_layer.disable_wifi()
         self.Settings.turn_dataConn_on_if_required()
         
-        self.UTILS.reportComment("Using app '" + self.APP_NAME + "'")
+        self.UTILS.logComment("Using app '" + self.APP_NAME + "'")
         
         #
         # Make sure our app isn't installed already.
@@ -59,11 +59,11 @@ class test_21(GaiaTestCase):
         # Install our app.
         #
         self.UTILS.TEST(self.Market.install_app(self.APP_NAME, self.APP_AUTHOR),
-                        "Failed to install app.", True)
+                        "Successfully installed application '" + self.APP_NAME + "'.", True)
         
         #
         # Launch the app from the homescreen.
         #
         self.UTILS.TEST(self.UTILS.launchAppViaHomescreen(self.APP_NAME),
-                        "Could not launch app from homescreen.")
+                        "Application '" + self.APP_NAME + "' can be launched from homescreen.")
 

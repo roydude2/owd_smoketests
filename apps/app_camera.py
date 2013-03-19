@@ -15,7 +15,7 @@ class AppCamera(GaiaTestCase):
 
         # Just so I get 'autocomplete' in my IDE!
         self.marionette = Marionette()
-        self.UTILS      = TestUtils(self, 00)        
+        self.UTILS      = TestUtils(self)        
         if True:
             self.marionette = p_parent.marionette
             self.UTILS      = p_parent.UTILS
@@ -27,7 +27,7 @@ class AppCamera(GaiaTestCase):
         try:
             self.apps.set_permission('Camera', 'geolocation', 'deny')
         except:
-            self.UTILS.reportComment("Couldn't automatically set Camera geolocation permission!")
+            self.UTILS.logComment("Couldn't automatically set Camera geolocation permission!")
         
 
     def launch(self):
@@ -83,8 +83,8 @@ class AppCamera(GaiaTestCase):
         
         elapsed_time = int(time.time() - start_time)
         
-        self.UTILS.TEST((elapsed_time > p_from_SS), "Video is shorter than expected (played for %.2f seconds)." % elapsed_time)
-        self.UTILS.TEST((elapsed_time < p_to_SS), "Video is longer than expected (played for %.2f seconds)." % elapsed_time)
+        self.UTILS.TEST((elapsed_time > p_from_SS), "Video is not shorter than expected (played for %.2f seconds)." % elapsed_time)
+        self.UTILS.TEST((elapsed_time < p_to_SS), "Video is not longer than expected (played for %.2f seconds)." % elapsed_time)
 
     #
     # NOTE: p_length needs to be in the format "mm:ss"
@@ -112,6 +112,6 @@ class AppCamera(GaiaTestCase):
         
         # TEST: Thumbnail has not been previewed yet.
         prev_marker = self.marionette.find_element(*self.UTILS.verify("DOM.Camera.thumbnail_preview_marker"))
-        self.UTILS.TEST((prev_marker.get_attribute("class") == "offscreen"), "Image was previewed as soon as picture was taken.")
+        self.UTILS.TEST((prev_marker.get_attribute("class") == "offscreen"), "Image is not previewed as soon as picture is taken.")
         
 

@@ -21,7 +21,7 @@ class test_12(GaiaTestCase):
         # Set up child objects...
         #
         GaiaTestCase.setUp(self)
-        self.UTILS      = TestUtils(self, 12)
+        self.UTILS      = TestUtils(self)
         self.gallery    = AppGallery(self)
         self.camera     = AppCamera(self)
         

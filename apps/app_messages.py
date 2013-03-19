@@ -15,7 +15,7 @@ class AppMessages(GaiaTestCase):
 
         # Just so I get 'autocomplete' in my IDE!
         self.marionette = Marionette()
-        self.UTILS      = TestUtils(self, 00)        
+        self.UTILS      = TestUtils(self)        
         if True:
             self.marionette = p_parent.marionette
             self.UTILS      = p_parent.UTILS
@@ -76,8 +76,8 @@ class AppMessages(GaiaTestCase):
         x = self.UTILS.waitForStatusBarNew(x, p_timeout)
         
         if not x:
-            self.UTILS.logResult(False, "Failed to locate new sms before timeout!")
-            errmsg = "(NOTE: If you asked the device to message itself, the return message may have just returned "
+            self.UTILS.logResult(False, "New SMS is received.")
+            errmsg = "(NOTE: If you asked the device to message itself, the return message will return "
             errmsg = errmsg + "too quickly to be detected - try using the number of a different device.)"
             self.UTILS.logResult(False, errmsg)
             return False
@@ -100,31 +100,22 @@ class AppMessages(GaiaTestCase):
         #
         self.UTILS.displayStatusBar()
 
-        x = self.marionette.find_elements(*self.UTILS.verify("DOM.GLOBAL.status_bar_count"))
+        x = self.marionette.find_elements(*self.UTILS.verify("DOM.Messages.statusbar_all_notifs"))
         
-        for i in range(0, len(x)):
+        for elP in x:
             #
-            # Very tricky - the 'tappable' part is actually the parent div :(
+            # Bit tricky - the 'tappable' part is actually the parent "div".
             #
-            #   elParent: this is what has to be clicked to 'action' sms app.
-            #   elChild : this is where the number is stored (so match on this).
+            #   elP: this is what has to be clicked to 'action' sms app.
+            #   elC: this is where the number is stored (so match on this).
             #
-            # (there MUST be an easier way to do this - took me hours
-            #  of trial-and-error to figure it out! ;[ )
-            #
-            elParent = DOM.Messages.statusbar_all_notifs % (i+1)
-            elChild  = DOM.Messages.statusbar_all_notifs % (i+1) + "/div[1]"
+            elC      = elP.find_elements("xpath", "//div")
             
-            elC = self.marionette.find_element('xpath', elChild)
-
-            if p_num in elC.text:
-                #
-                # Match - get the parent div and click it.
-                # 
-                elP = self.marionette.find_element('xpath', elParent)
-                self.marionette.tap(elP)
-                break
-
+            for ic in elC:
+                if p_num in ic.text:
+                    self.marionette.tap(elP)
+                    break
+            
         #
         # Switch back to the messaging app.
         #

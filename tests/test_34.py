@@ -15,14 +15,13 @@ from datetime import datetime
 
 class test_34(GaiaTestCase):
     _Description = "Add calendar event."
-    _TestCase    = 34
  
     def setUp(self):
         #
         # Set up child objects...
         #
         GaiaTestCase.setUp(self)
-        self.UTILS      = TestUtils(self, self._TestCase)
+        self.UTILS      = TestUtils(self)
         self.calendar   = AppCalendar(self)
         self.titleStr   = "Test event " + str(datetime.now().time())
         self.locatStr   = "Right here"
@@ -67,17 +66,17 @@ class test_34(GaiaTestCase):
         # Check the event is listed as expected in MONTH view.
         #
         x = self.calendar.getEventPreview("month", t_h1, self.titleStr, self.locatStr)
-        self.UTILS.TEST(x, "Created calendar event not found in month view.")
+        self.UTILS.TEST(x, "Created calendar event is found in month view.")
         
         #
         # Check the event is listed as expected in WEEK view.
         #
         x = self.calendar.getEventPreview("week", t_h1, self.titleStr, self.locatStr)
-        self.UTILS.TEST(x, "Created calendar event not found in week view.")
+        self.UTILS.TEST(x, "Created calendar event is found in week view.")
         
         #
         # Check the event is listed as expected in DAY view.
         #
         x = self.calendar.getEventPreview("day", t_h1, self.titleStr, self.locatStr)
-        self.UTILS.TEST(x, "Created calendar event not found in day view.")
+        self.UTILS.TEST(x, "Created calendar event is found in day view.")
         

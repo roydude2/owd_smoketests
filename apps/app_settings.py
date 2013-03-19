@@ -15,7 +15,7 @@ class AppSettings(GaiaTestCase):
 
         # Just so I get 'autocomplete' in my IDE!
         self.marionette = Marionette()
-        self.UTILS      = TestUtils(self, 00)        
+        self.UTILS      = TestUtils(self)        
         if True:
             self.marionette = p_parent.marionette
             self.UTILS      = p_parent.UTILS
@@ -106,7 +106,7 @@ class AppSettings(GaiaTestCase):
         #
         self.UTILS.TEST(
             self.data_layer.get_setting("ril.data.enabled"),    
-            "Data connection is not enabled after trying to enable it.", True)
+            "Data connection is enabled after trying to enable it.", True)
         
         #
         # Give the statusbar icon time to appear, then check for it.
@@ -117,7 +117,7 @@ class AppSettings(GaiaTestCase):
         if p_wifiOFF:
             x = self.UTILS.check_statusbar_for_icon(DOM.Statusbar.dataConn, DOM.Settings.frame_locator)
             self.UTILS.TEST(x, 
-                            "Data connection is listed as 'enabled', but the icon is not present in the status bar.", 
+                            "Data connection icon is present in the status bar.", 
                             True)
 
 
@@ -192,7 +192,8 @@ class AppSettings(GaiaTestCase):
             #
             backBTN = self.marionette.find_element(*self.UTILS.verify("DOM.Settings.back_button"))
             self.marionette.tap(backBTN)
-            self.wait_for_element_displayed('xpath', DOM.GLOBAL.app_head_specific % "Wi-Fi")
+#            self.wait_for_element_displayed('xpath', DOM.GLOBAL.app_head_specific % "Wi-Fi")
+            self.UTILS.TEST(self.UTILS.headerCheck("Wi-Fi"), "Header is 'Wi-Fi'.")
         
         #
         # A couple of checks to wait for 'anything' to be Connected.
@@ -203,7 +204,7 @@ class AppSettings(GaiaTestCase):
             conBool = True
         except:
             conBool = False
-        self.UTILS.TEST(conBool, "Timeout waiting for wifi to be marked as 'Connected' in the list.")
+        self.UTILS.TEST(conBool, "Wifi is marked as 'Connected' in the list.")
         
         self.UTILS.TEST(self.data_layer.get_setting("wifi.enabled"),
             "Wifi connection to '" + p_wifi_name + "' not established.", True)

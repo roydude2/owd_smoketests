@@ -59,12 +59,12 @@ class main():
         
                 # Just so I get 'autocomplete' in my IDE!
         self.marionette     = Marionette()
-        self.UTILS          = TestUtils(self, 00)        
+        self.UTILS          = TestUtils(self)        
         if True:
             self.marionette = p_parent.marionette
             self.UTILS      = p_parent.UTILS
 
-        self.UTILS.reportComment("Using subject \"" + self.subject + "\".")
+        self.UTILS.logComment("Using subject \"" + self.subject + "\".")
         
         self.marionette.set_search_timeout(50)
         p_parent.lockscreen.unlock()
@@ -108,7 +108,7 @@ class main():
         self.Email.openMailFolder(self.sentFolderName)
         time.sleep(10)
         self.UTILS.TEST(self.Email.emailIsInFolder(self.subject),
-            "Email was not found in the Sent folder after being sent.")
+            "Email is found in the Sent folder after being sent.")
         
         #
         # Give the email time to arrive.
@@ -133,21 +133,21 @@ class main():
         # Open the email.
         #
         self.UTILS.TEST(self.Email.openMsg(self.subject),
-            "Unable to find and open an email with the subject '" + self.subject + "'", True)
+            "Found an email with the subject '" + self.subject + "'", True)
         
         #
         # Verify the contents.
         #
         x = self.UTILS.get_element(*self.UTILS.verify("DOM.Email.open_email_from"))
         self.UTILS.TEST(x.text == self.EMAIL1, 
-            "Expected 'From' field to be '" + self.EMAIL1 + "', but it was '" + x.text + "'.")
+            "'From' field = '" + self.EMAIL1 + "' (it was '" + x.text + "').")
 
         x = self.UTILS.get_element(*self.UTILS.verify("DOM.Email.open_email_to"))
         self.UTILS.TEST(x.text == self.EMAIL2, 
-            "Expected 'To' field to be '" + self.EMAIL2 + "', but it was '" + x.text + "'.")
+            "'To' field = '" + self.EMAIL2 + "', (it was '" + x.text + "').")
 
         x = self.UTILS.get_element(*self.UTILS.verify("DOM.Email.open_email_subject"))
         self.UTILS.TEST(x.text == self.subject, 
-            "Expected 'From' field to be '" + self.subject + "', but it was '" + x.text + "'.")
+            "'From' field = '" + self.subject + "', (it was '" + x.text + "').")
         
 

@@ -22,7 +22,7 @@ class test_10(GaiaTestCase):
         # Set up child objects...
         #
         GaiaTestCase.setUp(self)
-        self.UTILS      = TestUtils(self, 8)
+        self.UTILS      = TestUtils(self)
         self.messages   = AppMessages(self)
         
         self.marionette.set_search_timeout(50)
@@ -39,7 +39,7 @@ class test_10(GaiaTestCase):
         # Establish which phone number to use.
         #
         self.target_telNum = self.UTILS.get_os_variable("TEST_SMS_NUM", "Mobile number for SMS tests (test 10)")
-        self.UTILS.reportComment("Sending sms to telephone number " + self.target_telNum)
+        self.UTILS.logComment("Sending sms to telephone number " + self.target_telNum)
         
     def tearDown(self):
         self.UTILS.reportResults()
@@ -66,7 +66,7 @@ class test_10(GaiaTestCase):
         # Then open the bar and click on the new message notification.
         #
         x = self.messages.waitForSMSNotifier(self.target_telNum, 180)
-        self.UTILS.TEST(x, "Failed to find new msg.", True)
+        self.UTILS.TEST(x, "Found new msg.", True)
         
         self.messages.clickSMSNotifier(self.target_telNum)
 
@@ -79,4 +79,4 @@ class test_10(GaiaTestCase):
         # TEST: The returned message is as expected.
         #
         self.UTILS.TEST((returnedSMS.lower() == self._TestMsg.lower()), 
-            "Expected text to be '" + self._TestMsg + "' but was '" + returnedSMS + "'")
+            "SMS text = '" + self._TestMsg + "' (it was '" + returnedSMS + "').")

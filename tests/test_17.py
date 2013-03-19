@@ -21,7 +21,7 @@ class test_17(GaiaTestCase):
         # Set up child objects...
         #
         GaiaTestCase.setUp(self)
-        self.UTILS      = TestUtils(self, 17)
+        self.UTILS      = TestUtils(self)
         self.Settings   = AppSettings(self)
         self.Browser    = AppBrowser(self)
         self.testURL    = self.UTILS.get_os_variable("URL_TEST_17", "URL to test data connection with")
@@ -29,7 +29,7 @@ class test_17(GaiaTestCase):
         self.marionette.set_search_timeout(50)
         self.lockscreen.unlock()
         
-        self.UTILS.reportComment("Using " + self.testURL)
+        self.UTILS.logComment("Using " + self.testURL)
         
         self.data_layer.disable_wifi()
         self.data_layer.disable_cell_data()
@@ -53,10 +53,5 @@ class test_17(GaiaTestCase):
         # Open our URL.
         #
         self.Browser.open_url(self.testURL)
-
-        #
-        # Check the page didn't have a problem.
-        #
-        self.Browser.check_page_loaded()
         
 

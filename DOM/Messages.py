@@ -1,6 +1,6 @@
 frame_locator          = ('src', 'app://sms.gaiamobile.org/index.html')
 statusbar_new_sms      = ('xpath', './/*[@id="desktop-notifications-container"]//div[contains(text(), "%s")]')
-statusbar_all_notifs   = ".//*[@id='desktop-notifications-container']/div[%s]"
+statusbar_all_notifs   = ("xpath", ".//*[@id='desktop-notifications-container']/div")
 create_new_message_btn = ('id', 'icon-add')
 target_number          = ('id', 'receiver-input')
 input_message_area     = ('id', 'message-to-send')

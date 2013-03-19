@@ -12,17 +12,21 @@ class TestUtils(GaiaTestCase):
     # When you create your instance of this class, include the
     # "self" object so we can access the calling class' objects.
     #
-    def __init__(self, p_parent, p_testNum):
+    def __init__(self, p_parent):
         self.parent         = p_parent
         self.apps           = p_parent.apps
         self.marionette     = p_parent.marionette
-        self.testNum        = str(p_testNum)
         self._resultArray   = []
         self._commentArray  = []
         self.errNum         = 0
         self.passed         = 0
         self.failed         = 0
         self.start_time     = time.time()
+
+        self.testNum        = self.get_os_variable("TEST_NUM")
+        self.testDesc       = self.get_os_variable("TEST_DESC")
+        self.det_fnam       = self.get_os_variable("DET_FILE")
+        self.sum_fnam       = self.get_os_variable("SUM_FILE")
         
         # Just so I get 'autocomplete' in my IDE!
         self.marionette = Marionette()
@@ -54,7 +58,7 @@ class TestUtils(GaiaTestCase):
     #
     # Add a comment to the comment array.
     #
-    def reportComment(self, p_str):
+    def logComment(self, p_str):
         self._commentArray.append(p_str)
 
     #
@@ -92,15 +96,11 @@ class TestUtils(GaiaTestCase):
         test_time   = round(test_time, 0)
         test_time   = str(datetime.timedelta(seconds=test_time))
 
-        test_case   = self.get_os_variable("TEST_CASE")
-        test_desc   = self.get_os_variable("TEST_DESC")
-        det_fnam    = self.get_os_variable("DET_FILE")
-        sum_fnam    = self.get_os_variable("SUM_FILE")
-        DET_FILE    = open(det_fnam, "w")
-        SUM_FILE    = open(sum_fnam, "w")
+        DET_FILE    = open(self.det_fnam, "w")
+        SUM_FILE    = open(self.sum_fnam, "w")
 
-        DET_FILE.write("Test case  : %s\n" % test_case)
-        DET_FILE.write("Description: %s\n" % test_desc)
+        DET_FILE.write("Test case  : %s\n" % self.testNum)
+        DET_FILE.write("Description: %s\n" % self.testDesc)
         DET_FILE.write("Time taken : %s\n" % str(test_time))
 
         boolStart = False
@@ -121,10 +121,10 @@ class TestUtils(GaiaTestCase):
                     y = y - 1
         
         totals = "(%d/%d)" %(y, x)
-        SUM_FILE.write("[%s] %s %s: %s\n" % (test_case.center(4), 
-                                                  test_desc.ljust(80), 
-                                                  totals.rjust(9),  
-                                                  res_str))
+        SUM_FILE.write("[%s] %s %s: %s\n" % ( self.testNum.center(4), 
+                                              self.testDesc.ljust(80), 
+                                              totals.rjust(9),  
+                                              res_str))
         
         DET_FILE.write("Passed     : %s\n" % str(self.passed))
         DET_FILE.write("Failed     : %s\n" % str(self.failed))
@@ -176,13 +176,19 @@ class TestUtils(GaiaTestCase):
         # Split the variable into it's parts.
         #
         varname     = p_DOM_definition
-        domElement  = eval(p_DOM_definition)
+        
+        try:
+            domElement  = eval(p_DOM_definition)
+        except:
+            self.logResult(False, 
+                           "'" + p_DOM_definition + "' is not found in the DOM files.")
+            self.quitTest()
         
         try:
             self.wait_for_element_present(*domElement, timeout=p_timeOut)
         except:
             fileTag  = "DOM_error_screen"
-            htmlFile = os.environ['RESULT_FILE'] + fileTag + ".html"
+            htmlFile = os.environ['RESULT_DIR'] + "/" + fileTag + ".html"
             shotFile = self.screenShot(fileTag)
 
             self.savePageHTML(htmlFile)
@@ -214,10 +220,17 @@ class TestUtils(GaiaTestCase):
         for idx in range(0,iframes['length']):
             self.marionette.switch_to_frame()
             iframe = iframes[str(idx)]
+            iframe_src = iframe.get_attribute("src")
+            iframe_id  = iframe.get_attribute("id")
+            iframe_x   = str(iframe.get_attribute("data-frame-origin"))
             self.marionette.switch_to_frame(iframe)
             time.sleep(1)
 
-            self.logResult(False, "Frame " + str(y) + " src=\"" + iframe.get_attribute("src") + "\", id=\"" + iframe.get_attribute("id") + "\"")
+            self.logResult(False, 
+                           "Frame " + str(y) + \
+                           " src=\"" + iframe_src + \
+                           "\" x=\"" + iframe_x + \
+                           "\", id=\"" + iframe_id + "\"")
             self.savePageHTML("/tmp/roy" + str(y) + ".html")
             self.screenShot("DEBUG_" + str(y))
 
@@ -232,21 +245,29 @@ class TestUtils(GaiaTestCase):
         #
         #    "self.marionette.switch_to_frame()"
         #
-        frameSpec = ("xpath", "//iframe[@" + p_tag + "='" + p_str + "']")
-        
-        try:
-            self.wait_for_element_present(*frameSpec)
-            iframe = self.marionette.find_element(*frameSpec)
-            if self.marionette.switch_to_frame(iframe):
-                return True    
-        except:
-            #
-            # Ignore the exception - if we get pas this we've failed to switch.
-            #
-            pass
+        # (This way is better because we can use 'wait_for_element_present, 
+        # but it doesn't work for facebook's src="" frame :(
+#        frameSpec = ("xpath", "//iframe[@" + p_tag + "='" + p_str + "']")
+#        
+#        try:
+#            self.wait_for_element_present(*frameSpec)
+#            iframe = self.marionette.find_element(*frameSpec)
+#            if self.marionette.switch_to_frame(iframe):
+#                return True    
+#        except:
+#            #
+#            # Ignore the exception - if we get past this we've failed to switch.
+#            #
+#            pass
+        time.sleep(1)
+        x = self.marionette.find_elements("tag name", "iframe")
+        for i in x:
+            if i.get_attribute(p_tag) == p_str:
+                self.marionette.switch_to_frame(i)
+                return True
         
         if p_quitOnError:
-            self.logResult(False, "Could not switch to frame " + p_tag + "=\"" + p_str + "\".")
+            self.logResult(False, "Switch to frame " + p_tag + "=\"" + p_str + "\".")
             self.quitTest()
         else:
             return False
@@ -269,7 +290,7 @@ class TestUtils(GaiaTestCase):
     # Take a screenshot.
     #
     def screenShot(self, p_fileSuffix):
-        outFile = os.environ['RESULT_FILE'] + p_fileSuffix + ".png"
+        outFile = os.environ['RESULT_DIR'] + "/" + p_fileSuffix + ".png"
         screenshot = self.marionette.screenshot()[22:] 
         with open(outFile, 'w') as f:
             f.write(base64.decodestring(screenshot))        
@@ -283,7 +304,7 @@ class TestUtils(GaiaTestCase):
         # Build the error filename.
         #
         self.errNum = self.errNum + 1
-        fnam = "_" + self.testNum + "_err_" + str(self.errNum)
+        fnam = self.testNum + "_err_" + str(self.errNum)
         
         #
         # Record the screenshot.
@@ -293,7 +314,7 @@ class TestUtils(GaiaTestCase):
         #
         # Dump the current page's html source too.
         #
-        htmlDump = os.environ['RESULT_FILE'] + fnam + ".html"
+        htmlDump = os.environ['RESULT_DIR'] + "/" + fnam + ".html"
         self.savePageHTML(htmlDump)
         return x
 
@@ -354,15 +375,18 @@ class TestUtils(GaiaTestCase):
 
     #
     # Returns the header that matches a string.
-    # NOTE: ALL headers in this frame are true for ".is_displayed()"!
+    # NOTE: ALL headers in this iframe return true for ".is_displayed()"!
     #
-    def headerFound(self, p_str):
+    def headerCheck(self, p_str):
         try:
             self.wait_for_element_present(*DOM.GLOBAL.app_head)
             headerName = self.marionette.find_elements(*DOM.GLOBAL.app_head)
             for i in headerName:
                 if i.text == p_str:
-                    return True
+                    if i.is_displayed():
+                        return True
+                    else:
+                        return False
         except:
             return False
                 

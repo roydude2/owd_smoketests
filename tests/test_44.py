@@ -12,7 +12,7 @@ import DOM
 #
 from tests.shared_test_functions import FTU_LANG_KB
 
-class test_42(GaiaTestCase):
+class test_44(GaiaTestCase):
     _Description = "First time use screens - check SPANISH keyboard."
     
     _LANG           = "Espanol"
@@ -23,7 +23,7 @@ class test_42(GaiaTestCase):
         # Set up child objects...
         #
         GaiaTestCase.setUp(self)
-        self.UTILS   = TestUtils(self, 42)
+        self.UTILS   = TestUtils(self)
         self.FTU_KB  = FTU_LANG_KB.main(self, self._LANG, self._SCREEN_SIZES)
         
     def tearDown(self):

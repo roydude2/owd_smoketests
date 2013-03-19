@@ -15,7 +15,7 @@ class AppClock(GaiaTestCase):
 
         # Just so I get 'autocomplete' in my IDE!
         self.marionette = Marionette()
-        self.UTILS      = TestUtils(self, 00)        
+        self.UTILS      = TestUtils(self)        
         if True:
             self.marionette = p_parent.marionette
             self.UTILS      = p_parent.UTILS
@@ -87,7 +87,7 @@ class AppClock(GaiaTestCase):
         t_hour = x[0]
         t_ampm = x[1]
 
-        self.UTILS.reportComment("Creating new alarm for " + str(t_hour) + ":" + str(p_min).zfill(2) + " " + t_ampm)
+        self.UTILS.logComment("Creating new alarm for " + str(t_hour) + ":" + str(p_min).zfill(2) + " " + t_ampm)
         
         #
         # Set the hour.
@@ -155,11 +155,11 @@ class AppClock(GaiaTestCase):
                 p_ampm      == alarm_ampm:
                     foundBool = True
                     self.UTILS.TEST(p_label == alarm_label, 
-                                    "Alarm description is incorrect in Clock screen preview.")
+                                    "Alarm description is correct in Clock screen preview.")
                     break
                 
         self.UTILS.TEST(foundBool, 
-                        "Alarm preview not found in Clock screen for " + p_time + p_ampm + ".")
+                        "Alarm preview is found in Clock screen for " + p_time + p_ampm + ".")
              
              
     def checkStatusbarIcon(self):
@@ -217,13 +217,13 @@ class AppClock(GaiaTestCase):
         p_time = str(t_hour) + ":" + str(p_min).zfill(2)
         
         x = self.UTILS.get_element(*self.UTILS.verify("DOM.Clock.alarm_alert_time")).text
-        self.UTILS.TEST(x == p_time, "Incorrect time shown when alarm is ringing: expected '" + p_time + "', but it was '" + x + "'.")
+        self.UTILS.TEST(x == p_time, "Correct alarm time is shown when alarm is ringing (expected '" + p_time + "', it was '" + x + "').")
         
         x = self.UTILS.get_element(*self.UTILS.verify("DOM.Clock.alarm_alert_ampm")).text
-        self.UTILS.TEST(x == t_ampm, "Incorrect AM / PM shown when alarm is ringing: expected '" + t_ampm + "', but it was '" + x + "'.")
+        self.UTILS.TEST(x == t_ampm, "Correct AM / PM shown when alarm is ringing (expected '" + t_ampm + "', it was '" + x + "').")
         
         x = self.UTILS.get_element(*self.UTILS.verify("DOM.Clock.alarm_alert_label")).text
-        self.UTILS.TEST(x == p_label, "Incorrect label shown when alarm is ringing: expected '" + p_label + "', but it was '" + x + "'.")
+        self.UTILS.TEST(x == p_label, "Correct label shown when alarm is ringing (expected '" + p_label + "', it was '" + x + "').")
         
         #
         # Stop the alarm.

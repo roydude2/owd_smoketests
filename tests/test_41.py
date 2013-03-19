@@ -11,6 +11,7 @@ import DOM
 # Imports particular to this test case.
 #
 from apps.app_contacts import *
+from apps.app_facebook import *
 from apps.app_settings import *
 from tests.mock_data.contacts import MockContacts
 import time
@@ -23,8 +24,9 @@ class test_41(GaiaTestCase):
         # Set up child objects...
         #
         GaiaTestCase.setUp(self)
-        self.UTILS      = TestUtils(self, 41)
+        self.UTILS      = TestUtils(self)
         self.contacts   = AppContacts(self)
+        self.facebook   = AppFacebook(self)
         self.settings   = AppSettings(self)
                 
         #
@@ -41,7 +43,8 @@ class test_41(GaiaTestCase):
         #
         # Set up to use data connection.
         #
-        self.data_layer.disable_wifi()
+        self.UTILS.logComment("Not disabling wifi at the moment")
+#        self.data_layer.disable_wifi()
         self.settings.turn_dataConn_on_if_required()
         
         #
@@ -73,52 +76,36 @@ class test_41(GaiaTestCase):
         #
         # Press the link button.
         #
-        self.contacts.pressLinkContact()
+        self.contacts.tapLinkContact()
 
         #
-        # Need to figure out a better way to do this.
+        # Select the contact to link.
         #
-        x = self.marionette.find_elements("xpath", "//*[@id='friends-list']//li")
-        
-        fb_email = False
-        
-        for i in x:
-            if i.is_displayed():
-                #
-                # Keep the name and email detais for this contact.
-                #
-                y = i.find_elements("tag name", "p")
-                fb_email = y[1].text
-                
-                self.marionette.tap(i)
-                break
-
-        self.UTILS.TEST(fb_email, "Could not find linked contact's email address.")
-        
-        if fb_email:
-            self.UTILS.reportComment("Linked FB contact email: " + fb_email + ".")
+        fb_email = self.UTILS.get_os_variable("LINK_EMAIL_ADDRESS", "Email address of facebook account to link.")
+        self.facebook.LinkContact(fb_email)
         
         #
-        # Switch back and wait for contact details page to re-appear.
+        # Check we're back at our contact.
         #
-        self.marionette.switch_to_frame()
-        self.UTILS.switchToFrame(*DOM.Facebook.fb_friends_iframe_1)
-        self.UTILS.TEST(self.UTILS.headerFound(self.Contact_1['name']), 
-                        "Header '"+ self.Contact_1['name'] +"' not found.")
+        self.UTILS.TEST(self.UTILS.headerCheck(self.Contact_1['name']), 
+                        "Header is '"+ self.Contact_1['name'] +"'.")
 
         #
-        # Reload the contacts app (we need a little sleep to let the facebook
-        # icon appear).
-        #
-        self.apps.kill_all()
-        self.contacts.launch()
-        time.sleep(2)
+        # This was covering up an error - these details should be available before
+        # the contacts app is reloaded. 
+#        #
+#        # Reload the contacts app (we need a little sleep to let the facebook
+#        # icon appear).
+#        #
+#        self.apps.kill_all()
+#        self.contacts.launch()
+#        time.sleep(2)
 
         #
         # Check that our contact is now listed as a facebook contact (icon by the name in 'all contacts' screen).
         #
-        x = self.marionette.find_elements(*self.UTILS.verify("DOM.Contacts.view_all_fb_contacts"))
-        self.UTILS.TEST(len(x) > 0, "Our contact is not listed as a facebook contact after linking.")
+        x = self.marionette.find_elements(*self.UTILS.verify("DOM.Contacts.social_network_contacts"))
+        self.UTILS.TEST(len(x) > 0, "Contact is listed as a facebook contact after linking.")
         
 
         #
@@ -143,8 +130,8 @@ class test_41(GaiaTestCase):
             if i.text == fb_email               : boolLinkedEmail   = True
             if i.text == "Unlink contact"       : boolUnLink        = True
             
-        self.UTILS.TEST(boolViewFbProfile   , "'View Facebook profile' button not displayed after contact linked to fb contact.")
-        self.UTILS.TEST(boolWallPost        , "'Wall post' button not displayed after contact linked to fb contact.")
-        self.UTILS.TEST(boolUnLink          , "'Unlink contact' button not displayed after contact linked to fb contact.")
-        self.UTILS.TEST(boolLinkedEmail     , "Linked facebook email address not displayed after contact linked to fb contact.")
+        self.UTILS.TEST(boolViewFbProfile   , "'View Facebook profile' button is displayed after contact linked to fb contact.")
+        self.UTILS.TEST(boolWallPost        , "'Wall post' button is displayed after contact linked to fb contact.")
+        self.UTILS.TEST(boolUnLink          , "'Unlink contact' button is displayed after contact linked to fb contact.")
+        self.UTILS.TEST(boolLinkedEmail     , "Linked facebook email address is displayed after contact linked to fb contact.")
         

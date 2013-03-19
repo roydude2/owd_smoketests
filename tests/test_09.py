@@ -5,7 +5,7 @@ import sys
 sys.path.insert(1, "./")
 from tools      import TestUtils
 from gaiatest   import GaiaTestCase
-import DOM
+import DOM, time
 
 #
 # Imports particular to this test case.
@@ -24,7 +24,7 @@ class test_9(GaiaTestCase):
         # Set up child objects...
         #
         GaiaTestCase.setUp(self)
-        self.UTILS      = TestUtils(self, 8)
+        self.UTILS      = TestUtils(self)
         self.contacts   = AppContacts(self)
         self.messages   = AppMessages(self)
         
@@ -43,7 +43,7 @@ class test_9(GaiaTestCase):
         # Establish which phone number to use.
         #
         self.contact_1["tel"]["value"] = self.UTILS.get_os_variable("TEST_SMS_NUM", "Mobile number for SMS tests (test 9)")
-        self.UTILS.reportComment("Using target telephone number " + self.contact_1["tel"]["value"])
+        self.UTILS.logComment("Using target telephone number " + self.contact_1["tel"]["value"])
         
         #
         # Add this contact (quick'n'dirty method - we're just testing sms, no adding a contact).
@@ -67,7 +67,6 @@ class test_9(GaiaTestCase):
         #
         # Tap the sms button in the view details screen to go to the sms page.
         #
-        self.wait_for_element_displayed(*DOM.Contacts.sms_button)
         smsBTN = self.UTILS.get_element(*DOM.Contacts.sms_button)
         self.marionette.tap(smsBTN)
 
@@ -75,6 +74,7 @@ class test_9(GaiaTestCase):
         # Switch to the 'Messages' app frame (or marionette will still be watching the
         # 'Contacts' app!).
         #
+        time.sleep(2)
         self.marionette.switch_to_frame()
         self.UTILS.switchToFrame(*DOM.Messages.frame_locator)
 
@@ -82,16 +82,8 @@ class test_9(GaiaTestCase):
         # TEST: this automatically opens the 'send SMS' screen, so
         # check the correct name is in the header of this sms.
         #
-        boolOK = False
-        try:
-            self.wait_for_element_displayed("xpath", "//h1[text()='" + self.contact_1['name'] + "']")
-            boolOK = True
-        except:
-            boolOK = False
-            
-        self.UTILS.TEST(boolOK,
-                        "'Send message' header was not '" + self.contact_1['name'] + "'.")
-        
+        self.UTILS.TEST(self.UTILS.headerCheck(self.contact_1['name']),
+                        "'Send message' header = '" + self.contact_1['name'] + "'.")
     
         #
         # Create SMS.
@@ -108,15 +100,13 @@ class test_9(GaiaTestCase):
         # can get stuck at the top of the screen 'forever'.
         # To try and avoid that, wait a while before displaying the status bar.
         #
-        import time
         time.sleep(10)
         
         #
         # Wait 3 mins for return message (to confirm communication) - uses the contacts name if it matches one, not the number.
         #
-        x = self.messages.waitForSMSNotifier(self.contact_1["name"], 180)
-        
-        self.UTILS.TEST(x, "Failed to find new msg.", True)
+        x = self.messages.waitForSMSNotifier(self.contact_1["name"], 180)        
+        self.UTILS.TEST(x, "Found new msg.", True)
         
         #
         # Switch back to the sms app. (if we managed to click).
@@ -134,7 +124,7 @@ class test_9(GaiaTestCase):
         # TEST: The returned message is as expected (caseless in case user typed it manually).
         #
         self.UTILS.TEST((returnedSMS.lower() == self._TestMsg.lower()), 
-            "Expected text to be '" + self._TestMsg + "' but was '" + returnedSMS + "'")
+            "SMS text = '" + self._TestMsg + "' (it was '" + returnedSMS + "').")
 
         #
         # Because of a bug, the message notifier remains in the header until you restart the

@@ -16,7 +16,7 @@ class AppFTU(GaiaTestCase):
 
         # Just so I get 'autocomplete' in my IDE!
         self.marionette = Marionette()
-        self.UTILS      = TestUtils(self, 00)        
+        self.UTILS      = TestUtils(self)        
         if True:
             self.marionette = p_parent.marionette
             self.UTILS      = p_parent.UTILS
@@ -44,6 +44,10 @@ class AppFTU(GaiaTestCase):
         # Have to go back to top level to get the B2G select box wrapper
         self.marionette.switch_to_frame()
 
+        #
+        # This won't be around for too long hopefully, so just leave these
+        # DOM defs here.
+        #
         options = self.marionette.find_elements('css selector', '#value-selector-container li')
         close_button = self.marionette.find_element('css selector', 'button.value-option-confirm')
 
@@ -51,7 +55,7 @@ class AppFTU(GaiaTestCase):
         # Is the scroller visible?
         #
         if len(options) <= 0:
-            self.UTILS.logResult(False, "Scroller not displayed while setting '" + match_string + "'.")
+            self.UTILS.logResult(False, "The '" + match_string + "' scroller is displayed when the button is tapped.")
         else:
             # Loop options until we find the match
             for li in options:
@@ -67,7 +71,7 @@ class AppFTU(GaiaTestCase):
     def setLanguage(self, p_lang):
         time.sleep(1)
         x = self.UTILS.get_elements(*self.UTILS.verify("DOM.FTU.language_list"))
-        self.UTILS.TEST(len(x) > 0, "No languages listed!")
+        self.UTILS.TEST(len(x) > 0, "SOME languages are listed.")
         
         for i in x:
             if i.text == p_lang:
@@ -129,7 +133,7 @@ class AppFTU(GaiaTestCase):
         time.sleep(3)
         self.UTILS.TEST(
             self.data_layer.get_setting("ril.data.enabled"),    
-            "Data connection is not enabled after trying to enable it.", True)
+            "Data connection is enabled after trying to enable it.", True)
         
     #
     # Join a wifi network.
@@ -139,9 +143,9 @@ class AppFTU(GaiaTestCase):
         try:
             x = self.marionette.find_elements(*self.UTILS.verify("DOM.FTU.wifi_networks_list"))
         except:
-            self.UTILS.logResult(False, "No networks found in wifi screen!")
+            self.UTILS.logResult(False, "SOME networks are found in wifi screen.")
         else:
-            self.UTILS.reportComment("(Found " + str(len(x)) + " wifi networks.)")
+            self.UTILS.logComment("(Found " + str(len(x)) + " wifi networks.)")
             
             #
             # Pick the one we chose.
@@ -149,7 +153,7 @@ class AppFTU(GaiaTestCase):
             try:
                 x= self.UTILS.get_element('id', p_wifiName)
             except:
-                self.UTILS.logResult(False, "Could not find wifi network '" + p_wifiName + "'.")
+                self.UTILS.logResult(False, "Wifi network '" + p_wifiName + "' is found.")
             else:
                 self.marionette.tap(x)
                 
@@ -182,4 +186,4 @@ class AppFTU(GaiaTestCase):
 
         self.UTILS.TEST(
             p_continent + "/" + p_city in self.marionette.find_element(*self.UTILS.verify("DOM.FTU.timezone_title")).text,
-            "Locality not set up correctly")
+            "Locality is set up correctly")

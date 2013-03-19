@@ -24,7 +24,7 @@ class test_42(GaiaTestCase):
         # Set up child objects...
         #
         GaiaTestCase.setUp(self)
-        self.UTILS   = TestUtils(self, 42)
+        self.UTILS   = TestUtils(self)
         self.FTU_KB  = FTU_LANG_KB.main(self, self._LANG, self._SCREEN_SIZES)
         
     def tearDown(self):

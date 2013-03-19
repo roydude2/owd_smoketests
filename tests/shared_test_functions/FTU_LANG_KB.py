@@ -43,9 +43,9 @@ class main():
         self.parent.data_layer.disable_wifi()
 
     def _checkSize(self, p_x, p_a, p_b):
-        x = p_x + " keyboard image was "
-        x = x + str(p_b) + " bytes, not " + str(p_a)
-        x = x + " - please verify the screenshot."
+        x = p_x + " keyboard image = "
+        x = x + str(p_a) + " bytes (it was " + str(p_b)
+        x = x + "). See the screenshot for details."
         self.UTILS.TEST((p_a == p_b), x )
         
     def run(self):
@@ -59,7 +59,7 @@ class main():
         # LANGUAGE.
         #
         self.UTILS.TEST(self.FTU.setLanguage(self.LANG), 
-            "Language '" + self.LANG + "' unavialable.", True)
+            "Language '" + self.LANG + "' is available.", True)
         self.FTU.nextScreen()
         
         #
@@ -99,25 +99,25 @@ class main():
         #
         
         imgnam  = self.UTILS.screenShot("42_lowercase_alpha")
-        self.UTILS.reportComment("Screenshot of lowercase alpha keyboard = " + imgnam)
+        self.UTILS.logComment("Screenshot of lowercase alpha keyboard = " + imgnam)
         imgsize = os.path.getsize(imgnam)
         self._checkSize("Lowercase alpha", self.SIZES[0], imgsize)
 
         self.parent.keyboard.tap_shift()
         imgnam  = self.UTILS.screenShot("42_uppercase_alpha")
-        self.UTILS.reportComment("Screenshot of uppercase alpha keyboard = " + imgnam)
+        self.UTILS.logComment("Screenshot of uppercase alpha keyboard = " + imgnam)
         imgsize = os.path.getsize(imgnam)
         self._checkSize("Uppercase alpha", self.SIZES[1], imgsize)
         
         self.parent.keyboard.switch_to_number_keyboard()
         imgnam  = self.UTILS.screenShot("42_numeric")
-        self.UTILS.reportComment("Screenshot of numeric keyboard = " + imgnam)
+        self.UTILS.logComment("Screenshot of numeric keyboard = " + imgnam)
         imgsize = os.path.getsize(imgnam)
         self._checkSize("Numeric", self.SIZES[2], imgsize)
         
         self.parent.keyboard.tap_alt()
         imgnam  = self.UTILS.screenShot("42_alt_numeric")
-        self.UTILS.reportComment("Screenshot of alt numeric keyboard = " + imgnam)
+        self.UTILS.logComment("Screenshot of alt numeric keyboard = " + imgnam)
         imgsize = os.path.getsize(imgnam)
         self._checkSize("Alt numeric", self.SIZES[3], imgsize)
         

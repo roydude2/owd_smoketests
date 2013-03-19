@@ -22,7 +22,7 @@ class test_7(GaiaTestCase):
         # Set up child objects...
         #
         GaiaTestCase.setUp(self)
-        self.UTILS      = TestUtils(self, 7)
+        self.UTILS      = TestUtils(self)
         self.contacts   = AppContacts(self)
         
         #

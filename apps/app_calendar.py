@@ -15,7 +15,7 @@ class AppCalendar(GaiaTestCase):
 
         # Just so I get 'autocomplete' in my IDE!
         self.marionette = Marionette()
-        self.UTILS      = TestUtils(self, 00)        
+        self.UTILS      = TestUtils(self)        
         if True:
             self.marionette = p_parent.marionette
             self.UTILS      = p_parent.UTILS
@@ -140,7 +140,7 @@ class AppCalendar(GaiaTestCase):
             #
             event_objects = self.marionette.find_elements('xpath', viewStr[0])
         except:
-            self.UTILS.logResult(False, "Couldn't find ANY events for hour " + p_hour24 + " in " + p_view + " view.")
+            self.UTILS.logResult(False, "Some events are present for hour " + p_hour24 + " in " + p_view + " view.")
             return False
         else:
             for event_object in event_objects:

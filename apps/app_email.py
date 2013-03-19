@@ -15,7 +15,7 @@ class AppEmail(GaiaTestCase):
 
         # Just so I get 'autocomplete' in my IDE!
         self.marionette = Marionette()
-        self.UTILS      = TestUtils(self, 00)        
+        self.UTILS      = TestUtils(self)        
         if True:
             self.marionette = p_parent.marionette
             self.UTILS      = p_parent.UTILS
@@ -53,6 +53,7 @@ class AppEmail(GaiaTestCase):
         # Are we already in this account?
         #
         x = self.UTILS.get_element(*self.UTILS.verify("DOM.GLOBAL.app_head"))
+        self.UTILS.TEST(x, "Current account name is found in the screen header.", True)
         if x.text == p_address:
             # Already here - just go to the Inbox.
             self.goto_folder_from_list("Inbox")
@@ -103,7 +104,7 @@ class AppEmail(GaiaTestCase):
         for i in x:
             if i.text != "":
                 # This isn't a placeholder, so delete it.
-                self.UTILS.reportComment("i: " + i.text)
+                self.UTILS.logComment("i: " + i.text)
                 self.marionette.tap(i)
                 self.wait_for_element_displayed('xpath', DOM.GLOBAL.app_head_specific % i.text)
                 
@@ -190,7 +191,7 @@ class AppEmail(GaiaTestCase):
             x = self.UTILS.get_element('xpath', DOM.GLOBAL.app_head_specific % "Compose message")
         except:
             self.UTILS.logResult(False, 
-                                 "Failed to arrive at 'compose' screen after clicking to compose a new email.")
+                                 "Taken to 'compose' screen after clicking to compose a new email.")
             self.UTILS.quitTest()
         
         #
@@ -226,12 +227,12 @@ class AppEmail(GaiaTestCase):
             self.marionette.switch_to_frame()
             x = self.marionette.find_element("xpath","//*[text()='Sending email failed']")
             if x.is_displayed():
-                self.UTILS.logResult(False, "Failed to send email.")
+                self.UTILS.logResult(False, "Send email succeeded.")
             else:
                 #
                 # Doesn't look like it, but for some reason we're not back at the Inbox.
                 #
-                self.UTILS.logResult(False, "Inbox does not appear after sending an email.")
+                self.UTILS.logResult(False, "Inbox appears after sending an email.")
                 
             self.UTILS.quitTest()
         
@@ -272,7 +273,7 @@ class AppEmail(GaiaTestCase):
             return True
             
         else:
-            self.UTILS.logResult(False, "Unable to open a message with the subject '"  + p_subject + "' in this folder.")
+            self.UTILS.logResult(False, "Able to find and open the message with subject '"  + p_subject + "' in this folder.")
             return False
 
     

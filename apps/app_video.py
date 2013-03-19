@@ -15,7 +15,7 @@ class AppVideo(GaiaTestCase):
 
         # Just so I get 'autocomplete' in my IDE!
         self.marionette = Marionette()
-        self.UTILS      = TestUtils(self, 00)        
+        self.UTILS      = TestUtils(self)        
         if True:
             self.marionette = p_parent.marionette
             self.UTILS      = p_parent.UTILS
@@ -54,7 +54,7 @@ class AppVideo(GaiaTestCase):
             in_errorMargin = True
             
         self.UTILS.TEST(in_errorMargin, 
-            "Expected video length on thumbnail to be %s (within %s seconds), but it was %s." % 
+            "Expected video length on thumbnail to be %s, +- %s seconds (it was %s seconds)." % 
                 (p_length_str_MMSS, p_errorMargin_SS, myDur))
 
     #
@@ -75,15 +75,6 @@ class AppVideo(GaiaTestCase):
         #
         self.wait_for_element_displayed(*DOM.Video.video_loaded)
 
-        #
-        # Allow for bug - if video plays without screen being tapped, then when
-        # it finishes the player closes (and marionette crashes).
-        #
-        self.UTILS.reportComment(
-            "BUG IN VIDEO PLAYER: Sometimes crashes after playing a video. " + 
-            "If you see an error dumped by Marionette here, it's probably because of that.")
-        #x=self.marionette.find_element(*DOM.Video.video_loaded)
-        #self.marionette.tap(x)
         
     #
     # Check the length of a video.
@@ -109,5 +100,5 @@ class AppVideo(GaiaTestCase):
         #
         # Check the elapsed time.
         #
-        self.UTILS.TEST((elapsed_time > p_from_SS), "Video is shorter than expected (played for %.2f seconds)." % elapsed_time)
-        self.UTILS.TEST((elapsed_time < p_to_SS), "Video is longer than expected (played for %.2f seconds)." % elapsed_time)
+        self.UTILS.TEST((elapsed_time > p_from_SS), "Video is not shorter than expected (played for %.2f seconds)." % elapsed_time)
+        self.UTILS.TEST((elapsed_time < p_to_SS), "Video is not longer than expected (played for %.2f seconds)." % elapsed_time)

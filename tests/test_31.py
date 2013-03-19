@@ -25,14 +25,15 @@ class test_31(GaiaTestCase):
         # Set up child objects...
         #
         GaiaTestCase.setUp(self)
-        self.UTILS      = TestUtils(self, 31)
+        self.UTILS      = TestUtils(self)
         self.Settings   = AppSettings(self)
         self.Browser    = AppBrowser(self)
         
         #
         # Ensure we have a connection.
         #
-        self.data_layer.disable_wifi()
+        self.UTILS.logComment("Not disabling wifi currently.")
+#        self.data_layer.disable_wifi()
         self.Settings.turn_dataConn_on_if_required()
         
         self.marionette.set_search_timeout(50)
@@ -57,11 +58,6 @@ class test_31(GaiaTestCase):
         # Open our URL.
         #
         self.Browser.open_url(self._URL)
-
-        #
-        # Check the page didn't have a problem.
-        #
-        self.Browser.check_page_loaded()
         
         #
         # Install the app (these DOM items are peculiar to this little dev app,
@@ -88,5 +84,5 @@ class test_31(GaiaTestCase):
         # Go back to the home page and check the app is installed.
         #
         self.UTILS.TEST(self.UTILS.launchAppViaHomescreen(self._appName), 
-                        "Unable to launch '" + self._appName + "' from the homescreen.", True)
+                        "Application '" + self._appName + "' can be launched from the homescreen.", True)
 

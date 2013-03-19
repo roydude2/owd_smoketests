@@ -26,7 +26,7 @@ class test_39(GaiaTestCase):
         #
         GaiaTestCase.setUp(self)
         
-        self.UTILS      = TestUtils(self, 0)
+        self.UTILS      = TestUtils(self)
         self.Settings   = AppSettings(self)
         self.EME        = AppEverythingMe(self)
         
@@ -37,7 +37,7 @@ class test_39(GaiaTestCase):
         # Make sure 'things' are as we expect them to be first.
         #
         self.data_layer.enable_wifi()
-        self.data_layer.enable_cell_data()
+        self.Settings.turn_dataConn_on_if_required()
         
         #
         # Make sure our app isn't installed already.
@@ -50,7 +50,7 @@ class test_39(GaiaTestCase):
         try:
             self.apps.set_permission('Homescreen', 'geolocation', 'deny')
         except:
-            self.UTILS.reportComment("(Just FYI) Unable to automatically set Homescreen geolocation permission.")
+            self.UTILS.logComment("(Just FYI) Unable to automatically set Homescreen geolocation permission.")
 
     def tearDown(self):
         self.UTILS.reportResults()
@@ -59,27 +59,27 @@ class test_39(GaiaTestCase):
         #
         # Launch the 'everything.me' app.
         #
-        self.UTILS.TEST(self.EME.launch(), "No application icons found.", True)
+        self.UTILS.TEST(self.EME.launch(), "Applications icons are found in EverythingME.", True)
         
         #
         # Pick a group.
         #
         self.UTILS.TEST(self.EME.pickGroup(self._GROUP_NAME),
-                        "Cannot find group '" + self._GROUP_NAME + "' in EverythingME.",
+                        "Group '" + self._GROUP_NAME + "' exists in EverythingME.",
                         True)
 
         #
         # Add the app to the homescreen.
         #
         self.UTILS.TEST(self.EME.addAppToHomescreen(self._APP_NAME),
-                        "Unable to add application '" + self._APP_NAME + "' to the homescreen.",
+                        "Application '" + self._APP_NAME + "' is added to the homescreen.",
                         True)
         
         #
         # Go back to the homescreen and check it's installed.
         #
         self.UTILS.TEST(self.UTILS.launchAppViaHomescreen(self._APP_NAME), 
-                        self._APP_NAME + " not installed.", True)
+                        self._APP_NAME + " is installed.", True)
         
         #
         # Give it 10 seconds to start up, switch to the frame for it and grab a screenshot.
@@ -88,4 +88,4 @@ class test_39(GaiaTestCase):
         self.marionette.switch_to_frame()
         self.UTILS.switchToFrame(*self._APP_FRAME)
         x = self.UTILS.screenShot("_" + self._APP_NAME)
-        self.UTILS.reportComment("NOTE: Please check the game screenshot in " + x)
+        self.UTILS.logComment("NOTE: Please check the game screenshot in " + x)

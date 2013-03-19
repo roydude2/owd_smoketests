@@ -22,7 +22,7 @@ class test_33(GaiaTestCase):
         # Set up child objects...
         #
         GaiaTestCase.setUp(self)
-        self.UTILS  = TestUtils(self, 33)
+        self.UTILS  = TestUtils(self)
         self.Calc   = AppCalculator(self)
         
         self.marionette.set_search_timeout(50)
@@ -52,6 +52,6 @@ class test_33(GaiaTestCase):
         
         Answer = self.UTILS.get_element(*self.UTILS.verify("DOM.Calculator.display"))
         
-        self.UTILS.TEST(Answer.text == "15", "Expected answer to be 15, but it was " + Answer.text + ".")
+        self.UTILS.TEST(Answer.text == "15", "Answer is 15 (it was " + Answer.text + ").")
         
         

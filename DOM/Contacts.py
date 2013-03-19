@@ -1,11 +1,12 @@
 import GLOBAL
-frame_locator          = ('css selector', 'iframe[src="app://communications.gaiamobile.org/index.html"]')
+#frame_locator          = ('css selector', 'iframe[src="app://communications.gaiamobile.org/index.html"]')
+frame_locator          = ("src","app://communications.gaiamobile.org/contacts/index.html")
 view_all_header        = ('xpath', GLOBAL.app_head_specific % 'Contacts')
 view_all_contact_xpath = '//*[@data-order="%s"]'
-view_all_fb_contacts   = ('class name', "icon-social icon-fb")
+social_network_contacts= ('class name', "icon-social icon-fb notorg")
 settings_button        = ('id', 'settings-button')
 settings_header        = ('xpath', GLOBAL.app_head_specific % 'Settings')
-#settings_fb_enable     = ('xpath', '//li[@class="fb-item"]')
+settings_fb_enable     = ('xpath', '//li[@class="fb-item"]')
 settings_import_fb     = ('id', 'import-fb') 
 add_contact_button     = ('id', 'add-contact-button')
 add_contact_header     = ('xpath', GLOBAL.app_head_specific % 'Add contact')

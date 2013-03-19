@@ -28,7 +28,7 @@ class test_14(GaiaTestCase):
     def setUp(self):
         # Set up child objects...
         GaiaTestCase.setUp(self)
-        self.UTILS      = TestUtils(self, 14)
+        self.UTILS      = TestUtils(self)
         self.gallery    = AppGallery(self)
 
         self.marionette.set_search_timeout(50)
@@ -59,14 +59,14 @@ class test_14(GaiaTestCase):
         #
         x = self.gallery.thumbCount()
         if x > 0:
-            self.UTILS.reportComment("PLEASE VERIFY THE FOLLOWING " + str(x) + " IMAGES ....")
+            self.UTILS.logComment("PLEASE VERIFY THE FOLLOWING " + str(x) + " IMAGES ....")
             for i in range(0, x):
                 # Click this thumbnail.
                 self.gallery.clickThumb(i)
                 
                 # Take a screenshot (and update the comment).
                 imgnam = self.UTILS.screenShot("14_" + str(i+1))
-                self.UTILS.reportComment("-> " + imgnam)
+                self.UTILS.logComment("-> " + imgnam)
                 
                 # Check the size of the screenshot.
                 # (because we can't guarentee the order, or match the filenames, we have to just loop through our
@@ -79,7 +79,7 @@ class test_14(GaiaTestCase):
                         break
                         
                 self.UTILS.TEST(size_matched,
-                    "Unexpected image size (" + str(self._img_sizes[i]) + " bytes). please visually check the screenshots.")
+                    "Image size is as expected (it was " + str(self._img_sizes[i]) + " bytes). Please visually check the screenshots.")
                 
                 # Wait a second (or this test is done too quickly to see!)
                 time.sleep(0.5)

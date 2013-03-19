@@ -19,7 +19,7 @@ class test_16(GaiaTestCase):
     def setUp(self):
         # Set up child objects...
         GaiaTestCase.setUp(self)
-        self.UTILS  = TestUtils(self, 16)
+        self.UTILS  = TestUtils(self)
         self.Settings   = AppSettings(self)
         self.Browser    = AppBrowser(self)
         self.wifi_name  = self.UTILS.get_os_variable("WIFI_TEST_16", "Name of wifi to connect to (case sensitive!)")
@@ -65,7 +65,7 @@ class test_16(GaiaTestCase):
         #
         self.UTILS.TEST(
                 self.Settings.checkWifiLisetedAsConnected(self.wifi_name),
-                "Wifi '" + self.wifi_name + "' not listed as 'connected' in wifi settings.", True)
+                "Wifi '" + self.wifi_name + "' is listed as 'connected' in wifi settings.", True)
             
         #
         # Open the browser app.
@@ -77,10 +77,7 @@ class test_16(GaiaTestCase):
         #
         self.Browser.open_url(self.testURL)
 
-        #
-        # Check the page didn't have a problem.
-        #
-        self.Browser.check_page_loaded()
+        
         
         
         

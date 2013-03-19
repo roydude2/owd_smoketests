@@ -23,7 +23,7 @@ class test_35(GaiaTestCase):
         # Set up child objects...
         #
         GaiaTestCase.setUp(self)
-        self.UTILS      = TestUtils(self, 35)
+        self.UTILS      = TestUtils(self)
         self.clock      = AppClock(self)
         self.settings   = AppSettings(self)
                 
@@ -96,7 +96,7 @@ class test_35(GaiaTestCase):
         #
         # Check the statusbar icon exists.
         #
-        self.UTILS.TEST(self.clock.checkStatusbarIcon(), "Alarm icon not present in statusbar.")
+        self.UTILS.TEST(self.clock.checkStatusbarIcon(), "Alarm icon is present in statusbar.")
 
         #
         # Wait for the alarm to start.

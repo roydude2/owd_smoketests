@@ -74,3 +74,16 @@ export PASSWORD_27=		# Wifi password
 #
 export YOUR_CONTINENT=		# YOUR continent (for setting timezone).
 export YOUR_CITY=		# YOUR city (for setting timezone).
+
+#
+# Test number: 40
+# Test desc. :  "Importing facebook contacts."
+#
+export FB_USERNAME=		# Username to connect you to facebook.
+export FB_PASSWORD=		# Password to connect you to facebook.
+
+#
+# Test number: 41
+# Test desc. :  "Link a facebook contact."
+#
+export LINK_EMAIL_ADDRESS=		# Email address of facebook account to link.

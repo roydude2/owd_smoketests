@@ -15,7 +15,7 @@ class AppContacts(GaiaTestCase):
 
         # Just so I get 'autocomplete' in my IDE!
         self.marionette = Marionette()
-        self.UTILS      = TestUtils(self, 00)        
+        self.UTILS      = TestUtils(self)        
         if True:
             self.marionette = p_parent.marionette
             self.UTILS      = p_parent.UTILS
@@ -25,7 +25,6 @@ class AppContacts(GaiaTestCase):
         self.apps.kill_all()
         self.app = self.apps.launch('Contacts')
         self.wait_for_element_not_displayed(*DOM.GLOBAL.loading_overlay)
-
 
     def getContactFields(self):
         #
@@ -84,7 +83,7 @@ class AppContacts(GaiaTestCase):
 
         self.UTILS.TEST(
             (test_str == p_val),
-            "Expected " + p_name + " to be \"" + p_val + "\" but it was \"" + test_str + "\"."
+            p_name + " = \"" + p_val + "\" (it was \"" + test_str + "\")."
             )
 
     def verifyFieldContents(self, p_contact):
@@ -156,7 +155,7 @@ class AppContacts(GaiaTestCase):
         try:
             contact_found = self.marionette.find_element("xpath", DOM.Contacts.view_all_contact_xpath % p_contact['name'].replace(" ",""))
         except:
-            self.UTILS.logResult(False, "Could not find '" + p_contact['name'] + "' in the contacts list!")
+            self.UTILS.logResult(False, "'" + p_contact['name'] + "' is found in the contacts list!")
             return 0 # (leave the function)
         
         #
@@ -165,7 +164,7 @@ class AppContacts(GaiaTestCase):
         try:
             self.marionette.tap(contact_found)
         except:
-            self.UTILS.logResult(False, "Could not tap on '" + p_contact['name'] + "' in contacts list!")
+            self.UTILS.logResult(False, "Able to tap on '" + p_contact['name'] + "' in contacts list!")
             return 0 # (leave the function)
         
         self.wait_for_element_displayed(*self.UTILS.verify("DOM.Contacts.view_details_title"))
@@ -173,47 +172,10 @@ class AppContacts(GaiaTestCase):
         # 
         # TEST: Correct contact name is in the page header.
         #
-        self.UTILS.TEST(self.UTILS.headerFound(p_contact['name']), 
-            "'View contact' screen header was not '" + p_contact["name"] + "'.")
+        self.UTILS.TEST(self.UTILS.headerCheck(p_contact['name']), 
+            "'View contact' screen header = '" + p_contact["name"] + "'.")
             
         time.sleep(2)
-    
-    def pressLinkContact(self):
-        #
-        # Press the 'Link contact' button in the view contact details screen.
-        #
-        
-        #
-        # NOTE: there is more than one button with this ID, so make sure we use the right one!
-        #
-        time.sleep(2)
-        x = self.marionette.find_elements(*self.UTILS.verify("DOM.Contacts.link_button"))
-        for i in x:
-            if i.is_displayed():
-                self.marionette.tap(i)
-                break
-        
-        #
-        # We need a long pause to be sure the frames are all complete.
-        #
-        time.sleep(8)
-        
-        #
-        # Travel through the frames to the one we need for the import page.
-        #
-        self.marionette.switch_to_frame()
-        time.sleep(2)
-        self.UTILS.switchToFrame(*DOM.Facebook.fb_friends_iframe_1)
-        time.sleep(2)
-        self.UTILS.switchToFrame(*DOM.Facebook.fb_friends_iframe_2)
-        time.sleep(2)
-
-        #
-        # Wait for the fb friends page to start.
-        #
-        self.wait_for_element_displayed(*self.UTILS.verify("DOM.Facebook.fb_friends_header"))
-        time.sleep(2)
-        
     
     def tapSettingsButton(self):
         #
@@ -224,22 +186,6 @@ class AppContacts(GaiaTestCase):
         
         self.wait_for_element_displayed(*self.UTILS.verify("DOM.Contacts.settings_header"))
         
-    def tapLinkButton(self):
-        #
-        # Tap the link button to go to facebook.
-        #
-        
-        #
-        # There's more than one element with the id "link_button"
-        # (and matching on text() didn't work)!
-        #
-        x = self.marionette.find_elements(*self.UTILS.verify("DOM.Contacts.link_button"))
-        for i in x:
-            if i.is_displayed():
-                if i.text == "Link contact":
-                    i.click()
-                    self.marionette.tap(i)
-
     def checkViewContactDetails(self, p_contact):
         #
         # Validate the details of a contact in the 'view contact' screen.
@@ -304,114 +250,81 @@ class AppContacts(GaiaTestCase):
         
         self.wait_for_element_displayed(*self.UTILS.verify("DOM.Contacts.view_all_header"))
 
-    def fb_importAll(self):
+    def tapLinkContact(self):
         #
-        # Import all contacts.
+        # Press the 'Link contact' button in the view contact details screen.
         #
         
         #
-        # Tap 'Update imported friends' button.
+        # NOTE: there is more than one button with this ID, so make sure we use the right one!
         #
-        x = self.UTILS.get_element(*self.UTILS.verify("DOM.Contacts.settings_import_fb"))        
-        self.marionette.tap(x)
+        time.sleep(2)
+        x = self.marionette.find_elements(*self.UTILS.verify("DOM.Contacts.link_button"))
+        for i in x:
+            if i.is_displayed():
+                self.marionette.tap(i)
+                break
+        
+        #
+        # We need a long pause to be sure the frames are all complete.
+        #
+        time.sleep(5)
         
         #
         # Travel through the frames to the one we need for the import page.
         #
         self.marionette.switch_to_frame()
-        self.UTILS.switchToFrame(*DOM.Facebook.fb_friends_iframe_1)
-        self.UTILS.switchToFrame(*DOM.Facebook.fb_friends_iframe_2)
+        self.UTILS.switchToFrame(*DOM.Facebook.friends_iframe_1)
+        self.UTILS.switchToFrame(*DOM.Facebook.friends_iframe_2)
 
         #
         # Wait for the fb friends page to start.
         #
-        self.wait_for_element_displayed(*self.UTILS.verify("DOM.Facebook.fb_friends_header"))
+        self.wait_for_element_displayed(*self.UTILS.verify("DOM.Facebook.friends_header"))
         time.sleep(2)
         
-        #
-        # Get the count of friends that will be imported.
-        #
-        x = self.UTILS.get_elements(*self.UTILS.verify("DOM.Facebook.fb_friends_list"))
-        friend_count = len(x)
-        
-        #
-        # Tap "Select all".
-        #
-        x = self.UTILS.get_element(*self.UTILS.verify("DOM.Facebook.fb_friends_select_all"))
-        self.marionette.tap(x)
-        
-        #
-        # Tap "Import".
-        #
-        x = self.UTILS.get_element(*self.UTILS.verify("DOM.Facebook.fb_friends_import"))
-        self.marionette.tap(x)
-        
-        #
-        # Return the number of friends we imported.
-        #
-        return friend_count
-        
-        
-        
+    #
     # Facebook have now added a 'captcha' to the login process here, so we
     # can no-longer automate this part.
     # I'm leaving this here though, just in case they decide to remove the
     # captcha in the future.
-    ##
-    ## Enable fb import.
-    ##
-    #def fb_enable(self):
-        #self.tapSettingsButton()
-        #x = self.UTILS.get_element(*DOM.Contacts.settings_fb_enable)        
-        #self.marionette.tap(x)
+    #
+    # Enable fb import.
+    #
+    def enableFBImport(self):
+        self.tapSettingsButton()
+        x = self.UTILS.get_element(*DOM.Contacts.settings_fb_enable)        
+        self.marionette.tap(x)
         
-        ##
-        ## Were we already connected to facebook?
-        ##
-        #try:
-            #x = self.UTILS.get_element('xpath', "//button[text()='Remove']")
-        #except:
-            #pass
-        #else:
-            ##
-            ## We are already logged into facebook - remove fb data
-            ## so we can proceed with this part of the test from sratch.
-            ##
-            #self.marionette.tap(x)
-            #time.sleep(5)
+        #
+        # Were we already connected to facebook?
+        #
+        x = self.UTILS.get_element('xpath', "//button[text()='Remove']")
+        if x:
+            #
+            # We were already logged into facebook - remove fb data
+            # so we can proceed with this part of the test from sratch.
+            #
+            self.marionette.tap(x)
+            time.sleep(5)
             
-            ##
-            ## Now click the 'enable facebook' button again.
-            ##
-            #self.UTILS.connect_to_iframe("app://communications.gaiamobile.org/contacts/index.html")
-            #x = self.UTILS.get_element(*DOM.Contacts.settings_fb_enable)
-            #self.marionette.tap(x)
+            #
+            # Now click the 'enable facebook' button again.
+            #
+            # For some reason I need to relaunch the Contacts app first.
+            # If I don't then after I log in again the 'Please hold on ...'
+            # message stays forever.
+            # (This is only a problem when automating - if you do this
+            # manually it works fine.)
+            #
+            self.launch()
+            self.tapSettingsButton()
             
-        ##
-        ## Give facebook time to load, then connect to the iframe with src=""
-        ## to see the facebook screen.
-        ##
-        #time.sleep(2) # Just to be sure!
+            self.marionette.switch_to_frame()
+            self.UTILS.switchToFrame(*DOM.Contacts.frame_locator)
+            
+            x = self.UTILS.get_element(*DOM.Contacts.settings_fb_enable)
+            self.marionette.tap(x)
 
-    ##
-    ## Log into facebook.
-    ##
-    #def fb_login(self, p_user, p_pass):
-        ##
-        ## Get to the facebook login frame.
-        ##
-        #self.marionette.switch_to_frame()
-        #self.UTILS.connect_to_iframe("")
-        
-        #x = self.UTILS.get_element(*DOM.Facebook.email)
-        #x.send_keys(p_user)
-        
-        #x = self.UTILS.get_element(*DOM.Facebook.password)
-        #x.send_keys(p_pass)
+        time.sleep(2) # Just to be sure!
 
-        #x = self.UTILS.get_element(*DOM.Facebook.login_button)
-        #self.marionette.tap(x)
-        
-        #time.sleep(3)
-        
-        

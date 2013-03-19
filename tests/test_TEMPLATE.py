@@ -20,7 +20,7 @@ class test_??(GaiaTestCase):
         # Set up child objects...
         #
         GaiaTestCase.setUp(self)
-        self.UTILS      = TestUtils(self, ??)
+        self.UTILS      = TestUtils(self)
         self.gallery    = AppGallery(self)
         
         self.marionette.set_search_timeout(50)
