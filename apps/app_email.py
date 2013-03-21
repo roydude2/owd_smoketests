@@ -128,10 +128,10 @@ class AppEmail(GaiaTestCase):
     #
     def setupAccount(self, p_user, p_email, p_pass):
         #
-        # If we've just started out, email will open directly to "New account").
+        # If we've just started out, email will open directly to "New Account").
         #
         x = self.marionette.find_element(*self.UTILS.verify("DOM.GLOBAL.app_head"))
-        if x.text != "New account":
+        if x.text != "New Account":
             #
             # We have at least one emali account setup,
             # check to see if we can just switch to ours.

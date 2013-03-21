@@ -30,7 +30,6 @@ folderList_name_xpath   = '//*[text()="%s"]'
 folder_message_list     = ('class name', 'msg-header-item')
 folder_subject_list     = ('class name', 'msg-header-subject')
 
-
-open_email_from         = ('xpath', "//*[@id='cards']/div[3]/div[1]/div[1]/div[2]/div/span")
-open_email_to           = ('xpath', "//*[@id='cards']/div[3]/div[1]/div[1]/div[3]/div[1]/div/span")
+open_email_from         = ('xpath', "//div[@class='msg-envelope-from-line']//span[@class='msg-peep-content msg-peep-address']")
+open_email_to           = ('xpath', "//div[@class='msg-envelope-to-line']//span[@class='msg-peep-content msg-peep-address']")
 open_email_subject      = ('class name', 'msg-envelope-subject')
