@@ -49,9 +49,9 @@ class test_7(GaiaTestCase):
         #
         # Create new contact.
         #
-        self.contacts.createNewContact(self.Contact_1)
+        self.contacts.createNewContact(self.Contact_1, True)
         
         #
         # TEST: The 'view contact' page shows the correct details for this new contact.
         #
-        self.contacts.checkViewContactDetails(self.Contact_1)
+        self.contacts.checkViewContactDetails(self.Contact_1, True)

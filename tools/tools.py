@@ -329,7 +329,7 @@ class TestUtils(GaiaTestCase):
             msg = p_msg
 
         self.logResult(False, msg)
-        sys.exit(2) #"Fatal error, quitting this test.")
+        sys.exit(0) #"Fatal error, quitting this test.")
         
     #
     # Wait for an element to be displayed, then return the element

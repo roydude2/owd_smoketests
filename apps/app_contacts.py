@@ -168,7 +168,7 @@ class AppContacts(GaiaTestCase):
 
          
 
-    def createNewContact(self, p_contact):
+    def createNewContact(self, p_contact, p_addImage=False):
         #
         # Create a contact using the UI.
         #
@@ -193,8 +193,9 @@ class AppContacts(GaiaTestCase):
         #
         self.wait_for_element_displayed(*self.UTILS.verify("DOM.Contacts.add_contact_header"))
         
-        # Put the image on the contact.
-        self.addImageToContact()
+        if p_addImage:
+            # Put the image on the contact.
+            self.addImageToContact()
         
         # Put the contact details into each of the fields.
         self.populateFields(p_contact)
@@ -207,27 +208,28 @@ class AppContacts(GaiaTestCase):
         
         self.wait_for_element_displayed("xpath", DOM.Contacts.view_all_contact_xpath % p_contact['name'].replace(" ",""))
         
-        #
-        # Verify that the contact's image is displayed.
-        #
-        x = self.marionette.find_elements("xpath", "//li[@class='contact-item']")
-        for i in x:
-            try:
-                i.find_element("xpath", "//p[@data-order='%s']" % p_contact['name'].replace(" ",""))
-            except:
-                pass
-            else:
-                #
-                # This is our contact - try and get the image.
-                #
-                boolOK = True
+        if p_addImage:
+            #
+            # Verify that the contact's image is displayed.
+            #
+            x = self.marionette.find_elements("xpath", "//li[@class='contact-item']")
+            for i in x:
                 try:
-                    x = i.find_element("xpath", "//img")
-                    self.UTILS.TEST("blob" in x.get_attribute("src"), "Contact image present in 'all contacts' screen.")
+                    i.find_element("xpath", "//p[@data-order='%s']" % p_contact['name'].replace(" ",""))
                 except:
-                    boolOK = False
-                
-                self.UTILS.TEST(boolOK, "An image is present for this contact in all contacts screen.")
+                    pass
+                else:
+                    #
+                    # This is our contact - try and get the image.
+                    #
+                    boolOK = True
+                    try:
+                        x = i.find_element("xpath", "//img")
+                        self.UTILS.TEST("blob" in x.get_attribute("src"), "Contact image present in 'all contacts' screen.")
+                    except:
+                        boolOK = False
+                    
+                    self.UTILS.TEST(boolOK, "An image is present for this contact in all contacts screen.")
                 
 
 
@@ -274,7 +276,7 @@ class AppContacts(GaiaTestCase):
         
         self.wait_for_element_displayed(*self.UTILS.verify("DOM.Contacts.settings_header"))
         
-    def checkViewContactDetails(self, p_contact):
+    def checkViewContactDetails(self, p_contact, p_imageCheck = False):
         #
         # Validate the details of a contact in the 'view contact' screen.
         #
@@ -284,12 +286,13 @@ class AppContacts(GaiaTestCase):
         #
         self.viewContact(p_contact)
         
-        #
-        # Verify that the contact image is displayed.
-        #
-        x = self.marionette.find_element("id", "cover-img")
-        x_style = x.get_attribute("style")
-        self.UTILS.TEST("blob" in x_style, "Contact's image contains 'something' in contact details screen.")
+        if p_imageCheck:
+            #
+            # Verify that the contact image is displayed.
+            #
+            x = self.marionette.find_element("id", "cover-img")
+            x_style = x.get_attribute("style")
+            self.UTILS.TEST("blob" in x_style, "Contact's image contains 'something' in contact details screen.")
 
         #
         # Correct details are in the contact fields.
