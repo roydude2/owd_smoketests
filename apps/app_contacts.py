@@ -20,6 +20,9 @@ class AppContacts(GaiaTestCase):
             self.marionette = p_parent.marionette
             self.UTILS      = p_parent.UTILS
 
+        # Upload an image into the gallery.
+        p_parent.push_resource('contact_face.jpg', destination='DCIM/100MZLLA')
+
 
     def launch(self):
         self.apps.kill_all()
@@ -104,6 +107,25 @@ class AppContacts(GaiaTestCase):
         self.checkMatch(contFields['comment'   ] , p_contact['comment']              , "COMMENTS")
 
 
+    def addImageToContact(self):
+        #
+        # Takes care of adding an image for this contact from the gallery
+        # (assumes we're already in the process of adding a contact).
+        #
+        
+        #
+        # Click the 'add picture' link.
+        #
+        x = self.marionette.find_element("xpath", ".//*[@id='thumbnail-action']")
+        self.marionette.tap(x)
+        x.click()
+
+        time.sleep(5)
+        self.UTILS.savePageHTML("/tmp/roy1.html")
+        self.UTILS.quitTest()
+
+         
+
     def createNewContact(self, p_contact):
         #
         # Create a contact using the UI.
@@ -131,6 +153,9 @@ class AppContacts(GaiaTestCase):
         
         # Put the contact details into each of the fields.
         self.populateFields(p_contact)
+        
+        # Put the image on the contact.
+        self.addImageToContact()
         
         # Press the 'done' button and wait for the 'all contacts' page to load.
         done_button = self.UTILS.get_element(*self.UTILS.verify("DOM.Contacts.done_button"))

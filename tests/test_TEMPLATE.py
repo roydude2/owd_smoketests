@@ -1,4 +1,10 @@
 #
+# This is a template for creating tests.
+# (I have included the 'contacts' application just as an
+# example, showing you how you use these in your tests.)
+#
+
+#
 # Imports which are standard for all test cases.
 #
 import sys
@@ -10,36 +16,40 @@ import DOM
 #
 # Imports particular to this test case.
 #
-from apps.app_gallery import *
+from apps.app_contacts import *
 
-class test_??(GaiaTestCase):
-    _Description = "??"
-    
+class test_99(GaiaTestCase):
+    _Description = "Create a contact via the contacts app."
+ 
     def setUp(self):
+            
         #
         # Set up child objects...
         #
+        # Standard.
         GaiaTestCase.setUp(self)
         self.UTILS      = TestUtils(self)
-        self.gallery    = AppGallery(self)
         
+        # Specific for this test.
+        self.contacts   = AppContacts(self)
+        
+        #
+        # Set the timeout for element searches.
+        #
         self.marionette.set_search_timeout(50)
         self.lockscreen.unlock()
         
-        #
-        # Establish parameters.
-        #
-        self.MYVAR = self.UTILS.get_os_variable("MY_VAR", "Something about MY_VAR")
-        self.UTILS.reportComment("Using " + self.MYVAR)
         
     def tearDown(self):
         self.UTILS.reportResults()
-        
+
     def test_run(self):
+        #
+        # Launch contacts app.
+        #
+        self.contacts.launch()
         
         #
-        # Launch ?? app.
+        # Do the tests ...
         #
-        self.??.launch()
-
-
+        
