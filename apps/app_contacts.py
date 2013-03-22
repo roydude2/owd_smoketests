@@ -12,6 +12,7 @@ class AppContacts(GaiaTestCase):
     def __init__(self, p_parent):
         self.apps       = p_parent.apps
         self.data_layer = p_parent.data_layer
+        self.parent     = p_parent
 
         # Just so I get 'autocomplete' in my IDE!
         self.marionette = Marionette()
@@ -19,10 +20,6 @@ class AppContacts(GaiaTestCase):
         if True:
             self.marionette = p_parent.marionette
             self.UTILS      = p_parent.UTILS
-
-        # Upload an image into the gallery.
-        p_parent.push_resource('contact_face.jpg', destination='DCIM/100MZLLA')
-
 
     def launch(self):
         self.apps.kill_all()
@@ -109,20 +106,65 @@ class AppContacts(GaiaTestCase):
 
     def addImageToContact(self):
         #
-        # Takes care of adding an image for this contact from the gallery
-        # (assumes we're already in the process of adding a contact).
+        # Adds an image for this contact from the gallery
+        # (assumes we're already in the 'new contact' screen).
         #
         
+        # Upload an image into the gallery.
+        self.parent.push_resource('contact_face.jpg', destination='DCIM/100MZLLA')
+
         #
         # Click the 'add picture' link.
         #
-        x = self.marionette.find_element("xpath", ".//*[@id='thumbnail-action']")
+        x = self.marionette.find_element("id", "thumbnail-photo")
         self.marionette.tap(x)
-        x.click()
+        time.sleep(2)
+        
+        # Switch to the 'make a choice' iframe.
+        self.marionette.switch_to_frame()
+        
+        # Choose to get a picture from the Gallery.
+        boolOK = True
+        try:
+            x = self.marionette.find_element("link text", "Gallery")
+            self.marionette.tap(x)
+        except:
+            boolOK = False
 
-        time.sleep(5)
-        self.UTILS.savePageHTML("/tmp/roy1.html")
-        self.UTILS.quitTest()
+        self.UTILS.TEST(boolOK, "Can select import picture from Gallery app.")
+            
+        time.sleep(1)
+        
+        # Switch to Gallery iframe.
+        self.UTILS.switchToFrame("src", "app://gallery.gaiamobile.org/index.html#pick")
+        
+        # Select the thumbnail (assume it's the only one).
+        boolOK = True
+        try:
+            x = self.marionette.find_element("xpath", "//*[@id='thumbnails']/li[1]")
+            self.marionette.tap(x)
+        except:
+            boolOK = False
+
+        self.UTILS.TEST(boolOK, "Can select picture in Gallery app.")
+            
+        time.sleep(1)
+        
+        # Tap 'crop done' button.
+        boolOK = True
+        try:
+            x = self.marionette.find_element("id", "crop-done-button")
+            self.marionette.tap(x)
+        except:
+            boolOK = False
+
+        self.UTILS.TEST(boolOK, "Can finish cropping the picture and return to Contacts app.")
+            
+        time.sleep(1)
+        
+        # Back to contacts app iframe.
+        self.marionette.switch_to_frame()
+        self.UTILS.switchToFrame("srC", "app://communications.gaiamobile.org/contacts/index.html")
 
          
 
@@ -151,11 +193,11 @@ class AppContacts(GaiaTestCase):
         #
         self.wait_for_element_displayed(*self.UTILS.verify("DOM.Contacts.add_contact_header"))
         
-        # Put the contact details into each of the fields.
-        self.populateFields(p_contact)
-        
         # Put the image on the contact.
         self.addImageToContact()
+        
+        # Put the contact details into each of the fields.
+        self.populateFields(p_contact)
         
         # Press the 'done' button and wait for the 'all contacts' page to load.
         done_button = self.UTILS.get_element(*self.UTILS.verify("DOM.Contacts.done_button"))
@@ -163,9 +205,30 @@ class AppContacts(GaiaTestCase):
         
         self.wait_for_element_displayed(*self.UTILS.verify("DOM.Contacts.view_all_header"))
         
-        # For some reason the new contact doesn't always appear imediately.
-        #time.sleep(5)
         self.wait_for_element_displayed("xpath", DOM.Contacts.view_all_contact_xpath % p_contact['name'].replace(" ",""))
+        
+        #
+        # Verify that the contact's image is displayed.
+        #
+        x = self.marionette.find_elements("xpath", "//li[@class='contact-item']")
+        for i in x:
+            try:
+                i.find_element("xpath", "//p[@data-order='%s']" % p_contact['name'].replace(" ",""))
+            except:
+                pass
+            else:
+                #
+                # This is our contact - try and get the image.
+                #
+                boolOK = True
+                try:
+                    x = i.find_element("xpath", "//img")
+                    self.UTILS.TEST("blob" in x.get_attribute("src"), "Contact image present in 'all contacts' screen.")
+                except:
+                    boolOK = False
+                
+                self.UTILS.TEST(boolOK, "An image is present for this contact in all contacts screen.")
+                
 
 
     def viewContact(self, p_contact):
@@ -221,6 +284,13 @@ class AppContacts(GaiaTestCase):
         #
         self.viewContact(p_contact)
         
+        #
+        # Verify that the contact image is displayed.
+        #
+        x = self.marionette.find_element("id", "cover-img")
+        x_style = x.get_attribute("style")
+        self.UTILS.TEST("blob" in x_style, "Contact's image contains 'something' in contact details screen.")
+
         #
         # Correct details are in the contact fields.
         #
