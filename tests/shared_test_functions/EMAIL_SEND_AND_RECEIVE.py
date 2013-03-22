@@ -72,9 +72,8 @@ class main():
         #
         # Make sure we have some data connectivity.
         #
-#        if not p_parent.data_layer.is_wifi_connected():
-#            p_parent.data_layer.enable_wifi()
-#            p_parent.data_layer.enable_cell_data()
+        p_parent.data_layer.enable_wifi()
+        self.settings.turn_dataConn_on_if_required()
         
     def run(self):
 
