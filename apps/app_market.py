@@ -20,11 +20,11 @@ class AppMarket(GaiaTestCase):
             self.marionette = p_parent.marionette
             self.UTILS      = p_parent.UTILS
 
-    #
-    # Sometimes the market doesn't load 1st time (just when automated
-    # for some reason). So check and try again if necessary.
-    #
     def launchMe(self):
+        #
+        # Sometimes the market doesn't load 1st time (just when automated
+        # for some reason). So check and try again if necessary.
+        #
         self.apps.kill_all()
         self.app = self.apps.launch('Marketplace')
         self.wait_for_element_not_displayed(*DOM.GLOBAL.loading_overlay)
@@ -58,8 +58,8 @@ class AppMarket(GaiaTestCase):
         # Select the application we want from the list returned by
         # self.searchForApp().
         #
-        self.wait_for_element_displayed(*DOM.Market.search_results_area)
-        results = self.marionette.find_elements(*DOM.Market.search_result)
+        self.UTILS.waitForDisplayed(20, "Search results displayed.", True, DOM.Market.search_results_area)
+        results = self.UTILS.get_elements(*DOM.Market.search_results)
         
         if len(results) <= 0:
             return False
@@ -73,10 +73,10 @@ class AppMarket(GaiaTestCase):
         return False
 
 
-    #
-    # Install an app.
-    #
     def install_app(self, p_app, p_author):
+        #
+        # Install an app.
+        #
         self.searchForApp(p_app)
         
         if not self.selectSearchResultApp(p_app, p_author):
@@ -101,9 +101,9 @@ class AppMarket(GaiaTestCase):
         #
         self.marionette.switch_to_frame()
 
-        self.wait_for_element_displayed(*self.UTILS.verify("DOM.Market.confirm_install_button"))
-        yes_button = self.marionette.find_element(*self.UTILS.verify("DOM.Market.confirm_install_button"))
+        yes_button = self.UTILS.get_element(*self.UTILS.verify("DOM.Market.confirm_install_button"))
         self.marionette.tap(yes_button)
+
         self.wait_for_element_not_displayed(*DOM.Market.confirm_install_button)
         
         return True

@@ -14,7 +14,7 @@ from apps.app_settings import *
 from apps.app_browser import *
 
 class test_31(GaiaTestCase):
-    _Description = "Use Data Connection to download packaged app."
+    _Description = "Launch a packaged app."
     
     _URL         = "http://everlong.org/mozilla/packaged/"
     _appName     = "cool packaged app"

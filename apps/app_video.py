@@ -27,12 +27,14 @@ class AppVideo(GaiaTestCase):
         self.app = self.apps.launch('Video')
         self.wait_for_element_not_displayed(*DOM.Video.items)
         
-    #
-    # NOTE: p_length_str_MMSS needs to be in the format "MM:SS"
-    #
     def checkThumbDuration(self, p_thumb_num, p_length_str_MMSS, p_errorMargin_SS):
-        self.wait_for_element_present(*self.UTILS.verify("DOM.Video.thumb_durations"))
-        durations = self.marionette.find_elements(*self.UTILS.verify("DOM.Video.thumb_durations"))
+        #
+        # NOTE: p_length_str_MMSS needs to be in the format "MM:SS"
+        #
+        self.UTILS.waitForDisplayed(20, "Video thumbnail duration appears.", False, self.UTILS.verify("DOM.Video.thumb_durations"))
+#        self.wait_for_element_present(*self.UTILS.verify("DOM.Video.thumb_durations"))
+
+        durations = self.UTILS.get_elements(*self.UTILS.verify("DOM.Video.thumb_durations"))
         
         myDur = durations[p_thumb_num].text
         
@@ -57,15 +59,18 @@ class AppVideo(GaiaTestCase):
             "Expected video length on thumbnail to be %s, +- %s seconds (it was %s seconds)." % 
                 (p_length_str_MMSS, p_errorMargin_SS, myDur))
 
-    #
-    # Clicks the thumbnail to start the video.
-    #
     def startVideo(self, p_num):
+        #
+        # Clicks the thumbnail to start the video.
+        #
+
         #
         # Get the list of video items and click the 'p_num' one.
         #
-        self.wait_for_element_displayed(*self.UTILS.verify("DOM.Video.items"))
-        all_videos = self.marionette.find_elements(*self.UTILS.verify("DOM.Video.items"))
+        self.UTILS.waitForDisplayed(20, "Video items appear.", False, self.UTILS.verify("DOM.Video.items"))
+#        self.wait_for_element_displayed(*self.UTILS.verify("DOM.Video.items"))
+
+        all_videos = self.UTILS.get_elements(*self.UTILS.verify("DOM.Video.items"))
         my_video = all_videos[p_num]
         
         self.marionette.tap(my_video)
@@ -73,13 +78,14 @@ class AppVideo(GaiaTestCase):
         #
         # Wait for the video to start playing before returning.
         #
-        self.wait_for_element_displayed(*DOM.Video.video_loaded)
+        self.UTILS.waitForDisplayed(20, "Video loads.", False, DOM.Video.video_loaded)
+#        self.wait_for_element_displayed(*DOM.Video.video_loaded)
 
         
-    #
-    # Check the length of a video.
-    #
     def checkVideoLength(self, p_vid_num, p_from_SS, p_to_SS):
+        #
+        # Check the length of a video by playing it.
+        #
             
         #
         # Start the timer.

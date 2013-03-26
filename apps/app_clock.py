@@ -54,10 +54,10 @@ class AppClock(GaiaTestCase):
                 self.marionette.tap(x)
                 time.sleep(1)
         
-    #
-    # Takes an hour and returns array "hour" (12 hour format) and "ampm".
-    #
     def switch_24_12(self, p_hour):
+        #
+        # Returns array "hour" (12 hour format) and "ampm" based on a 24hour "p_hour".
+        #
         if p_hour >= 12:
             t_ampm = "PM"
             if p_hour > 12:
@@ -70,10 +70,11 @@ class AppClock(GaiaTestCase):
         
         return (t_hour, t_ampm)
         
-    #
-    # Create a new alarm.
-    #
     def createAlarm(self, p_hour, p_min, p_label, p_repeat="Never", p_sound="Classic Buzz", p_snooze="5 minutes"):
+        #
+        # Create a new alarm.
+        #
+
         #
         # Click the new alarm button.
         #
@@ -133,10 +134,11 @@ class AppClock(GaiaTestCase):
         #
         self.checkAlarmPreview(t_hour, p_min, t_ampm, p_label, p_repeat)
         
-    #
-    # Verify the alarm details in the clock screen.
-    #
     def checkAlarmPreview(self, p_hour, p_min, p_ampm, p_label, p_repeat):
+        #
+        # Verify the alarm details in the clock screen.
+        #
+
         #
         # Put the time in a format we can compare easily with.
         #
@@ -176,13 +178,13 @@ class AppClock(GaiaTestCase):
         
         return boolOK
                 
-    #
-    # Check details of alarm when it rings.
-    #
-    # NOTE: the status bar alarm is always 'visible', so you have to manually
-    #       wait until the alarm is expected to have started before calling this!
-    #
-    def checkAlarmDetails(self, p_hour, p_min, p_label):
+    def checkAlarmRingDetails(self, p_hour, p_min, p_label):
+        #
+        # Check details of alarm when it rings.
+        #
+        # NOTE: the status bar alarm is always 'visible', so you have to manually
+        #       wait until the alarm is expected to have started before calling this!
+        #
 
         #
         # The alarm screen appears in a different frame to the clock.
@@ -242,8 +244,8 @@ class AppClock(GaiaTestCase):
         x = float(len(p_scroller.find_elements("class name", "picker-unit")))
         
         #
-        # This is a little formula I worked out - seems to work, but it's
-        # not perfect (and I've only tested it on the scrollers on my Ungai).
+        # This is a little formula I worked out - seems to work, but I've only 
+        # tested it on the scrollers on my Ungai.
         #
         x = 1 - ((1/((x/100)*0.8))/100)
         
@@ -278,14 +280,14 @@ class AppClock(GaiaTestCase):
 
         time.sleep(0.5)
         
-    #
-    # Set the time using the scroller.
-    # Marionette flick() works a treat here, woop!
-    #
     def _select(self, p_component, p_number):
         scroller = self.UTILS.get_element(
             DOM.Clock.time_picker_column[0], 
             DOM.Clock.time_picker_column[1] % p_component)
+        #
+        # Set the time using the scroller.
+        # Marionette flick() works a treat here, woop!
+        #
         
         #
         # Get the current setting for this scroller.

@@ -14,7 +14,7 @@ from apps.app_gallery import *
 import os, time
 
 class test_14(GaiaTestCase):
-    _Description = "Viewing images in the gallery app."
+    _Description = "Browse photos in gallery."
     
     _img_list = ('img1.jpg',
                  'img2.jpg',

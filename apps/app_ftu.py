@@ -35,10 +35,11 @@ class AppFTU(GaiaTestCase):
         self.wait_for_element_not_displayed(*DOM.GLOBAL.loading_overlay)
 
 
-    #
-    # Selects an item from a select box (lifted directly from gaiatest).
-    #
     def _select(self, match_string):
+        #
+        # Selects an item from a select box (lifted directly from gaiatest).
+        #
+
         # Cheeky Select wrapper until Marionette has its own
         # Due to the way B2G wraps the app's select box we match on text
         # Have to go back to top level to get the B2G select box wrapper
@@ -80,52 +81,53 @@ class AppFTU(GaiaTestCase):
         
         return False
         
-    #
-    # Click to the next screen (works until you get to the tour).
-    #
     def nextScreen(self):
+        #
+        # Click to the next screen (works until you get to the tour).
+        #
         x = self.UTILS.get_element(*self.UTILS.verify("DOM.FTU.next_button"))
         self.marionette.tap(x)
         time.sleep(1)
         
-    #
-    # Click to start the Tour.
-    #
     def startTour(self):
-        x = self.marionette.find_element(*self.UTILS.verify("DOM.FTU.tour_start_btn"))
+        #
+        # Click to start the Tour.
+        #
+        x = self.UTILS.get_element(*self.UTILS.verify("DOM.FTU.tour_start_btn"))
         self.marionette.tap(x)
         time.sleep(1)
 
-    #
-    # Click to skip the Tour.
-    #
     def skipTour(self):
-        x = self.marionette.find_element(*self.UTILS.verify("DOM.FTU.tour_skip_btn"))
+        #
+        # Click to skip the Tour.
+        #
+        x = self.UTILS.get_element(*self.UTILS.verify("DOM.FTU.tour_skip_btn"))
         self.marionette.tap(x)
         time.sleep(1)
 
-    #
-    # Click to next page of the Tour.
-    #
     def nextTourScreen(self):
-        x = self.marionette.find_element(*self.UTILS.verify("DOM.FTU.tour_next_btn"))
+        #
+        # Click to next page of the Tour.
+        #
+        x = self.UTILS.get_element(*self.UTILS.verify("DOM.FTU.tour_next_btn"))
         self.marionette.tap(x)
         time.sleep(1)
 
-    #
-    # Click to end the Tour.
-    #
     def endTour(self):
-        x = self.marionette.find_element(*self.UTILS.verify("DOM.FTU.tour_finished_btn"))
+        #
+        # Click to end the Tour.
+        #
+        x = self.UTILS.get_element(*self.UTILS.verify("DOM.FTU.tour_finished_btn"))
         self.marionette.tap(x)
         time.sleep(1)
 
-    #
-    # Enable data.
-    # (crazy - the switch has an "id", but if you use that it never becomes 'visible'!)
-    #
     def setDataConnEnabled(self):
-        self.wait_for_element_displayed(*self.UTILS.verify("DOM.FTU.section_cell_data"))
+        #
+        # Enable data.
+        # (the switch has an "id", but if you use that it never becomes 'visible'!)
+        #
+        self.UTILS.waitForDisplayed(20, "Cellular data connection section appears.", True, DOM.FTU.section_cell_data)
+#        self.wait_for_element_displayed(*self.UTILS.verify("DOM.FTU.section_cell_data"))
         x = self.UTILS.get_element(*DOM.FTU.dataconn_switch)
         self.marionette.tap(x)
         
@@ -135,13 +137,13 @@ class AppFTU(GaiaTestCase):
             self.data_layer.get_setting("ril.data.enabled"),    
             "Data connection is enabled after trying to enable it.", True)
         
-    #
-    # Join a wifi network.
-    #
     def setNetwork(self, p_wifiName, p_userName, p_password):
+        #
+        # Join a wifi network.
+        #
         time.sleep(5)
         try:
-            x = self.marionette.find_elements(*self.UTILS.verify("DOM.FTU.wifi_networks_list"))
+            x = self.UTILS.get_elements(*self.UTILS.verify("DOM.FTU.wifi_networks_list"))
         except:
             self.UTILS.logResult(False, "SOME networks are found in wifi screen.")
         else:
@@ -169,21 +171,25 @@ class AppFTU(GaiaTestCase):
                     wifi_login_pass.send_keys(p_password)
                     self.marionette.tap(wifi_login_join)
         
-    #
-    # Set the timezone.
-    #
     def setTimezone(self, p_continent, p_city):
-        self.wait_for_element_displayed(*self.UTILS.verify("DOM.FTU.timezone"))
+        
+        #
+        # Set the timezone.
+        #
+        self.UTILS.waitForDisplayed(20, "Timezone area appears.", True, DOM.FTU.timezone)
+
         continent_select = self.marionette.find_element(*self.UTILS.verify("DOM.FTU.timezone_continent"))
+
         # Click to activate the b2g select element
         continent_select.click()
         self._select(p_continent)
 
         city_select = self.marionette.find_element(*self.UTILS.verify("DOM.FTU.timezone_city"))
+        
         # Click to activate the b2g select element
         city_select.click()
         self._select(p_city)
 
         self.UTILS.TEST(
-            p_continent + "/" + p_city in self.marionette.find_element(*self.UTILS.verify("DOM.FTU.timezone_title")).text,
+            p_continent + "/" + p_city in self.UTILS.get_element(*self.UTILS.verify("DOM.FTU.timezone_title")).text,
             "Locality is set up correctly")

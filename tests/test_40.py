@@ -16,7 +16,7 @@ from apps.app_settings import *
 from tests.mock_data.contacts import MockContacts
 
 class test_40(GaiaTestCase):
-    _Description = "Importing facebook contacts."
+    _Description = "Import Facebook contacts from contacts app settings."
 
     def setUp(self):
         #
@@ -48,8 +48,7 @@ class test_40(GaiaTestCase):
         #
         # Set up to use data connection.
         #
-        self.UTILS.logComment("Not disabling wifi at the moment")
-#        self.data_layer.disable_wifi()
+        self.data_layer.disable_wifi()
         self.settings.turn_dataConn_on_if_required()
         
         #

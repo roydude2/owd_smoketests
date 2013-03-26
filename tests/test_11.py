@@ -14,7 +14,7 @@ from apps.app_gallery import *
 from apps.app_camera import *
 
 class test_11(GaiaTestCase):
-    _Description = "Take a photograph via the camera app."
+    _Description = "Take a picture with camera."
     
     def setUp(self):
         #

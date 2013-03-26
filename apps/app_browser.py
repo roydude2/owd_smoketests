@@ -45,15 +45,17 @@ class AppBrowser(GaiaTestCase):
         #
         # Wait for throbber to appear then dissappear.
         #
-        self.wait_for_element_displayed(*self.UTILS.verify("DOM.Browser.throbber"))
+        self.UTILS.waitForDisplayed(20, "Browser 'throbber' appears while loading a url.", True, DOM.Browser.throbber)
+#        self.wait_for_element_displayed(*self.UTILS.verify("DOM.Browser.throbber"))
         self.wait_for_condition(lambda m: not self.is_throbber_visible(), timeout=120)
     
         self.UTILS.TEST(self.check_page_loaded(p_url), "Web page loaded correctly.")
     
-    #
-    # Check the page didn't have a problem.
-    #
     def check_page_loaded(self, p_url):
+        #
+        # Check the page didn't have a problem.
+        #
+
         #
         # Switch to the browser content frame and check the contents.
         #
@@ -66,14 +68,7 @@ class AppBrowser(GaiaTestCase):
 #        x = self.marionette.find_element(*iframe_dom)
 #        self.UTILS.switchToFrame("src", x.get_attribute("src"))        iframe_dom = ("class name", "browser-tab")
 
-        iframe_dom = ("xpath", "//iframe[@class='browser-tab']")
-        try:
-            self.wait_for_element_present(*iframe_dom)
-        except:
-            self.UTILS.logResult(False, "Unable to locate browser page frame based on url '%s'." % p_url)
-            return False
-
-        self.UTILS.switchToFrame("class", "browser-tab")
+        self.UTILS.switchToFrame(*DOM.Browser.website_frame)
 
         try:
             x = self.marionette.find_element(*DOM.Browser.page_problem)

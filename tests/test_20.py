@@ -15,7 +15,7 @@ from apps.app_settings import *
 from marionette.keys import Keys
 
 class test_20(GaiaTestCase):
-    _Description = "Get an app from the marketplace."
+    _Description = "Install a market installed hosted app."
     
     APP_NAME    = 'Wikipedia'
     APP_AUTHOR  = 'tfinc'

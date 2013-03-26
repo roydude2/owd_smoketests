@@ -14,7 +14,7 @@ from apps.app_camera import *
 from apps.app_video import *
 
 class test_13(GaiaTestCase):
-    _Description = "Record video and view it in the video player app."
+    _Description = "Play recorded video in the video player app."
     
     def setUp(self):
         #

@@ -14,7 +14,7 @@ from apps.app_settings import *
 from apps.app_everythingMe import *
 
 class test_39(GaiaTestCase):
-    _Description = "Install an app via 'everything.me'."
+    _Description = "Install and launch an everything.me app."
     
     _GROUP_NAME  = "Games"
     _APP_NAME    = "Tetris"

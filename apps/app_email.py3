@@ -27,25 +27,25 @@ class AppEmail(GaiaTestCase):
         self.app = self.apps.launch('Email')
         self.wait_for_element_not_displayed(*DOM.GLOBAL.loading_overlay)
         
+    #
+    # Wait until any progress icon goes away.
+    #
     def waitForDone(self):
-        #
-        # Wait until any progress icon goes away.
-        #
         self.wait_for_element_not_displayed('tag name', 'progress')
         time.sleep(2) # (just to be sure!)
 
+    #
+    # Goto a specific folder in the folder list screen.
+    #
     def goto_folder_from_list(self, p_name):
-        #
-        # Goto a specific folder in the folder list screen.
-        #
         x = self.UTILS.get_element('xpath', DOM.Email.folderList_name_xpath % p_name)
         self.marionette.tap(x)
         
     
+    #
+    # Add a new account.
+    #
     def switchAccount(self, p_address):
-        #
-        # Add a new account.
-        #
         x = self.UTILS.get_element(*self.UTILS.verify("DOM.Email.settings_menu_btn"))
         self.marionette.tap(x)
         
@@ -65,8 +65,7 @@ class AppEmail(GaiaTestCase):
         x = self.UTILS.get_element(*self.UTILS.verify("DOM.Email.goto_accounts_btn"))
         self.marionette.tap(x)
         
-        x = ('xpath', DOM.GLOBAL.app_head_specific % "Accounts")
-        self.UTILS.waitForDisplayed(20, "Accounts header appears.", False, x)
+        self.wait_for_element_displayed('xpath', DOM.GLOBAL.app_head_specific % "Accounts")
         
         #
         # Check if it's already set up.
@@ -86,18 +85,17 @@ class AppEmail(GaiaTestCase):
         return False
 
 
+    #
+    # Remove current email account and restart the application.
+    #
     def remove_accounts_and_restart(self):
-        #
-        # Remove current email accounts and restart the application.
-        #
         x = self.UTILS.get_element(*self.UTILS.verify("DOM.Email.settings_menu_btn"))
         self.marionette.tap(x)
         
         x = self.UTILS.get_element(*self.UTILS.verify("DOM.Email.settings_set_btn"))
         self.marionette.tap(x)
         
-        x=('xpath', DOM.GLOBAL.app_head_specific % "Mail settings")
-        self.UTILS.waitForDisplayed(20, "Mail settings header appears.", False, x)
+        self.wait_for_element_displayed('xpath', DOM.GLOBAL.app_head_specific % "Mail settings")
         
         #
         # Remove each email address listed ...
@@ -108,9 +106,7 @@ class AppEmail(GaiaTestCase):
                 # This isn't a placeholder, so delete it.
                 self.UTILS.logComment("i: " + i.text)
                 self.marionette.tap(i)
-                
-                x = ('xpath', DOM.GLOBAL.app_head_specific % i.text)
-                self.UTILS.waitForDisplayed(20, i.text + " header appears.", False, x)
+                self.wait_for_element_displayed('xpath', DOM.GLOBAL.app_head_specific % i.text)
                 
                 # Delete.
                 delacc = self.UTILS.get_element(*self.UTILS.verify("DOM.Email.settings_del_acc_btn"))
@@ -127,14 +123,14 @@ class AppEmail(GaiaTestCase):
         #
         self.launch()
     
+    #
+    # Login.
+    #
     def setupAccount(self, p_user, p_email, p_pass):
-        #
-        # Set up a new email account in the email app and login.
-        #
-
         #
         # If we've just started out, email will open directly to "New Account").
         #
+#        x = self.UTILS.get_element(*self.UTILS.verify("DOM.GLOBAL.app_head"))
         x = self.marionette.find_element(*self.UTILS.verify("DOM.GLOBAL.app_head"))
         if x.text != "New Account":
             #
@@ -171,7 +167,7 @@ class AppEmail(GaiaTestCase):
         btn = self.UTILS.get_element(*self.UTILS.verify("DOM.Email.login_next_btn"))
         self.marionette.tap(btn)
         
-        self.UTILS.waitForDisplayed(20, "Email header appears.", False, self.UTILS.verify("DOM.Email.sup_header"))
+        self.wait_for_element_displayed(*self.UTILS.verify("DOM.Email.sup_header"))
         
         #
         # Click the 'continue ...' button.
@@ -182,10 +178,10 @@ class AppEmail(GaiaTestCase):
         self.waitForDone()
         
     
+    #
+    # Compose and send a new email.
+    #
     def send_new_email(self, p_target, p_subject, p_message):
-        #
-        # Compose and send a new email.
-        #
         x = self.UTILS.get_element(*self.UTILS.verify("DOM.Email.compose_msg_btn"))
         self.marionette.tap(x)
         
@@ -224,8 +220,7 @@ class AppEmail(GaiaTestCase):
         # Wait for inbox to re-appear.
         #
         try:
-            x = ('xpath', DOM.GLOBAL.app_head_specific % "Inbox")
-            self.UTILS.waitForDisplayed(20, "Inbox header appears.", False, x)
+            self.wait_for_element_displayed('xpath', DOM.GLOBAL.app_head_specific % "Inbox")
         except:
             #
             # Did the email fail to send?
@@ -242,19 +237,17 @@ class AppEmail(GaiaTestCase):
                 
             self.UTILS.quitTest()
         
+    #
+    # Open a specific mail folder (must be called from "Inbox").
+    #
     def openMailFolder(self, p_folderName):
-        #
-        # Open a specific mail folder (must be called from "Inbox").
-        #
         x = self.UTILS.get_element(*self.UTILS.verify("DOM.Email.settings_menu_btn"))
-        if not x: self.UTILS.quitTest()
-        
         self.marionette.tap(x)
         
         #
         # When we're looking at the folders screen ...
         #
-        self.UTILS.waitForDisplayed(20, "Folder list header appears.", False, self.UTILS.verify("DOM.Email.folderList_header"))
+        self.wait_for_element_displayed(*self.UTILS.verify("DOM.Email.folderList_header"))
 
         #
         # ... click on the folder were after.
@@ -267,10 +260,10 @@ class AppEmail(GaiaTestCase):
         time.sleep(5)
             
         
+    #
+    # Assumes we are in the required folder.
+    #
     def openMsg(self, p_subject):
-        #
-        # Assumes we are in the required folder.
-        #
 
         myEmail = self.emailIsInFolder(p_subject)
         if myEmail:
@@ -305,7 +298,7 @@ class AppEmail(GaiaTestCase):
                 #
                 # *something* is now in the folder ...
                 #
-                z = self.UTILS.get_elements(*self.UTILS.verify("DOM.Email.folder_subject_list"))
+                z = self.marionette.find_elements(*DOM.Email.folder_subject_list)
                 for i in z:
                     #
                     # Do any of the folder items match our subject?
@@ -323,10 +316,7 @@ class AppEmail(GaiaTestCase):
             # subject yet.
             # Wait a couple fo seconds and try again.
             # 
-            x = self.marionette.find_element(*self.UTILS.verify("DOM.Email.folder_refresh_button"))
-            self.marionette.tap(x)
-            
-            time.sleep(5)
+            time.sleep(2)
             loops = loops - 1
         
         return False

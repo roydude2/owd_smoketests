@@ -27,19 +27,22 @@ class AppCalendar(GaiaTestCase):
         self.wait_for_element_not_displayed(*DOM.GLOBAL.loading_overlay)
 
     def addEvent(self):
+        #
+        # Press the 'add event' button.
+        #
         x = self.UTILS.get_element(*self.UTILS.verify("DOM.Calendar.add_event_btn"))
         self.marionette.tap(x)
         
-    #
-    # Create a new event - use 'False' in the following fields if you want to leave them at default:
-    #
-    #   start date
-    #   end date
-    #   location
-    #   notes
-    #
     def createEvent(self, p_title, p_location, p_allDay, p_startDate, p_startTime, p_endDate, p_endTime, p_notes):
         self.addEvent()
+        #
+        # Create a new event - use 'False' in the following fields if you want to leave them at default:
+        #
+        #   start date
+        #   end date
+        #   location
+        #   notes
+        #
         
         #
         # Set the title.
@@ -100,17 +103,17 @@ class AppCalendar(GaiaTestCase):
         x = self.UTILS.get_element(*self.UTILS.verify("DOM.Calendar.event_save_btn"))
         self.marionette.tap(x)
         
-    #
-    # Set to view type (day / week / month).
-    #
     def setView(self, p_type):
+        #
+        # Set to view type (day / week / month).
+        #
         x = self.UTILS.get_element(DOM.Calendar.view_type[0], DOM.Calendar.view_type[1] % p_type)
         self.marionette.tap(x)
         
-    #
-    # Return object for an event in month / week or day view.
-    #
     def getEventPreview(self, p_view, p_hour24, p_title, p_location=False):
+        #
+        # Return object for an event in month / week or day view.
+        #
         
         #
         # The tag identifiers aren't consistent, so set them here.

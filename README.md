@@ -71,28 +71,28 @@ SMOKETESTS COVERED:
     <td  align=center>10</td><td  align=left>Send and receive an SMS via the messaging app.</td>
   </tr>
   <tr>
-    <td  align=center>11</td><td  align=left>Take a photograph via the camera app.</td>
+    <td  align=center>11</td><td  align=left>Take a picture with camera.</td>
   </tr>
   <tr>
     <td  align=center>12</td><td  align=left>Record a video and view it in the gallery app.</td>
   </tr>
   <tr>
-    <td  align=center>13</td><td  align=left>Record video and view it in the video player app.</td>
+    <td  align=center>13</td><td  align=left>Play recorded video in the video player app.</td>
   </tr>
   <tr>
-    <td  align=center>14</td><td  align=left>Viewing images in the gallery app.</td>
+    <td  align=center>14</td><td  align=left>Browse photos in gallery.</td>
   </tr>
   <tr>
-    <td  align=center>16</td><td  align=left>Connect to Wifi network.</td>
+    <td  align=center>16</td><td  align=left>Load a website via Wifi.</td>
   </tr>
   <tr>
-    <td  align=center>17</td><td  align=left>Use Data Connection.</td>
+    <td  align=center>17</td><td  align=left>Load a website via Cellular Data.</td>
   </tr>
   <tr>
-    <td  align=center>20</td><td  align=left>Get an app from the marketplace.</td>
+    <td  align=center>20</td><td  align=left>Install a market installed hosted app.</td>
   </tr>
   <tr>
-    <td  align=center>21</td><td  align=left>Get an app from the marketplace and run it.</td>
+    <td  align=center>21</td><td  align=left>Launch market installed hosted app.</td>
   </tr>
   <tr>
     <td  align=center>22</td><td  align=left>Combination of 22 and 23 - Send and receive an email between hotmail accounts.</td>
@@ -107,22 +107,22 @@ SMOKETESTS COVERED:
     <td  align=center>29</td><td  align=left>Killing apps via the homescreen.</td>
   </tr>
   <tr>
-    <td  align=center>31</td><td  align=left>Use Data Connection to download packaged app.</td>
+    <td  align=center>31</td><td  align=left>Launch a packaged app.</td>
   </tr>
   <tr>
-    <td  align=center>32</td><td  align=left>Use Data Connection to download packaged app, then delete it.</td>
+    <td  align=center>32</td><td  align=left>Delete a packaged app.</td>
   </tr>
   <tr>
-    <td  align=center>34</td><td  align=left>Add calendar event.</td>
+    <td  align=center>34</td><td  align=left>Add and view an event to an offline calendar in each calendar view.</td>
   </tr>
   <tr>
-    <td  align=center>35</td><td  align=left>Setting a new alarm (will sleep for a while to give alarm time to start).</td>
+    <td  align=center>35</td><td  align=left>Add an alarm (will pause for < 1 minute while waiting for alarm to start).</td>
   </tr>
   <tr>
-    <td  align=center>39</td><td  align=left>Install an app via 'everything.me'.</td>
+    <td  align=center>39</td><td  align=left>Install and launch an everything.me app.</td>
   </tr>
   <tr>
-    <td  align=center>40</td><td  align=left>Importing facebook contacts.</td>
+    <td  align=center>40</td><td  align=left>Import Facebook contacts from contacts app settings.</td>
   </tr>
   <tr>
     <td  align=center>41</td><td  align=left>Link a facebook contact.</td>

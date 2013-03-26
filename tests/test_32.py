@@ -14,7 +14,7 @@ from apps.app_settings import *
 from apps.app_browser import *
 
 class test_32(GaiaTestCase):
-    _Description = "Use Data Connection to download packaged app, then delete it."
+    _Description = "Delete a packaged app."
     
     _URL         = "http://everlong.org/mozilla/packaged/"
     _appName     = "cool packaged app"

@@ -25,7 +25,7 @@ export TEST_SMS_NUM=		# Mobile number for SMS tests (test 10)
 
 #
 # Test number: 16
-# Test desc. :  "Connect to Wifi network."
+# Test desc. :  "Load a website via Wifi."
 #
 export WIFI_TEST_16=		# Name of wifi to connect to (case sensitive!)
 export URL_TEST_16=		# URL to test wifi with
@@ -34,7 +34,7 @@ export PASSWORD_16=		# Wifi password
 
 #
 # Test number: 17
-# Test desc. :  "Use Data Connection."
+# Test desc. :  "Load a website via Cellular Data."
 #
 export URL_TEST_17=		# URL to test data connection with
 
@@ -70,14 +70,14 @@ export PASSWORD_27=		# Wifi password
 
 #
 # Test number: 35
-# Test desc. :  "Setting a new alarm (will sleep for a while to give alarm time to start)."
+# Test desc. :  "Add an alarm (will pause for < 1 minute while waiting for alarm to start)."
 #
 export YOUR_CONTINENT=		# YOUR continent (for setting timezone).
 export YOUR_CITY=		# YOUR city (for setting timezone).
 
 #
 # Test number: 40
-# Test desc. :  "Importing facebook contacts."
+# Test desc. :  "Import Facebook contacts from contacts app settings."
 #
 export FB_USERNAME=		# Username to connect you to facebook.
 export FB_PASSWORD=		# Password to connect you to facebook.

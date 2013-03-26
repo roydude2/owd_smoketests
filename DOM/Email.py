@@ -29,6 +29,7 @@ folderList_name_xpath   = '//*[text()="%s"]'
 
 folder_message_list     = ('class name', 'msg-header-item')
 folder_subject_list     = ('class name', 'msg-header-subject')
+folder_refresh_button   = ("class name", "msg-refresh-btn bottom-btn msg-nonsearch-only")
 
 open_email_from         = ('xpath', "//div[@class='msg-envelope-from-line']//span[@class='msg-peep-content msg-peep-address']")
 open_email_to           = ('xpath', "//div[@class='msg-envelope-to-line']//span[@class='msg-peep-content msg-peep-address']")

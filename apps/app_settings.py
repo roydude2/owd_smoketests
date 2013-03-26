@@ -27,21 +27,25 @@ class AppSettings(GaiaTestCase):
         self.app = self.apps.launch('Settings')
         self.wait_for_element_not_displayed(*DOM.GLOBAL.loading_overlay)
 
-    #
-    # Open wifi settings.
-    #
     def wifi(self):
+        #
+        # Open wifi settings.
+        #
         x = self.UTILS.get_element(*self.UTILS.verify("DOM.Settings.wifi"))
         self.marionette.tap(x)
-        self.wait_for_element_displayed(*self.UTILS.verify("DOM.Settings.wifi_header"))
+        
+        self.UTILS.waitForDisplayed(20, "Wifi header appears.", False, self.UTILS.verify("DOM.Settings.wifi_header"))
+#        self.wait_for_element_displayed(*self.UTILS.verify("DOM.Settings.wifi_header"))
 
-    #
-    # Open cellular and data settings.
-    #
     def cellular_and_data(self):
+        #
+        # Open cellular and data settings.
+        #
         x = self.UTILS.get_element(*self.UTILS.verify("DOM.Settings.cellData"))
         self.marionette.tap(x)
-        self.wait_for_element_displayed(*self.UTILS.verify("DOM.Settings.celldata_header"))
+        
+        self.UTILS.waitForDisplayed(20, "Celldata header appears.", False, self.UTILS.verify("DOM.Settings.celldata_header"))
+#        self.wait_for_element_displayed(*self.UTILS.verify("DOM.Settings.celldata_header"))
 
     def turn_dataConn_on_if_required(self):
         #
@@ -51,10 +55,11 @@ class AppSettings(GaiaTestCase):
         if not self.data_layer.get_setting("ril.data.enabled"):
             self.turn_dataConn_on()
 
-    #
-    # Click slider to turn data connection on.
-    #
     def turn_dataConn_on(self, p_wifiOFF=False):
+        #
+        # Click slider to turn data connection on.
+        #
+
         #
         # First, make sure we're in "Settings".
         #
@@ -121,10 +126,10 @@ class AppSettings(GaiaTestCase):
                             True)
 
 
-    #
-    # Click slider to turn wifi on.
-    #
     def turn_wifi_on(self):
+        #
+        # Click slider to turn wifi on.
+        #
         if not self.data_layer.get_setting("wifi.enabled"):
             x = self.UTILS.get_element(*self.UTILS.verify("DOM.Settings.wifi_enabled"))
             self.marionette.tap(x)
@@ -135,10 +140,11 @@ class AppSettings(GaiaTestCase):
         #
         time.sleep(3)
         
-    #
-    # Verify the expected network is listed as connected in 'available networks'.
-    #
     def checkWifiLisetedAsConnected(self, p_name):
+        #
+        # Verify the expected network is listed as connected in 'available networks'.
+        #
+
         # 
         # Wait a little time to be sure the networks are all listed.
         #
@@ -162,11 +168,10 @@ class AppSettings(GaiaTestCase):
         #
         return False
         
-
-    #
-    # Select a network.
-    #
     def tap_wifi_network_name(self, p_wifi_name, p_user, p_pass):
+        #
+        # Select a network.
+        #
         wifi_name_element = DOM.Settings.wifi_name_xpath % p_wifi_name
         x= self.UTILS.get_element('xpath', wifi_name_element)
         if x:
@@ -190,7 +195,7 @@ class AppSettings(GaiaTestCase):
             #
             # We were not asked, so go back to the list.
             #
-            backBTN = self.marionette.find_element(*self.UTILS.verify("DOM.Settings.back_button"))
+            backBTN = self.UTILS.get_element(*self.UTILS.verify("DOM.Settings.back_button"))
             self.marionette.tap(backBTN)
 #            self.wait_for_element_displayed('xpath', DOM.GLOBAL.app_head_specific % "Wi-Fi")
             self.UTILS.TEST(self.UTILS.headerCheck("Wi-Fi"), "Header is 'Wi-Fi'.")
@@ -198,33 +203,34 @@ class AppSettings(GaiaTestCase):
         #
         # A couple of checks to wait for 'anything' to be Connected.
         #
-        conBool = False
-        try:
-            self.wait_for_element_displayed(*self.UTILS.verify("DOM.Settings.wifi_connected"))
-            conBool = True
-        except:
-            conBool = False
-        self.UTILS.TEST(conBool, "Wifi is marked as 'Connected' in the list.")
+#        conBool = False
+#        try:
+        self.UTILS.waitForDisplayed(20, "Wifi is marked 'connected' in the list.", False, self.UTILS.verify("DOM.Settings.wifi_connected"))
+#            self.wait_for_element_displayed(*self.UTILS.verify("DOM.Settings.wifi_connected"))
+#            conBool = True
+#        except:
+#            conBool = False
+#        self.UTILS.TEST(conBool, "Wifi is marked as 'Connected' in the list.")
         
         self.UTILS.TEST(self.data_layer.get_setting("wifi.enabled"),
             "Wifi connection to '" + p_wifi_name + "' not established.", True)
 
-    #
-    # Set the volume for alarms.
-    #
     def setAlarmVolume(self, p_vol):
+        #
+        # Set the volume for alarms.
+        #
         self.data_layer.set_setting('audio.volume.alarm', p_vol)
         
-    #
-    # Set the volume for ringer and notifications.
-    #
     def setRingerAndNotifsVolume(self, p_vol):
+        #
+        # Set the volume for ringer and notifications.
+        #
         self.data_layer.set_setting('audio.volume.notification', p_vol)
         
-    #
-    # Go to Sound menu.
-    #
     def goSound(self):
+        #
+        # Go to Sound menu.
+        #
         self.launch()
         x = self.UTILS.get_element(*self.UTILS.verify("DOM.Settings.sound"))
         self.marionette.tap(x)

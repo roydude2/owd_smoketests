@@ -14,7 +14,7 @@ from apps.app_calendar import *
 from datetime import datetime
 
 class test_34(GaiaTestCase):
-    _Description = "Add calendar event."
+    _Description = "Add and view an event to an offline calendar in each calendar view."
  
     def setUp(self):
         #

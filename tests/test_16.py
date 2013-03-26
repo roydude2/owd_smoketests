@@ -14,7 +14,7 @@ from apps.app_settings import *
 from apps.app_browser import *
 
 class test_16(GaiaTestCase):
-    _Description = "Connect to Wifi network."
+    _Description = "Load a website via Wifi."
     
     def setUp(self):
         # Set up child objects...

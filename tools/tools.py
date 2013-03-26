@@ -40,10 +40,10 @@ class TestUtils(GaiaTestCase):
     # Methods which deal with reporting the results.
     #
 
-    #
-    # Add a test result to the result array.
-    #
     def logResult(self, p_result, p_msg, p_fnam=False):
+        #
+        # Add a test result to the result array.
+        #
         logMsg = p_msg
         
         if p_fnam:
@@ -55,21 +55,21 @@ class TestUtils(GaiaTestCase):
         #
         self._resultArray.append((p_result, logMsg))
     
-    #
-    # Add a comment to the comment array.
-    #
     def logComment(self, p_str):
+        #
+        # Add a comment to the comment array.
+        #
         self._commentArray.append(p_str)
 
-    #
-    # Test that p_result is true.
-    #
-    # The main advantage to this over the standard 'assert's is that
-    # this continues past a failure if p_stop is False.
-    # However, it also takes a screenshot and dumps the html source
-    # if p_result is False.
-    #
     def TEST(self, p_result, p_msg, p_stop = False):
+        #
+        # Test that p_result is true.
+        #
+        # The main advantage to this over the standard 'assert's is that
+        # this continues past a failure if p_stop is False.
+        # However, it also takes a screenshot and dumps the html source
+        # if p_result is False.
+        #
         fnam = False
         if not p_result:
             fnam = self.screenShotOnErr()
@@ -83,11 +83,12 @@ class TestUtils(GaiaTestCase):
             self.logResult(p_result, p_msg)
         
 
-    #
-    # Create the final result file from the result and comment arrays
-    # (run only once, at the end of each test case).
-    #
     def reportResults(self):
+        #
+        # Create the final result file from the result and comment arrays
+        # (run only once, at the end of each test case).
+        #
+
         #
         # Create output files (summary, which is displayed and
         # details, which is not displayed).
@@ -152,26 +153,27 @@ class TestUtils(GaiaTestCase):
     # Methods for general use.
     #
 
-    #
-    # Get a variable from the OS.
-    #
     def get_os_variable(self, p_name, p_msg=False):
+        #
+        # Get a variable from the OS.
+        #
         if p_name == "ENTER":
             return ""
         else:
             return os.environ[p_name]
     
-    #
-    # Return a DOM element - includes a check that the element is still
-    # correct and stops the test if the element has changed.
-    #
-    # NOTE: Do not use this for:
-    #        - Elements that are supposed to stop existing
-    #          (i.e. wait_for_element_not_exists() )
-    #        - Frames.
-    #        - Elements which will be in a different frame to this one.
-    #
     def verify(self, p_DOM_definition, p_timeOut=20):
+        #
+        # Return a DOM element - includes a check that the element is still
+        # correct and stops the test if the element has changed.
+        #
+        # NOTE: Do not use this for:
+        #        - Elements that are supposed to stop existing
+        #          (i.e. wait_for_element_not_exists() )
+        #        - Frames.
+        #        - Elements which will be in a different frame to this one.
+        #
+
         #
         # Split the variable into it's parts.
         #
@@ -180,6 +182,11 @@ class TestUtils(GaiaTestCase):
         try:
             domElement  = eval(p_DOM_definition)
         except:
+            #
+            # Since this isn't really a test of the app (more of a test of our
+            # definitions), I'm not reporting this as a pass / fail 'TEST' unless
+            # it fails.
+            #
             self.logResult(False, 
                            "'" + p_DOM_definition + "' is not found in the DOM files.")
             self.quitTest()
@@ -205,14 +212,14 @@ class TestUtils(GaiaTestCase):
         else:
             return domElement
 
-    #
-    # DEV TOOL: this will loop through every iframe, report the "src", 
-    # take a screenshot and capture the html in /tmp/royX.html.
-    #
-    # Because this is only meant as a dev aid (and shouldn't be in any released test
-    # scripts), it reports to ERROR instead of COMMENT.
-    #
     def viewAllIframes(self):
+        #
+        # DEV TOOL: this will loop through every iframe, report the "src", 
+        # take a screenshot and capture the html in /tmp/royX.html.
+        #
+        # Because this is only meant as a dev aid (and shouldn't be in any released test
+        # scripts), it reports to ERROR instead of COMMENT.
+        #
         self.marionette.switch_to_frame()
         time.sleep(1)
         y = 1
@@ -238,27 +245,9 @@ class TestUtils(GaiaTestCase):
         
     def switchToFrame(self, p_tag, p_str, p_quitOnError=True):
         #
-        # Switch to iframe based on the p_tag = p_string, i.e.
-        # "id" = "my_iframe".
+        # Switch to a different iframe based on tag and value.
+        # NOTE: You *may* need to use self.marionette.switch_to_frame() first!
         #
-        # Be aware that you USUALLY need to do this first:
-        #
-        #    "self.marionette.switch_to_frame()"
-        #
-        # (This way is better because we can use 'wait_for_element_present, 
-        # but it doesn't work for facebook's src="" frame :(
-#        frameSpec = ("xpath", "//iframe[@" + p_tag + "='" + p_str + "']")
-#        
-#        try:
-#            self.wait_for_element_present(*frameSpec)
-#            iframe = self.marionette.find_element(*frameSpec)
-#            if self.marionette.switch_to_frame(iframe):
-#                return True    
-#        except:
-#            #
-#            # Ignore the exception - if we get past this we've failed to switch.
-#            #
-#            pass
         time.sleep(1)
         x = self.marionette.find_elements("tag name", "iframe")
         for i in x:
@@ -272,11 +261,11 @@ class TestUtils(GaiaTestCase):
         else:
             return False
     
-    #
-    # Wait for a statusbar setting to be displayed, then return to the
-    # given frame.
-    #
     def check_statusbar_for_icon(self, p_dom, p_returnFrame=False):
+        #
+        # Wait for a statusbar setting to be displayed, then return to the
+        # given frame (doesn't wait, just expects it to be there).
+        #
         self.marionette.switch_to_frame()
         x = self.marionette.find_element(*p_dom)
         isThere = x.is_displayed()
@@ -286,20 +275,21 @@ class TestUtils(GaiaTestCase):
         
         return isThere
         
-    #
-    # Take a screenshot.
-    #
     def screenShot(self, p_fileSuffix):
+        #
+        # Take a screenshot.
+        #
         outFile = os.environ['RESULT_DIR'] + "/" + p_fileSuffix + ".png"
         screenshot = self.marionette.screenshot()[22:] 
         with open(outFile, 'w') as f:
             f.write(base64.decodestring(screenshot))        
         return outFile
 
-    #
-    # Screenshot on error.
-    #
     def screenShotOnErr(self):
+        #
+        # Take a screenshot on error (increments the file number).
+        #
+
         #
         # Build the error filename.
         #
@@ -318,10 +308,10 @@ class TestUtils(GaiaTestCase):
         self.savePageHTML(htmlDump)
         return x
 
-    #
-    # Quit this test suite.
-    #
     def quitTest(self, p_msg=False):
+        #
+        # Quit this test suite.
+        #
         self.screenShotOnErr()
         if not p_msg:
             msg = "CANNOT CONTINUE PAST THIS ERROR - ABORTING THIS TEST!"
@@ -331,28 +321,74 @@ class TestUtils(GaiaTestCase):
         self.logResult(False, msg)
         sys.exit(0) #"Fatal error, quitting this test.")
         
-    #
-    # Wait for an element to be displayed, then return the element
-    # (or False).
-    #
+    def waitForNotDisplayed(self, p_timeout, p_msg, p_stop, p_element):
+        #
+        # Waits for an element to be displayed and captures the error if not.
+        #
+        boolOK = True
+        try:
+            self.wait_for_element_not_displayed(*p_element, timeout=p_timeout)
+        except:
+            boolOK = False
+            
+        self.TEST(boolOK, p_msg, p_stop)
+        
+        return boolOK
+        
+    def waitForDisplayed(self, p_timeout, p_msg, p_stop, p_element):
+        #
+        # Waits for an element to be displayed and captures the error if not.
+        #
+        boolOK = True
+        try:
+            self.wait_for_element_displayed(*p_element, timeout=p_timeout)
+        except:
+            boolOK = False
+            
+        self.TEST(boolOK, p_msg, p_stop)
+        
+        return boolOK
+        
     def get_element(self, *p_element):
+        #
+        # Wait for an element to be displayed, then return the element
+        # (or False).
+        #
+        boolOK = True
         try:
             self.wait_for_element_displayed(*p_element)
             el = self.marionette.find_element(*p_element)
-            return el
         except:
-            self.logResult(False, 
-                           "Element (\"" + \
-                           p_element[0] + "\", \"" + \
-                           p_element[1] + "\") not displayed before timeout.")
+            boolOK = False
+        
+        self.TEST(boolOK, 
+                       "Element (\"" + \
+                       p_element[0] + "\", \"" + \
+                       p_element[1] + "\") is displayed before timeout.")
+        if boolOK:
+            return el
+        else:
             return False
         
     def get_elements(self, *p_elements):
+        #
+        # Wait for an element to be displayed, then return the element
+        # (or False).
+        #
+        boolOK = True
         try:
             self.wait_for_element_displayed(*p_elements)
-            els = self.marionette.find_elements(*p_elements)
-            return els
+            el = self.marionette.find_elements(*p_elements)
         except:
+            boolOK = False
+        
+        self.TEST(boolOK, 
+                       "Elements (\"" + \
+                       p_elements[0] + "\", \"" + \
+                       p_elements[1] + "\") is displayed before timeout.")
+        if boolOK:
+            return el
+        else:
             return False
     
     ##
@@ -370,47 +406,51 @@ class TestUtils(GaiaTestCase):
         #self.marionette.execute_script(
             #'navigator.mozApps.install("%s")' % MANIFEST)
     
-    #
-    # Save the HTML of the current page to the specified file.
-    #
     def savePageHTML(self, p_outfile):
+        #
+        # Save the HTML of the current page to the specified file.
+        #
         f = open(p_outfile, 'w')
         f.write( self.marionette.page_source.encode('ascii', 'ignore') )
 
-    #
-    # Returns the header that matches a string.
-    # NOTE: ALL headers in this iframe return true for ".is_displayed()"!
-    #
     def headerCheck(self, p_str):
+        #
+        # Returns the header that matches a string.
+        # NOTE: ALL headers in this iframe return true for ".is_displayed()"!
+        #
+        boolOK = False
         try:
             self.wait_for_element_present(*DOM.GLOBAL.app_head)
             headerName = self.marionette.find_elements(*DOM.GLOBAL.app_head)
             for i in headerName:
                 if i.text == p_str:
                     if i.is_displayed():
-                        return True
-                    else:
-                        return False
+                        boolOK = True
+                        break
         except:
-            return False
+            boolOK = False
                 
-        return False
+        self.TEST(boolOK, "Header \"" + p_str + "\" is found.")
+        return boolOK
         
     def setTimeToNow(self):
+        #
+        # Set the phone's time (using gaia data_layer instead of the UI).
+        #
         self.parent.data_layer.set_time(time.time() * 1000)
         
-    #
-    # Scroll to next page (right).
-    # Should change this to use marionette.flick() when it works.
-    #
     def scrollHomescreenRight(self):
+        #
+        # Scroll to next page (right).
+        # Should change this to use marionette.flick() when it works.
+        #
         self.marionette.execute_script('window.wrappedJSObject.GridManager.goToNextPage()')
     
-    #
-    # Scroll to previous page (left).
-    # Should change this to use marionette.flick() when it works.
-    #
     def scrollHomescreenLeft(self):
+        #
+        # Scroll to previous page (left).
+        # Should change this to use marionette.flick() when it works.
+        #
         self.marionette.execute_script('window.wrappedJSObject.GridManager.goToPreviousPage()')
     
     def findAppIcon(self, p_appName, p_reloadHome=True):
@@ -463,24 +503,24 @@ class TestUtils(GaiaTestCase):
         #
         return False
     
-    #
-    # Touch the home button (sometimes does something different to going home).
-    #
     def touchHomeButton(self):
+        #
+        # Touch the home button (sometimes does something different to going home).
+        #
         self.marionette.switch_to_frame()
         self.marionette.execute_script("window.wrappedJSObject.dispatchEvent(new Event('home'));")
     
-    #
-    # Long hold the home button to bring up the 'current running apps'.
-    #
     def holdHomeButton(self):
+        #
+        # Long hold the home button to bring up the 'current running apps'.
+        #
         self.marionette.switch_to_frame()
         self.marionette.execute_script("window.wrappedJSObject.dispatchEvent(new Event('holdhome'));")
     
-    #
-    # Return to the home screen.
-    #
     def goHome(self):
+        #
+        # Return to the home screen.
+        #
         self.apps.kill_all()
 #        self.homescreen = self.apps.launch('Homescreen')
         self.marionette.switch_to_frame()
@@ -488,34 +528,37 @@ class TestUtils(GaiaTestCase):
         self.switchToFrame(*DOM.GLOBAL.homescreen_iframe)
         time.sleep(1)
 
-    #
-    # Activate edit mode in the homescreen.
-    # ASSUMES YOU ARE ALREADY IN THE HOMESCREEN + CORRECT FRAME., i.e.
-    #
-    #    self.goHome()
-    #
-    # ... before you execute this!
-    #
     def activateHomeEditMode(self):
+        #
+        # Activate edit mode in the homescreen.
+        # ASSUMES YOU ARE ALREADY IN THE HOMESCREEN + CORRECT FRAME., i.e.
+        #
+        #    self.goHome()
+        #
+        # ... before you execute this!
+        #
         self.marionette.execute_script("window.wrappedJSObject.Homescreen.setMode('edit')")
 
-    #
-    # Launch an app via the homescreen.
-    #
     def launchAppViaHomescreen(self, p_name):
+        #
+        # Launch an app via the homescreen.
+        #
+        boolOK = False
         if self.findAppIcon(p_name):
             time.sleep(1)
             x = ('css selector', DOM.GLOBAL.app_icon_css % p_name)
             myApp = self.marionette.find_element(*x)
             self.marionette.tap(myApp)
-            return True
+            boolOK = True
         else:
-            return False
+            boolOK = False
+        
+        return boolOK
             
-    #
-    # Return whether an app is present on the homescreen (i.e. 'installed').
-    #
     def isAppInstalled(self, p_appName):
+        #
+        # Return whether an app is present on the homescreen (i.e. 'installed').
+        #
         self.marionette.switch_to_frame()
         self.switchToFrame(*DOM.GLOBAL.homescreen_iframe)
 
@@ -526,10 +569,11 @@ class TestUtils(GaiaTestCase):
         except:
             return False
 
-    #
-    # Remove an app using the UI.
-    #
     def uninstallApp(self, p_appName):
+        #
+        # Remove an app using the UI.
+        #
+
         #
         # Verify that the app is installed.
         #
@@ -577,20 +621,19 @@ class TestUtils(GaiaTestCase):
         
         return True
 
-    #
-    # Displays the status / notification bar in the home screen.
-    #
     def displayStatusBar(self):
+        #
+        # Displays the status / notification bar in the home screen.
         #
         # The only reliable way I have to do this at the moment is via JS
         # (tapping it only worked sometimes).
         #
         self.marionette.execute_script("window.wrappedJSObject.UtilityTray.show()")
         
-    #
-    # Waits for a new notification in the status bar (20s timeout by default).
-    #
     def waitForStatusBarNew(self, p_dom=DOM.GLOBAL.status_bar_new, p_time=20):
+        #
+        # Waits for a new notification in the status bar (20s timeout by default).
+        #
         try: 
             self.wait_for_element_present(*p_dom, timeout=p_time)
             return True

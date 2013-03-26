@@ -7,12 +7,15 @@ export ERR_FILE=${RESULT_DIR}/error_output
 export SUM_FILE=${RESULT_DIR}/${TEST_NUM}_summary
 export DET_FILE=${RESULT_DIR}/${TEST_NUM}_detail
 
+# At the moment things sometimes file the first time. This
+# just allows us to try one more time.
+RUNONCE=$1
 
 #
 # Run the test using 'gaiatest', ignore STDOUT (because what we want is being
 # writtin to a file), but capture STDERR.
 #
-gaiatest --address localhost:2828 $TEST_FILE > /dev/null 2>$ERR_FILE
+x=$(gaiatest --address localhost:2828 $TEST_FILE > /dev/null 2>$ERR_FILE)
 
 #
 # Now append any Marionette output to the details file (sometimes it contains
@@ -21,8 +24,7 @@ gaiatest --address localhost:2828 $TEST_FILE > /dev/null 2>$ERR_FILE
 x=$(grep -i error $ERR_FILE)
 if [ "$x" ]
 then
-	echo "
-
+    echo "
 
 
 ################################################################################
@@ -36,7 +38,6 @@ $(cat $ERR_FILE)
 
 fi
 
-
 #
 # Display the summary file.
 # If there is an 'error' in the marionette output but we think our tests
@@ -44,15 +45,33 @@ fi
 #
 cat $SUM_FILE | while read line
 do
-    printf "$line"
+
     result=$(echo $line | awk '{print $NF}')
     if [ "$result" = "Passed" ]
     then
-        x=$(grep -i error $ERR_FILE)
-	if [ "$x" ]
-	then
-	    printf " (NOTE: possible test code error!)"
-	fi
+        x="$line"
+        y=$(grep -i error $ERR_FILE)
+        if [ "$y" ]
+        then
+            x="$x (NOTE: possible test code error!)"
+        fi
+        echo "$x"
+    else
+        #
+        # It failed - at the moment, failures are usually just
+        # 'something odd' in Marionette or Gaiatest, which run
+        # fine the next time you try.
+        # Because this is so often the case, we'll automatically
+        # Try a second time before giving up.
+        #
+        if [ "$RUNONCE" = "Y" ]
+        then
+            # This is the 2nd atempt - report the error because it's real.
+            echo "$line"
+        else
+            # Try again.
+            $0 Y
+        fi
     fi
-    printf "\n"
+    RUNONCE=""
 done

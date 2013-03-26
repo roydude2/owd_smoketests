@@ -16,7 +16,7 @@ from apps.app_settings import *
 import datetime, time   
 
 class test_35(GaiaTestCase):
-    _Description = "Setting a new alarm (will sleep for a while to give alarm time to start)."
+    _Description = "Add an alarm (will pause for < 1 minute while waiting for alarm to start)."
 
     def setUp(self):
         #
@@ -101,4 +101,4 @@ class test_35(GaiaTestCase):
         #
         # Wait for the alarm to start.
         #
-        self.clock.checkAlarmDetails(_hour, _minute, _title)
+        self.clock.checkAlarmRingDetails(_hour, _minute, _title)

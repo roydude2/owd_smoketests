@@ -38,7 +38,7 @@ class AppCamera(GaiaTestCase):
     def switchSource(self):
         switchBTN = self.UTILS.get_element(*self.UTILS.verify("DOM.Camera.switch_source_btn"))
         self.UTILS.TEST(switchBTN, "Source switch buttons is available.", True)
-        self.marionette.tap(switchBTN)      
+        self.marionette.tap(switchBTN)
         self.wait_for_element_present(*self.UTILS.verify("DOM.Camera.capture_button_enabled"))
 
     #
@@ -53,7 +53,7 @@ class AppCamera(GaiaTestCase):
     # Click thumbnail.
     #
     def clickThumbnail(self, p_num):
-        thumbEls = self.marionette.find_elements(*self.UTILS.verify("DOM.Camera.thumbnail"))
+        thumbEls = self.UTILS.get_elements(*self.UTILS.verify("DOM.Camera.thumbnail"))
         myThumb = thumbEls[p_num]
         self.marionette.tap(myThumb)
 
@@ -76,7 +76,10 @@ class AppCamera(GaiaTestCase):
         self.marionette.tap(playBTN)
 
         # Start the timer when the pause button is visible.
-        self.wait_for_element_displayed(*self.UTILS.verify("DOM.Camera.video_pause_button"))
+        self.UTILS.waitForDisplayed(20, 
+                                    "Video pause button appears during playback.", 
+                                    False, 
+                                    self.UTILS.verify("DOM.Camera.video_pause_button"))
         start_time = time.time()
         
         # Stop the timer when the pause button is no longer visible.
@@ -103,16 +106,21 @@ class AppCamera(GaiaTestCase):
         self.marionette.tap(captureBTN)
         
         # Record for 5 seconds
-        self.wait_for_condition(lambda m: m.find_element(*self.UTILS.verify("DOM.Camera.video_timer")).text == p_length_str_MMSS)
-
+        try:
+            self.wait_for_condition(lambda m: m.find_element(*self.UTILS.verify("DOM.Camera.video_timer")).text == p_length_str_MMSS)
+        except:
+            self.UTILS.logResult(False, "Video timer never reached " + p_length_str_MMSS + ".")
+            
         # Stop recording
         self.marionette.tap(captureBTN)
         self.wait_for_element_not_displayed(*DOM.Camera.video_timer)
 
-        self.wait_for_element_displayed(*self.UTILS.verify("DOM.Camera.thumbnail"))
+        self.UTILS.waitForDisplayed(20, 
+                                    "Thumbnail appears after recording video", 
+                                    False, 
+                                    self.UTILS.verify("DOM.Camera.thumbnail"))
         
         # TEST: Thumbnail has not been previewed yet.
         prev_marker = self.marionette.find_element(*self.UTILS.verify("DOM.Camera.thumbnail_preview_marker"))
         self.UTILS.TEST((prev_marker.get_attribute("class") == "offscreen"), "Image is not previewed as soon as picture is taken.")
         
-

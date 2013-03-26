@@ -46,10 +46,10 @@ class AppEverythingMe(GaiaTestCase):
         except:
             return False
 
-    #
-    # Pick a group from the main icons.
-    #
     def pickGroup(self, p_name):
+        #
+        # Pick a group from the main icons.
+        #
         x = self.UTILS.get_elements(*self.UTILS.verify("DOM.EME.groups"))
         for groupLink in x:
             if groupLink.get_attribute("data-query") == p_name:
@@ -59,12 +59,10 @@ class AppEverythingMe(GaiaTestCase):
         return False
         
 
-    #
-    # Pick an app from the apps listed.
-    # Since the app names aren't present in the html I have to depend on
-    # a unique id number.
-    #
     def addAppToHomescreen(self, p_name):
+        #
+        # Pick an app from the apps listed in this group.
+        #
         x = self.UTILS.get_elements(*self.UTILS.verify("DOM.EME.apps"))
         for appLink in x:
             if appLink.get_attribute("data-name") == p_name:

@@ -74,11 +74,11 @@ class AppContacts(GaiaTestCase):
         self.replaceStr(contFields['country'    ] , p_contact["adr"]["countryName"])
         self.replaceStr(contFields['comment'    ] , p_contact["comment"])
 
-    #
-    # Test for a match between an element and a string
-    # (found I was doing this rather a lot so it's better in a function).
-    #
     def checkMatch(self, p_el, p_val, p_name):
+        #
+        # Test for a match between an element and a string
+        # (found I was doing this rather a lot so it's better in a function).
+        #
         test_str = str(p_el.get_attribute("value"))
 
         self.UTILS.TEST(
@@ -183,7 +183,8 @@ class AppContacts(GaiaTestCase):
         #
         # Click Create new contact from the view all screen.
         #
-        self.wait_for_element_displayed(*self.UTILS.verify("DOM.Contacts.view_all_header"))
+        self.UTILS.waitForDisplayed(20, "View all contacts header displayed.", True, self.UTILS.verify("DOM.Contacts.view_all_header"))
+#        self.wait_for_element_displayed(*self.UTILS.verify("DOM.Contacts.view_all_header"))
         add_new_contact = self.UTILS.get_element(*self.UTILS.verify("DOM.Contacts.add_contact_button"))
         
         self.marionette.tap(add_new_contact)
@@ -191,7 +192,8 @@ class AppContacts(GaiaTestCase):
         #
         # Enter details for new contact.
         #
-        self.wait_for_element_displayed(*self.UTILS.verify("DOM.Contacts.add_contact_header"))
+        self.UTILS.waitForDisplayed(20, "Add contact header displayed.", True, self.UTILS.verify("DOM.Contacts.add_contact_header"))
+#        self.wait_for_element_displayed(*self.UTILS.verify("DOM.Contacts.add_contact_header"))
         
         if p_addImage:
             # Put the image on the contact.
@@ -204,7 +206,8 @@ class AppContacts(GaiaTestCase):
         done_button = self.UTILS.get_element(*self.UTILS.verify("DOM.Contacts.done_button"))
         self.marionette.tap(done_button)
         
-        self.wait_for_element_displayed(*self.UTILS.verify("DOM.Contacts.view_all_header"))
+        self.UTILS.waitForDisplayed(20, "View all contacts header displayed.", True, self.UTILS.verify("DOM.Contacts.view_all_header"))
+#        self.wait_for_element_displayed(*self.UTILS.verify("DOM.Contacts.view_all_header"))
         
         self.wait_for_element_displayed("xpath", DOM.Contacts.view_all_contact_xpath % p_contact['name'].replace(" ",""))
         
@@ -381,15 +384,11 @@ class AppContacts(GaiaTestCase):
         self.wait_for_element_displayed(*self.UTILS.verify("DOM.Facebook.friends_header"))
         time.sleep(2)
         
-    #
-    # Facebook have now added a 'captcha' to the login process here, so we
-    # can no-longer automate this part.
-    # I'm leaving this here though, just in case they decide to remove the
-    # captcha in the future.
-    #
-    # Enable fb import.
-    #
     def enableFBImport(self):
+        #
+        # Enable fb import.
+        #
+
         self.tapSettingsButton()
         x = self.UTILS.get_element(*DOM.Contacts.settings_fb_enable)        
         self.marionette.tap(x)
@@ -397,10 +396,13 @@ class AppContacts(GaiaTestCase):
         #
         # Were we already connected to facebook?
         #
-        x = self.UTILS.get_element('xpath', "//button[text()='Remove']")
-        if x:
+        try:
+            self.marionette.switch_to_frame()
+            self.UTILS.switchToFrame(*DOM.Contacts.frame_locator)
+            x = self.marionette.find_element('xpath', "//button[text()='Remove']")
+
             #
-            # We were already logged into facebook - remove fb data
+            # If we get to here, we're already logged into facebook - remove fb data
             # so we can proceed with this part of the test from sratch.
             #
             self.marionette.tap(x)
@@ -423,6 +425,15 @@ class AppContacts(GaiaTestCase):
             
             x = self.UTILS.get_element(*DOM.Contacts.settings_fb_enable)
             self.marionette.tap(x)
+            
+        except:
+            #
+            # We weren't logged into facebook, so continue.
+            #
+            pass
+
+        self.marionette.switch_to_frame()
+        self.UTILS.switchToFrame(*DOM.Contacts.frame_locator)
 
         time.sleep(2) # Just to be sure!
 

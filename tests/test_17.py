@@ -14,7 +14,7 @@ from apps.app_settings import *
 from apps.app_browser import *
 
 class test_17(GaiaTestCase):
-    _Description = "Use Data Connection."
+    _Description = "Load a website via Cellular Data."
     
     def setUp(self):
         #

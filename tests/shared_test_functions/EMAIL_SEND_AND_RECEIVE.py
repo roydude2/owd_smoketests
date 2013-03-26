@@ -57,7 +57,7 @@ class main():
         self.settings       = AppSettings(p_parent)
         self.subject        = "Test " + p_testNum + " - " + str(time.time())
         
-                # Just so I get 'autocomplete' in my IDE!
+        # Just so I get 'autocomplete' in my IDE!
         self.marionette     = Marionette()
         self.UTILS          = TestUtils(self)        
         if True:

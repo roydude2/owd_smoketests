@@ -53,7 +53,7 @@ class AppFacebook(GaiaTestCase):
         self.marionette.switch_to_frame()
         self.UTILS.switchToFrame(*DOM.Facebook.friends_iframe_1)
 
-    def tapUpdateImportedFrieds(self):
+    def tapUpdateImportedFriends(self):
         #
         # Tap 'Update imported friends' button.
         #
@@ -76,7 +76,8 @@ class AppFacebook(GaiaTestCase):
         #
         # Wait for the fb friends page to start.
         #
-        self.wait_for_element_displayed(*self.UTILS.verify("DOM.Facebook.friends_header"))
+        self.UTILS.waitForDisplayed(20, "facebook friends header displayed.", True, DOM.Facebook.friends_header)
+#        self.wait_for_element_displayed(*self.UTILS.verify("DOM.Facebook.friends_header"))
         time.sleep(2)
         
         #
@@ -113,10 +114,11 @@ class AppFacebook(GaiaTestCase):
         #
         return friend_count
     
-    #
-    # Log into facebook.
-    #
     def login(self, p_user, p_pass):
+        #
+        # Log into facebook.
+        #
+
         #
         # Get to the facebook login frame.
         #
