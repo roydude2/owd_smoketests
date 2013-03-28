@@ -27,7 +27,7 @@ class AppMarket(GaiaTestCase):
         #
         self.apps.kill_all()
         self.app = self.apps.launch('Marketplace')
-        self.wait_for_element_not_displayed(*DOM.GLOBAL.loading_overlay)
+        self.UTILS.waitForNotDisplayed(20, "Loading overlay stops being displayed", False, DOM.GLOBAL.loading_overlay);
 
     def launch(self):
         self.launchMe()
@@ -104,7 +104,8 @@ class AppMarket(GaiaTestCase):
         yes_button = self.UTILS.get_element(*self.UTILS.verify("DOM.Market.confirm_install_button"))
         self.marionette.tap(yes_button)
 
-        self.wait_for_element_not_displayed(*DOM.Market.confirm_install_button)
+#        self.wait_for_element_not_displayed(*DOM.Market.confirm_install_button)
+        self.UTILS.waitForNotDisplayed(20, "Confirm install button stops being displayed", False, DOM.Market.confirm_install_button);
         
         return True
 

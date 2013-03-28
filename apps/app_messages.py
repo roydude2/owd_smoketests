@@ -25,7 +25,7 @@ class AppMessages(GaiaTestCase):
     def launch(self):
         self.apps.kill_all()
         self.app = self.apps.launch('Messages')
-        self.wait_for_element_not_displayed(*DOM.GLOBAL.loading_overlay)
+        self.UTILS.waitForNotDisplayed(20, "Loading overlay stops being displayed", False, DOM.GLOBAL.loading_overlay);
 
     def enterSMSMsg(self, p_msg):
         #

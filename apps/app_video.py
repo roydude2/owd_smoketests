@@ -25,7 +25,7 @@ class AppVideo(GaiaTestCase):
     def launch(self):
         self.apps.kill_all()
         self.app = self.apps.launch('Video')
-        self.wait_for_element_not_displayed(*DOM.Video.items)
+        self.UTILS.waitForNotDisplayed(20, "Loading overlay stops being displayed", False, DOM.GLOBAL.loading_overlay);
         
     def checkThumbDuration(self, p_thumb_num, p_length_str_MMSS, p_errorMargin_SS):
         #
@@ -100,7 +100,8 @@ class AppVideo(GaiaTestCase):
         #
         # Stop the timer.
         #
-        self.wait_for_element_not_displayed(*DOM.Video.video_frame)
+#        self.wait_for_element_not_displayed(*DOM.Video.video_frame)
+        self.UTILS.waitForNotDisplayed(20, "Video frame stops being displayed", False, DOM.Video.video_frame);
         elapsed_time = int(time.time() - start_time)
         
         #

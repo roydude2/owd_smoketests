@@ -32,8 +32,7 @@ class AppFTU(GaiaTestCase):
         self.data_layer.disable_cell_data()
 
         self.app = self.apps.launch('FTU')
-        self.wait_for_element_not_displayed(*DOM.GLOBAL.loading_overlay)
-
+        self.UTILS.waitForNotDisplayed(20, "Loading overlay stops being displayed", False, DOM.GLOBAL.loading_overlay);
 
     def _select(self, match_string):
         #

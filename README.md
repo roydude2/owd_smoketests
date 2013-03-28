@@ -130,10 +130,4 @@ SMOKETESTS COVERED:
   <tr>
     <td  align=center>42</td><td  align=left>First time use screens - check ENGLISH keyboard.</td>
   </tr>
-  <tr>
-    <td  align=center>43</td><td  align=left>First time use screens - check PORTUGUESE keyboard.</td>
-  </tr>
-  <tr>
-    <td  align=center>44</td><td  align=left>First time use screens - check SPANISH keyboard.</td>
-  </tr>
 </table>

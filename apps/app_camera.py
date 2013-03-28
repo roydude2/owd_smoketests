@@ -33,7 +33,7 @@ class AppCamera(GaiaTestCase):
     def launch(self):
         self.apps.kill_all()
         self.app = self.apps.launch('Camera')
-        self.wait_for_element_not_displayed(*DOM.GLOBAL.loading_overlay)
+        self.UTILS.waitForNotDisplayed(20, "Loading overlay stops being displayed", False, DOM.GLOBAL.loading_overlay);
         
     def switchSource(self):
         switchBTN = self.UTILS.get_element(*self.UTILS.verify("DOM.Camera.switch_source_btn"))
@@ -83,7 +83,8 @@ class AppCamera(GaiaTestCase):
         start_time = time.time()
         
         # Stop the timer when the pause button is no longer visible.
-        self.wait_for_element_not_displayed(*self.UTILS.verify("DOM.Camera.video_pause_button"))
+#        self.wait_for_element_not_displayed(*self.UTILS.verify("DOM.Camera.video_pause_button"))
+        self.UTILS.waitForNotDisplayed(20, "Video pause button stops being displayed", False, self.UTILS.verify("DOM.Camera.video_pause_button"));
         
         elapsed_time = int(time.time() - start_time)
         
@@ -113,7 +114,8 @@ class AppCamera(GaiaTestCase):
             
         # Stop recording
         self.marionette.tap(captureBTN)
-        self.wait_for_element_not_displayed(*DOM.Camera.video_timer)
+#        self.wait_for_element_not_displayed(*DOM.Camera.video_timer)
+        self.UTILS.waitForNotDisplayed(20, "Video timer stops being displayed", False, DOM.Camera.video_timer);
 
         self.UTILS.waitForDisplayed(20, 
                                     "Thumbnail appears after recording video", 

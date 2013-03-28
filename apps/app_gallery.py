@@ -24,7 +24,7 @@ class AppGallery(GaiaTestCase):
     def launch(self):
         self.apps.kill_all()
         self.app = self.apps.launch('Gallery')
-        self.wait_for_element_not_displayed(*DOM.GLOBAL.loading_overlay)
+        self.UTILS.waitForNotDisplayed(20, "Loading overlay stops being displayed", False, DOM.GLOBAL.loading_overlay);
 
     def thumbCount(self):
         self.wait_for_element_present(*self.UTILS.verify("DOM.Gallery.thumbnail_items"))
@@ -80,7 +80,8 @@ class AppGallery(GaiaTestCase):
         playBTN.click()
         self.marionette.tap(playBTN)
         
-        self.wait_for_element_not_displayed(*self.UTILS.verify("DOM.Gallery.video_pause_button"))
+#        self.wait_for_element_not_displayed(*self.UTILS.verify("DOM.Gallery.video_pause_button"))
+        self.UTILS.waitForNotDisplayed(20, "Pause button stops being displayed", False, self.UTILS.verify("DOM.Gallery.video_pause_button"));
 
     def checkVideoLength(self, p_from_SS, p_to_SS):
         #

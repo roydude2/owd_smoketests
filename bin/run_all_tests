@@ -45,7 +45,7 @@ runSetup(){
     $1
 
     #
-    # Check if it exitied correctly.
+    # Check if it exited correctly.
     #
     if [ $? -ne 0 ]
     then

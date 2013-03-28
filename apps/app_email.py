@@ -25,13 +25,14 @@ class AppEmail(GaiaTestCase):
         # For some reason this was causing a marionette error (just in this module).
 #        self.apps.kill_all()
         self.app = self.apps.launch('Email')
-        self.wait_for_element_not_displayed(*DOM.GLOBAL.loading_overlay)
+        self.UTILS.waitForNotDisplayed(20, "Loading overlay stops being displayed", False, DOM.GLOBAL.loading_overlay);
         
     def waitForDone(self):
         #
         # Wait until any progress icon goes away.
         #
-        self.wait_for_element_not_displayed('tag name', 'progress')
+#        self.wait_for_element_not_displayed('tag name', 'progress')
+        self.UTILS.waitForNotDisplayed(20, "progress icon stops being displayed", False, ('tag name', 'progress'));
         time.sleep(2) # (just to be sure!)
 
     def goto_folder_from_list(self, p_name):
