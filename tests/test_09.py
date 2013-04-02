@@ -3,7 +3,7 @@
 #
 import sys
 sys.path.insert(1, "./")
-from tools      import TestUtils
+from utils      import UTILS
 from gaiatest   import GaiaTestCase
 import DOM, time
 
@@ -24,7 +24,7 @@ class test_9(GaiaTestCase):
         # Set up child objects...
         #
         GaiaTestCase.setUp(self)
-        self.UTILS      = TestUtils(self)
+        self.UTILS      = UTILS(self)
         self.contacts   = AppContacts(self)
         self.messages   = AppMessages(self)
         

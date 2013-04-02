@@ -17,7 +17,7 @@
 import sys
 sys.path.insert(1, "./")
 from marionette import Marionette
-from tools      import TestUtils
+from utils      import UTILS
 from gaiatest   import GaiaTestCase
 import DOM
 
@@ -59,7 +59,7 @@ class main():
         
         # Just so I get 'autocomplete' in my IDE!
         self.marionette     = Marionette()
-        self.UTILS          = TestUtils(self)        
+        self.UTILS          = UTILS(self)
         if True:
             self.marionette = p_parent.marionette
             self.UTILS      = p_parent.UTILS

@@ -3,7 +3,7 @@
 #
 import sys
 sys.path.insert(1, "./")
-from tools      import TestUtils
+from utils      import UTILS
 from gaiatest   import GaiaTestCase
 import DOM
 
@@ -22,7 +22,7 @@ class test_27(GaiaTestCase):
         # Set up child objects...
         #
         GaiaTestCase.setUp(self)
-        self.UTILS      = TestUtils(self)
+        self.UTILS      = UTILS(self)
         self.FTU        = AppFTU(self)
         self.wifi_name  = self.UTILS.get_os_variable("WIFI_TEST_27", "Name of wifi to connect to (case sensitive!)")
         self.wifi_user  = self.UTILS.get_os_variable("USERNAME_27", "Wifi username")

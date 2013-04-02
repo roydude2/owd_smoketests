@@ -1,6 +1,6 @@
 import DOM, time
 from gaiatest   import GaiaTestCase
-from tools      import TestUtils
+from utils      import UTILS
 from marionette import Marionette
 
 class AppFTU(GaiaTestCase):
@@ -16,7 +16,7 @@ class AppFTU(GaiaTestCase):
 
         # Just so I get 'autocomplete' in my IDE!
         self.marionette = Marionette()
-        self.UTILS      = TestUtils(self)        
+        self.UTILS      = UTILS(self)        
         if True:
             self.marionette = p_parent.marionette
             self.UTILS      = p_parent.UTILS

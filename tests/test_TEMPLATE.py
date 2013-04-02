@@ -1,15 +1,9 @@
 #
-# This is a template for creating tests.
-# (I have included the 'contacts' application just as an
-# example, showing you how you use these in your tests.)
-#
-
-#
 # Imports which are standard for all test cases.
 #
 import sys
 sys.path.insert(1, "./")
-from tools      import TestUtils
+from utils      import UTILS
 from gaiatest   import GaiaTestCase
 import DOM
 
@@ -28,7 +22,7 @@ class test_99(GaiaTestCase):
         #
         # Standard.
         GaiaTestCase.setUp(self)
-        self.UTILS      = TestUtils(self)
+        self.UTILS      = UTILS(self)
         
         # Specific for this test.
         self.contacts   = AppContacts(self)

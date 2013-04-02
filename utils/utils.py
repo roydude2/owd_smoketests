@@ -11,7 +11,7 @@ import app_utilities        , \
        test_utilities
        
 
-class TestUtils(app_utilities.main        ,
+class UTILS(app_utilities.main        ,
                 debug_utilities.main      ,
                 element_utilities.main    ,
                 general_utilities.main    ,

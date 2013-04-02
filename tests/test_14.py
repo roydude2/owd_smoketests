@@ -3,7 +3,7 @@
 #
 import sys
 sys.path.insert(1, "./")
-from tools      import TestUtils
+from utils      import UTILS
 from gaiatest   import GaiaTestCase
 import DOM
 
@@ -28,7 +28,7 @@ class test_14(GaiaTestCase):
     def setUp(self):
         # Set up child objects...
         GaiaTestCase.setUp(self)
-        self.UTILS      = TestUtils(self)
+        self.UTILS      = UTILS(self)
         self.gallery    = AppGallery(self)
 
         self.marionette.set_search_timeout(50)
