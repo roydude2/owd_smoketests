@@ -34,7 +34,7 @@ class AppSettings(GaiaTestCase):
         x = self.UTILS.getElement(DOM.Settings.cellData, "Cellular and Data settings link")
         self.marionette.tap(x)
         
-        self.UTILS.waitForElements(DOM.Settings.celldata_header, "Celldata header appears.", True, 20, False)
+        self.UTILS.waitForElements(DOM.Settings.celldata_header, "Celldata header", True, 20, False)
 
     def turn_dataConn_on_if_required(self):
         #
