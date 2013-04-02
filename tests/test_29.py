@@ -57,8 +57,7 @@ class test_29(GaiaTestCase):
         
         self.UTILS.holdHomeButton()
         
-        x = self.UTILS.get_element(*self.UTILS.verify("DOM.Home.cards_view"))
-        self.UTILS.TEST(x.is_displayed(), "Currently running apps are displayed on 'cards' as expected.", True)
+        x = self.UTILS.getElement(DOM.Home.cards_view, "App 'cards' list")
         
         #
         # Flick it up (not working currently - retry when marionette toch is working).
@@ -76,11 +75,9 @@ class test_29(GaiaTestCase):
         self.UTILS.logComment("(Didn't drag the app 'up' to close it, I just clicked the 'close' button.)")
         i = 0
         for app in self._test_apps:
-            x = self.UTILS.get_element(*self.test_apps[i]["close_button"])
-            
-            self.UTILS.TEST(x, "Some running applications are found for us to close.", True)
-            
+            x = self.UTILS.getElement(self.test_apps[i]["close_button"], "Close button on '" + self.test_apps[i]["name"] + "' card")
             self.marionette.tap(x)
-            time.sleep(1)
+
+            self.UTILS.waitForNotElements(self.test_apps[i]["card"], "Cared for '" + self.test_apps[i]["name"] + "'", True, 5, False)
             i = i + 1
 

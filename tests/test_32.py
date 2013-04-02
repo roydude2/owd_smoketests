@@ -64,20 +64,20 @@ class test_32(GaiaTestCase):
         # Install the app.
         #
         x = ('id', 'install-app')        
-        install_btn = self.UTILS.get_element(*x)
+        install_btn = self.UTILS.getElement(x, "Install an app button")
         self.marionette.tap(install_btn)
         
         # Install button on the splash screen (switch to main frame to 'see' this).
         self.marionette.switch_to_frame()
 
         x = ('id', 'app-install-install-button')        
-        install_btn = self.UTILS.get_element(*x)
+        install_btn = self.UTILS.getElement(x, "Install button")
         self.marionette.tap(install_btn)
         
         # ... and switch back to brwoser to see the next splash screen(!)
         self.UTILS.switchToFrame(*DOM.Browser.frame_locator)
         x = ('id', 'modal-dialog-alert-ok')
-        btn = self.UTILS.get_element(*x)
+        btn = self.UTILS.getElement(x, "Ok button")
         self.marionette.tap(btn)
 
         #

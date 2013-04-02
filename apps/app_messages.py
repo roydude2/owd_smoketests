@@ -25,14 +25,14 @@ class AppMessages(GaiaTestCase):
     def launch(self):
         self.apps.kill_all()
         self.app = self.apps.launch('Messages')
-        self.UTILS.waitForNotDisplayed(20, "Loading overlay stops being displayed", False, DOM.GLOBAL.loading_overlay);
+        self.UTILS.waitForNotElements(DOM.GLOBAL.loading_overlay, "Loading overlay", False);
 
     def enterSMSMsg(self, p_msg):
         #
         # Create and send a message (assumes we are in a new 'create new message'
         # screen with the destination number filled in already).
         #
-        msgArea = self.UTILS.get_element(*self.UTILS.verify("DOM.Messages.input_message_area"))
+        msgArea = self.UTILS.getElement(DOM.Messages.input_message_area, "Input message area")
         msgArea.send_keys(p_msg)
 
     
@@ -40,16 +40,16 @@ class AppMessages(GaiaTestCase):
         #
         # Just presses the 'send' button (assumes everything else is done).
         #
-        sendBtn = self.UTILS.get_element(*self.UTILS.verify("DOM.Messages.send_message_button"))
+        sendBtn = self.UTILS.getElement(DOM.Messages.send_message_button, "Send sms button")
         sendBtn.click()
         time.sleep(5)
         self.marionette.tap(sendBtn)
         
         time.sleep(1)
-        self.wait_for_element_not_present(*DOM.Messages.message_sending_spinner, timeout=120)
+        self.UTILS.waitForNotElements(DOM.Messages.message_sending_spinner, "'Sending' icon", True, 120)
         
         # Go back to main messages screen
-        header_back_button = self.UTILS.get_element(*self.UTILS.verify("DOM.Messages.header_back_button"))
+        header_back_button = self.UTILS.getElement(DOM.Messages.header_back_button, "Back button")
         self.marionette.tap(header_back_button)
     
     def waitForSMSNotifier(self, p_num, p_timeout):
@@ -102,7 +102,7 @@ class AppMessages(GaiaTestCase):
         #
         self.UTILS.displayStatusBar()
 
-        x = self.marionette.find_elements(*self.UTILS.verify("DOM.Messages.statusbar_all_notifs"))
+        x = self.UTILS.getElements(DOM.Messages.statusbar_all_notifs, "Statusbar notifications")
         
         for elP in x:
             #
@@ -126,20 +126,18 @@ class AppMessages(GaiaTestCase):
 
     def readLastSMSInThread(self):
         #
-        # Read last message.
+        # Read last message "[-1]" gives us the last element in an array.
         #
-        self.UTILS.waitForDisplayed(20, "Received messages appear.", False, self.UTILS.verify("DOM.Messages.received_messages"))
-#        self.wait_for_element_displayed(*self.UTILS.verify("DOM.Messages.received_messages"))
+#        self.wait_for_element_displayed(DOM.Messages.received_messages)
 
-        received_message = self.UTILS.get_elements(*self.UTILS.verify("DOM.Messages.received_messages"))[-1]
+        received_message = self.UTILS.getElements(DOM.Messages.received_messages, "Received messages")[-1]
         return str(received_message.text)
 
     def readNewSMS(self, p_FromNum):
         #
         # Read and return the value of the new message received from number.
         #
-        x = self.UTILS.get_element("xpath", DOM.Messages.messages_from_num % p_FromNum)
-
+        x = self.UTILS.getElement(("xpath", DOM.Messages.messages_from_num % p_FromNum), "Message from '" + p_FromNum + "'")
         self.marionette.tap(x)
         
         # (From gaiatest: "TODO Due to displayed bugs I cannot find a good wait for switch btw views")
@@ -158,19 +156,13 @@ class AppMessages(GaiaTestCase):
         #
         # Tap create new sms button.
         #
-        self.UTILS.waitForDisplayed(20, "Create new message buttons appears.", False, self.UTILS.verify("DOM.Messages.create_new_message_btn"))
-#        self.wait_for_element_displayed(*self.UTILS.verify("DOM.Messages.create_new_message_btn"))
-
-        newMsgBtn = self.UTILS.get_element(*self.UTILS.verify("DOM.Messages.create_new_message_btn"))
+        newMsgBtn = self.UTILS.getElement(DOM.Messages.create_new_message_btn, "Create new message button")
         self.marionette.tap(newMsgBtn)
         
         #
         # Enter the number.
         #
-        self.UTILS.waitForDisplayed(20, "Target number rappears.", False, self.UTILS.verify("DOM.Messages.target_number"))
-#        self.wait_for_element_displayed(*self.UTILS.verify("DOM.Messages.target_number"))
-
-        numInput = self.UTILS.get_element(*self.UTILS.verify("DOM.Messages.target_number"))
+        numInput = self.UTILS.getElement(DOM.Messages.target_number, "Target number field")
         numInput.send_keys(p_num)
         
         #

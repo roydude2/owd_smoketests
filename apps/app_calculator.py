@@ -3,6 +3,7 @@ from gaiatest   import GaiaTestCase
 from tools      import TestUtils
 from marionette import Marionette
 from apps.app_market import *
+from apps.app_settings import *
 
 class AppCalculator(GaiaTestCase):
     
@@ -14,6 +15,7 @@ class AppCalculator(GaiaTestCase):
         self.apps       = p_parent.apps
         self.data_layer = p_parent.data_layer
         self.Market     = AppMarket(p_parent)
+        self.Settings   = AppSettings(p_parent)
 
         # Just so I get 'autocomplete' in my IDE!
         self.marionette = Marionette()
@@ -32,6 +34,7 @@ class AppCalculator(GaiaTestCase):
             # There are a few 'Calculator' apps, so make sure we get the correct
             # one.
             #
+            self.Settings.turn_dataConn_on_if_required()
             self.Market.launch()
             self.Market.install_app("Calculator", "ndesaulniers")
 
@@ -39,4 +42,4 @@ class AppCalculator(GaiaTestCase):
     def launch(self):
         self.apps.kill_all()
         self.app = self.apps.launch('Calculator')
-        self.UTILS.waitForNotDisplayed(20, "Loading overlay stops being displayed", False, DOM.GLOBAL.loading_overlay);
+        self.UTILS.waitForNotElements(DOM.GLOBAL.loading_overlay, "Loading overlay");

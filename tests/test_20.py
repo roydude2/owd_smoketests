@@ -35,7 +35,6 @@ class test_20(GaiaTestCase):
         #
         # Ensure we have a connection.
         #
-        #self.data_layer.disable_wifi()
         self.Settings.turn_dataConn_on_if_required()
         
         self.UTILS.logComment("Using app '" + self.APP_NAME + "'")
@@ -60,6 +59,7 @@ class test_20(GaiaTestCase):
         #
         self.UTILS.TEST(self.Market.install_app(self.APP_NAME, self.APP_AUTHOR),
                         "Successfully installed application '" + self.APP_NAME + "'.", True)
+
         
         #
         # Find the app icon on the homescreen.

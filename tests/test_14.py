@@ -85,8 +85,8 @@ class test_14(GaiaTestCase):
                 time.sleep(0.5)
                 
                 # Go back to the thumbnails.
-                backBTN = self.marionette.find_element(*DOM.Gallery.fullscreen_back_button)
+                backBTN = self.UTILS.getElement(DOM.Gallery.fullscreen_back_button, "Back button")
                 self.marionette.tap(backBTN)
-                self.wait_for_element_displayed(*DOM.Gallery.thumbnail_items)
+                self.UTILS.waitForElements(DOM.Gallery.thumbnail_items, "Thumbnails")
         
 

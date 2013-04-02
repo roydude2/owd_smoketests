@@ -1,3 +1,4 @@
+frame_locator           = ("src", "app://gallery.gaiamobile.org/index.html#pick")
 thumbnail_items         = ('css selector', 'li.thumbnail')
 thumbnail_list_section  = ('id', 'thumbnail-list-view')
 current_image_pic       = ('css selector', '#frame2 > img')

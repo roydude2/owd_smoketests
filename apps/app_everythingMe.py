@@ -32,25 +32,13 @@ class AppEverythingMe(GaiaTestCase):
         # Scroll to the left to expose the 'everything.me' screen.
         #
         self.UTILS.scrollHomescreenLeft()
-#        x = self.marionette.find_element(*self.UTILS.verify("DOM.EME.here_check"))
-#        while not x.is_displayed():
-#            self.UTILS.scrollHomescreenLeft()
-
-        try:
-            x = self.UTILS.get_elements(*self.UTILS.verify("DOM.EME.groups"))
-            if len(x) > 0:
-                time.sleep(2)
-                return True
-            else:
-                return False
-        except:
-            return False
+        self.UTILS.waitForElements(DOM.EME.groups, "EME group list", True, 30)
 
     def pickGroup(self, p_name):
         #
         # Pick a group from the main icons.
         #
-        x = self.UTILS.get_elements(*self.UTILS.verify("DOM.EME.groups"))
+        x = self.UTILS.getElements(DOM.EME.groups, "EME group list")
         for groupLink in x:
             if groupLink.get_attribute("data-query") == p_name:
                 self.marionette.tap(groupLink)
@@ -63,12 +51,12 @@ class AppEverythingMe(GaiaTestCase):
         #
         # Pick an app from the apps listed in this group.
         #
-        x = self.UTILS.get_elements(*self.UTILS.verify("DOM.EME.apps"))
+        x = self.UTILS.getElements(DOM.EME.apps, "Apps list")
         for appLink in x:
             if appLink.get_attribute("data-name") == p_name:
                 self.marionette.long_press(appLink)
                 self.marionette.switch_to_frame()
-                x = self.UTILS.get_element(*self.UTILS.verify("DOM.EME.add_app_to_homescreen"))
+                x = self.UTILS.getElement(DOM.EME.add_app_to_homescreen, "Add app to homescreen button")
                 self.marionette.tap(x)
                 
                 # This isn't obvious, but you need to scroll the screen right

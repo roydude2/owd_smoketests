@@ -91,7 +91,7 @@ class main():
         # PRIVACY SCREEN - info. email.
         #
         # Click the email area to display the keyboard.
-        x = self.UTILS.get_element(*self.UTILS.verify("DOM.FTU.privacy_email"))
+        x = self.UTILS.getElement(DOM.FTU.privacy_email, "Privacy policy email address")
         x.click()
         
         #

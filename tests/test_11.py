@@ -46,7 +46,7 @@ class test_11(GaiaTestCase):
         #
         # TEST: Thumbnail has not been previewed yet.
         #
-        prev_marker = self.marionette.find_element(*self.UTILS.verify("DOM.Camera.thumbnail_preview_marker"))
+        prev_marker = self.UTILS.getElement(DOM.Camera.thumbnail_preview_marker, "Thumbnail preview marker", False)
         self.UTILS.TEST((prev_marker.get_attribute("class") == "offscreen"), 
                         "Image is not previewed as soon as picture is taken.")
         
@@ -58,8 +58,7 @@ class test_11(GaiaTestCase):
         #
         # TEST: Thumbnail is previewed.
         #
-        self.wait_for_element_displayed(*self.UTILS.verify("DOM.Camera.thumbnail_preview_marker", 20))
-        prev_marker = self.UTILS.get_element(*self.UTILS.verify("DOM.Camera.thumbnail_preview_marker", 20))
+        prev_marker = self.UTILS.getElement(DOM.Camera.thumbnail_preview_marker, "Thumbnail preview marker", False)
         self.UTILS.TEST((prev_marker.get_attribute("class") == ""), "Image is previewed when thumbnail is clicked.")
         
         #
@@ -80,14 +79,14 @@ class test_11(GaiaTestCase):
         #
         # TEST: Thumbnails are not visible when vieweing an image.
         #
-        thumbs = self.marionette.find_element(*self.UTILS.verify("DOM.Gallery.thumbnail_list_section", 20))
+        thumbs = self.UTILS.getElement(DOM.Gallery.thumbnail_list_section, "Thumbnail list section", False)
         self.UTILS.TEST( (thumbs.get_attribute("class") == "hidden"), "Thumbnails are not present when vieweing image in gallery.")
         
         #
         # TEST: Image is displayed as expected.
         #
         try: 
-            thisIMG = self.UTILS.get_element(*self.UTILS.verify("DOM.Gallery.current_image_pic"))
+            thisIMG = self.UTILS.getElement(DOM.Gallery.current_image_pic, "Current image")
             try:
                 x = str(thisIMG.get_attribute('src'))
                 self.UTILS.TEST((x != ""), "Image source is not empty in gallery after clicking thumbnail.")

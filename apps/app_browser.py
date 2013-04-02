@@ -23,30 +23,31 @@ class AppBrowser(GaiaTestCase):
     def launch(self):
         self.apps.kill_all()
         self.app = self.apps.launch('Browser')
-        self.UTILS.waitForNotDisplayed(20, "Loading overlay stops being displayed", False, DOM.GLOBAL.loading_overlay);
+        self.UTILS.waitForNotElements(DOM.GLOBAL.loading_overlay, "Loading overlay");
 
     def is_throbber_visible(self):
         #
         # Just checks that the animated wait icon is still present.
         #
-        return self.marionette.find_element(*self.UTILS.verify("DOM.Browser.throbber")).get_attribute('class') == 'loading'
+        x = self.UTILS.getElement(DOM.Browser.throbber, "Animated 'wait' icon")
+        return x.get_attribute('class') == 'loading'
     
     def open_url(self, p_url):
         #
         # Open url.
         #
-        x=self.UTILS.get_element(*self.UTILS.verify("DOM.Browser.url_input"))
+        x=self.UTILS.getElement(DOM.Browser.url_input, "Url input field")
         self.UTILS.logComment("Using URL " + p_url)
         x.send_keys(p_url)
         
-        x=self.UTILS.get_element(*self.UTILS.verify("DOM.Browser.url_go_button"))
+        x=self.UTILS.getElement(DOM.Browser.url_go_button, "'Go to url' button")
         self.marionette.tap(x)
         
         #
         # Wait for throbber to appear then dissappear.
         #
-        self.UTILS.waitForDisplayed(20, "Browser 'throbber' appears while loading a url.", True, DOM.Browser.throbber)
-#        self.wait_for_element_displayed(*self.UTILS.verify("DOM.Browser.throbber"))
+        self.UTILS.waitForElements(DOM.Browser.throbber, "Animated 'wait' icon")
+
         self.wait_for_condition(lambda m: not self.is_throbber_visible(), timeout=120)
     
         self.UTILS.TEST(self.check_page_loaded(p_url), "Web page loaded correctly.")
@@ -69,6 +70,8 @@ class AppBrowser(GaiaTestCase):
 #        self.UTILS.switchToFrame("src", x.get_attribute("src"))        iframe_dom = ("class name", "browser-tab")
 
         self.UTILS.switchToFrame(*DOM.Browser.website_frame)
+        
+        time.sleep(10)
 
         try:
             x = self.marionette.find_element(*DOM.Browser.page_problem)

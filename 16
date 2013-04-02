@@ -1,0 +1,11 @@
+[ 16 ] 16                                                                                   (7/7): Passed
+led     : 0
+RESULT     : Passed
+
+ROY: -True-   pass    - Loading overlay is not displayed
+ROY: -True-   pass    - Cellular and Data settings link is displayed
+ROY: -True-   pass    - Celldata header appears. is displayed
+ROY: -True-   pass    - Connect to cellular and data link is displayed
+ROY: -True-   pass    - Data connection is enabled
+ROY: -True-   pass    - Confirm app delete button is displayed
+ROY: -True-   pass    - App is still installed after deletion.

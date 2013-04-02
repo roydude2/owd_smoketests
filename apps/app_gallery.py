@@ -24,21 +24,17 @@ class AppGallery(GaiaTestCase):
     def launch(self):
         self.apps.kill_all()
         self.app = self.apps.launch('Gallery')
-        self.UTILS.waitForNotDisplayed(20, "Loading overlay stops being displayed", False, DOM.GLOBAL.loading_overlay);
+        self.UTILS.waitForNotElements(DOM.GLOBAL.loading_overlay, "Loading overlay stops being displayed");
 
     def thumbCount(self):
-        self.wait_for_element_present(*self.UTILS.verify("DOM.Gallery.thumbnail_items"))
-        x = self.marionette.find_elements(*self.UTILS.verify("DOM.Gallery.thumbnail_items"))
+        x = self.UTILS.getElements(DOM.Gallery.thumbnail_items, "Gallery thumbnails", False)
         return len(x)
 
     def getGalleryItems(self):
         #
         # Returns a list of gallery item objects.
         #
-        self.UTILS.waitForDisplayed(20, 
-                                    "Thumbnail items appear.", 
-                                    False, 
-                                    self.UTILS.verify("DOM.Gallery.thumbnail_items"))
+        self.UTILS.waitForElements(DOM.Gallery.thumbnail_items, "Thumbnails", True, 20, False)
         return self.marionette.execute_script("return window.wrappedJSObject.files;")
         
     def clickThumb(self, p_num):
@@ -48,40 +44,25 @@ class AppGallery(GaiaTestCase):
         gallery_items = self.getGalleryItems()
         for index, item in enumerate(gallery_items):
             if index == p_num:
-                my_item = self.UTILS.get_elements(*self.UTILS.verify("DOM.Gallery.thumbnail_items"))[index]
+                my_item = self.UTILS.getElements(DOM.Gallery.thumbnail_items, "Gallery item list", True, 20, False)[index]
                 self.marionette.tap(my_item)
 
                 if 'video' in item['metadata']:
-                    self.UTILS.waitForDisplayed(20, 
-                                                "Video plays in gallery.", 
-                                                False, 
-                                                self.UTILS.verify("DOM.Gallery.current_image_vid"))
+                    self.UTILS.waitForElements(DOM.Gallery.current_image_vid, "Video playing", True, 20, False)
                 else:
-                    self.UTILS.waitForDisplayed(20, 
-                                                "Image displayed in gallery.", 
-                                                False, 
-                                                self.UTILS.verify("DOM.Gallery.current_image_pic"))
+                    self.UTILS.waitForElements(DOM.Gallery.current_image_pic, "Image", True, 20, False)
                 break
-
-        #self.wait_for_element_displayed(*DOM.Gallery.thumbnail_items)
-        #all_items = self.marionette.find_elements(*DOM.Gallery.thumbnail_items)
-        #my_item = all_items[p_num]
-        #self.marionette.tap(my_item)
-        
 
     def playCurrentVideo(self):
         #
         # Plays the video we've loaded (in gallery you have to click the thumbnail first,
         # THEN press a play button - it doesn't play automatically).
         #
-        self.UTILS.waitForDisplayed(20, "Video play buttons appears.", False, self.UTILS.verify("DOM.Gallery.video_play_button"))
-
-        playBTN = self.UTILS.get_element(*self.UTILS.verify("DOM.Gallery.video_play_button"))
+        playBTN = self.UTILS.getElement(DOM.Gallery.video_play_button, "Video play button")
         playBTN.click()
         self.marionette.tap(playBTN)
         
-#        self.wait_for_element_not_displayed(*self.UTILS.verify("DOM.Gallery.video_pause_button"))
-        self.UTILS.waitForNotDisplayed(20, "Pause button stops being displayed", False, self.UTILS.verify("DOM.Gallery.video_pause_button"));
+        self.UTILS.waitForNotElements(DOM.Gallery.video_pause_button, "Pause button", True, 20, False);
 
     def checkVideoLength(self, p_from_SS, p_to_SS):
         #

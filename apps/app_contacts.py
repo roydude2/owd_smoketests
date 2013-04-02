@@ -16,7 +16,7 @@ class AppContacts(GaiaTestCase):
 
         # Just so I get 'autocomplete' in my IDE!
         self.marionette = Marionette()
-        self.UTILS      = TestUtils(self)        
+        self.UTILS      = TestUtils(self)  
         if True:
             self.marionette = p_parent.marionette
             self.UTILS      = p_parent.UTILS
@@ -24,7 +24,7 @@ class AppContacts(GaiaTestCase):
     def launch(self):
         self.apps.kill_all()
         self.app = self.apps.launch('Contacts')
-        self.UTILS.waitForNotDisplayed(20, "Loading overlay stops being displayed", False, DOM.GLOBAL.loading_overlay);
+        self.UTILS.waitForNotElements(DOM.GLOBAL.loading_overlay, "Loading overlay")
 
     def getContactFields(self):
         #
@@ -35,15 +35,15 @@ class AppContacts(GaiaTestCase):
         #
         
         return {
-        'givenName' : self.UTILS.get_element(*self.UTILS.verify("DOM.Contacts.given_name_field")),
-        'familyName': self.UTILS.get_element(*self.UTILS.verify("DOM.Contacts.family_name_field")),
-        'tel'       : self.UTILS.get_element(*self.UTILS.verify("DOM.Contacts.phone_field")),
-        'email'     : self.UTILS.get_element(*self.UTILS.verify("DOM.Contacts.email_field")),
-        'street'    : self.UTILS.get_element(*self.UTILS.verify("DOM.Contacts.street_field")),
-        'zip'       : self.UTILS.get_element(*self.UTILS.verify("DOM.Contacts.zip_code_field")),
-        'city'      : self.UTILS.get_element(*self.UTILS.verify("DOM.Contacts.city_field")),
-        'country'   : self.UTILS.get_element(*self.UTILS.verify("DOM.Contacts.country_field")),
-        'comment'   : self.UTILS.get_element(*self.UTILS.verify("DOM.Contacts.comment_field"))
+        'givenName' : self.UTILS.getElement(DOM.Contacts.given_name_field, "Given name field"),
+        'familyName': self.UTILS.getElement(DOM.Contacts.family_name_field, "Family name field"),
+        'tel'       : self.UTILS.getElement(DOM.Contacts.phone_field, "Phone number field"),
+        'email'     : self.UTILS.getElement(DOM.Contacts.email_field, "Email field"),
+        'street'    : self.UTILS.getElement(DOM.Contacts.street_field, "Street field"),
+        'zip'       : self.UTILS.getElement(DOM.Contacts.zip_code_field, "Zip code field"),
+        'city'      : self.UTILS.getElement(DOM.Contacts.city_field, "City field"),
+        'country'   : self.UTILS.getElement(DOM.Contacts.country_field, "Country field"),
+        'comment'   : self.UTILS.getElement(DOM.Contacts.comment_field, "Comment field")
         }
         
     def replaceStr(self, p_field, p_str):
@@ -116,7 +116,8 @@ class AppContacts(GaiaTestCase):
         #
         # Click the 'add picture' link.
         #
-        x = self.marionette.find_element("id", "thumbnail-photo")
+#        x = self.marionette.find_element("id", "thumbnail-photo")
+        x = self.UTILS.getElement(("id", "thumbnail-photo"), "'Add picture' link")
         self.marionette.tap(x)
         time.sleep(2)
         
@@ -124,36 +125,43 @@ class AppContacts(GaiaTestCase):
         self.marionette.switch_to_frame()
         
         # Choose to get a picture from the Gallery.
-        boolOK = True
-        try:
-            x = self.marionette.find_element("link text", "Gallery")
-            self.marionette.tap(x)
-        except:
-            boolOK = False
-
-        self.UTILS.TEST(boolOK, "Can select import picture from Gallery app.")
-            
+        x = self.UTILS.getElement(("link text", "Gallery"), "Gallery link")
+        self.marionette.tap(x)
+#        boolOK = True
+#        try:
+#            x = self.marionette.find_element("link text", "Gallery")
+#            self.marionette.tap(x)
+#        except:
+#            boolOK = False
+#
+#        self.UTILS.TEST(boolOK, "Can select import picture from Gallery app.")
+        
         time.sleep(1)
         
         # Switch to Gallery iframe.
-        self.UTILS.switchToFrame("src", "app://gallery.gaiamobile.org/index.html#pick")
+        self.UTILS.switchToFrame(*DOM.Gallery.frame_locator)
         
         # Select the thumbnail (assume it's the only one).
-        boolOK = True
-        try:
-            x = self.marionette.find_element("xpath", "//*[@id='thumbnails']/li[1]")
-            self.marionette.tap(x)
-        except:
-            boolOK = False
-
-        self.UTILS.TEST(boolOK, "Can select picture in Gallery app.")
+        #ROY - replace this with DOM spec.
+        x = self.UTILS.getElement(("xpath", "//*[@id='thumbnails']/li[1]"), "Thumbnail for picture")
+        self.marionette.tap(x)
+#        boolOK = True
+#        try:
+#            x = self.marionette.find_element("xpath", "//*[@id='thumbnails']/li[1]")
+#            self.marionette.tap(x)
+#        except:
+#            boolOK = False
+#
+#        self.UTILS.TEST(boolOK, "Can select picture in Gallery app.")
             
         time.sleep(1)
         
         # Tap 'crop done' button.
         boolOK = True
         try:
-            x = self.marionette.find_element("id", "crop-done-button")
+#            x = self.marionette.find_element("id", "crop-done-button")
+            #ROY - replace this with DOM spec.
+            x = self.UTILS.getElement(("id", "crop-done-button"), "Crop 'done' button")
             self.marionette.tap(x)
         except:
             boolOK = False
@@ -164,6 +172,7 @@ class AppContacts(GaiaTestCase):
         
         # Back to contacts app iframe.
         self.marionette.switch_to_frame()
+        #ROY - replace this with DOM spec?????
         self.UTILS.switchToFrame("srC", "app://communications.gaiamobile.org/contacts/index.html")
 
          
@@ -176,24 +185,25 @@ class AppContacts(GaiaTestCase):
         #
         # First make sure we're in the right place.
         #
-        viewAllHeader = self.marionette.find_element(*self.UTILS.verify("DOM.Contacts.view_all_header"))
+        viewAllHeader = self.marionette.find_element(*DOM.Contacts.view_all_header)
         if not viewAllHeader.is_displayed():
+            #
+            # Header isn't present, so we're not running yet.
+            #
             self.launch()
             
         #
         # Click Create new contact from the view all screen.
         #
-        self.UTILS.waitForDisplayed(20, "View all contacts header displayed.", True, self.UTILS.verify("DOM.Contacts.view_all_header"))
-#        self.wait_for_element_displayed(*self.UTILS.verify("DOM.Contacts.view_all_header"))
-        add_new_contact = self.UTILS.get_element(*self.UTILS.verify("DOM.Contacts.add_contact_button"))
+        self.UTILS.waitForElements(DOM.Contacts.view_all_header, "View all contacts header")
+        add_new_contact = self.UTILS.getElement(DOM.Contacts.add_contact_button, "'Add new contact' button")
         
         self.marionette.tap(add_new_contact)
         
         #
         # Enter details for new contact.
         #
-        self.UTILS.waitForDisplayed(20, "Add contact header displayed.", True, self.UTILS.verify("DOM.Contacts.add_contact_header"))
-#        self.wait_for_element_displayed(*self.UTILS.verify("DOM.Contacts.add_contact_header"))
+        self.UTILS.waitForElements(DOM.Contacts.add_contact_header, "Add contact header")
         
         if p_addImage:
             # Put the image on the contact.
@@ -203,19 +213,23 @@ class AppContacts(GaiaTestCase):
         self.populateFields(p_contact)
         
         # Press the 'done' button and wait for the 'all contacts' page to load.
-        done_button = self.UTILS.get_element(*self.UTILS.verify("DOM.Contacts.done_button"))
+        done_button = self.UTILS.getElement(DOM.Contacts.done_button, "'Done' button")
         self.marionette.tap(done_button)
         
-        self.UTILS.waitForDisplayed(20, "View all contacts header displayed.", True, self.UTILS.verify("DOM.Contacts.view_all_header"))
-#        self.wait_for_element_displayed(*self.UTILS.verify("DOM.Contacts.view_all_header"))
+        # Wait for the 'view all contacts' header to be displayed.
+        self.UTILS.waitForElements(DOM.Contacts.view_all_header, "View all contacts header")
         
-        self.wait_for_element_displayed("xpath", DOM.Contacts.view_all_contact_xpath % p_contact['name'].replace(" ",""))
+        # Now check the contact's name is displayed here too.
+        x = ("xpath", DOM.Contacts.view_all_contact_xpath % p_contact['name'].replace(" ",""))
+        self.UTILS.waitForElements(x, "Contact '" + p_contact['name'] + "'")
         
         if p_addImage:
             #
             # Verify that the contact's image is displayed.
             #
-            x = self.marionette.find_elements("xpath", "//li[@class='contact-item']")
+            #ROY - put all these in the DOM spec!
+#            x = self.marionette.find_elements("xpath", "//li[@class='contact-item']")
+            x = self.UTILS.getElements(("xpath", "//li[@class='contact-item']"), "Contact list", False)
             for i in x:
                 try:
                     i.find_element("xpath", "//p[@data-order='%s']" % p_contact['name'].replace(" ",""))
@@ -245,22 +259,27 @@ class AppContacts(GaiaTestCase):
         #
         # Find the name of our contact in the contacts list.
         #
-        try:
-            contact_found = self.marionette.find_element("xpath", DOM.Contacts.view_all_contact_xpath % p_contact['name'].replace(" ",""))
-        except:
-            self.UTILS.logResult(False, "'" + p_contact['name'] + "' is found in the contacts list!")
-            return 0 # (leave the function)
-        
+#        try:
+#            contact_found = self.marionette.find_element("xpath", DOM.Contacts.view_all_contact_xpath % p_contact['name'].replace(" ",""))
+#        except:
+#            self.UTILS.logResult(False, "'" + p_contact['name'] + "' is found in the contacts list!")
+#            return 0 # (leave the function)
+
         #
         # TEST: try to click the contact name in the contacts list.
         #
-        try:
-            self.marionette.tap(contact_found)
-        except:
-            self.UTILS.logResult(False, "Able to tap on '" + p_contact['name'] + "' in contacts list!")
-            return 0 # (leave the function)
+        x = ("xpath", DOM.Contacts.view_all_contact_xpath % p_contact['name'].replace(" ",""))
+        contact_found = self.UTILS.getElement(x, "Contact '" + p_contact['name'] + "'")
+        self.marionette.tap(contact_found)
         
-        self.wait_for_element_displayed(*self.UTILS.verify("DOM.Contacts.view_details_title"))
+#        try:
+#            self.marionette.tap(contact_found)
+#        except:
+#            self.UTILS.logResult(False, "Able to tap on '" + p_contact['name'] + "' in contacts list!")
+#            return 0 # (leave the function)
+        
+        #ROY - do you need to check this AND the name in the age header?
+        self.UTILS.waitForElements(DOM.Contacts.view_details_title, "'View contact details' title")
 
         # 
         # TEST: Correct contact name is in the page header.
@@ -274,10 +293,10 @@ class AppContacts(GaiaTestCase):
         #
         # Tap the settings button.
         #
-        x = self.UTILS.get_element(*self.UTILS.verify("DOM.Contacts.settings_button"))
+        x = self.UTILS.getElement(DOM.Contacts.settings_button, "Settings button")
         self.marionette.tap(x)
         
-        self.wait_for_element_displayed(*self.UTILS.verify("DOM.Contacts.settings_header"))
+        self.UTILS.waitForElements(DOM.Contacts.settings_header, "Settings header")
         
     def checkViewContactDetails(self, p_contact, p_imageCheck = False):
         #
@@ -291,7 +310,7 @@ class AppContacts(GaiaTestCase):
         
         if p_imageCheck:
             #
-            # Verify that the contact image is displayed.
+            # Verify that an image is displayed.
             #
             x = self.marionette.find_element("id", "cover-img")
             x_style = x.get_attribute("style")
@@ -306,9 +325,9 @@ class AppContacts(GaiaTestCase):
         #
         # Validate the details of a contact in the 'view contact' screen.
         #
-        editBTN = self.UTILS.get_element(*self.UTILS.verify("DOM.Contacts.edit_details_button"))
+        editBTN = self.UTILS.getElement(DOM.Contacts.edit_details_button, "Edit details button")
         self.marionette.tap(editBTN)
-        self.wait_for_element_displayed(*self.UTILS.verify("DOM.Contacts.edit_contact_header"))
+        self.UTILS.waitForElements(DOM.Contacts.edit_contact_header, "'Edit contact' screen header")
 
         #
         # Correct details are in the contact fields.
@@ -328,9 +347,9 @@ class AppContacts(GaiaTestCase):
         #
         # Tap the Edit button to go to the edit details page.
         #
-        editBTN = self.UTILS.get_element(*self.UTILS.verify("DOM.Contacts.edit_details_button"))
+        editBTN = self.UTILS.getElement(DOM.Contacts.edit_details_button, "Edit details button")
         self.marionette.tap(editBTN)
-        self.wait_for_element_displayed(*self.UTILS.verify("DOM.Contacts.edit_contact_header"))
+        self.UTILS.waitForElements(DOM.Contacts.edit_contact_header, "'Edit contacts' screen header")
 
         #
         # Enter the new contact details.
@@ -340,16 +359,16 @@ class AppContacts(GaiaTestCase):
         #
         # Save the changes
         #
-        updateBTN = self.UTILS.get_element(*self.UTILS.verify("DOM.Contacts.edit_update_button"))
+        updateBTN = self.UTILS.getElement(DOM.Contacts.edit_update_button, "Edit 'update' button")
         self.marionette.tap(updateBTN)
 
         #
         # Return to the contact list screen.
         #
-        backBTN = self.UTILS.get_element(*self.UTILS.verify("DOM.Contacts.details_back_button"))
+        backBTN = self.UTILS.getElement(DOM.Contacts.details_back_button, "Details 'back' button")
         self.marionette.tap(backBTN)
         
-        self.wait_for_element_displayed(*self.UTILS.verify("DOM.Contacts.view_all_header"))
+        self.UTILS.waitForElements(DOM.Contacts.view_all_header, "'View all contacts' screen header")
 
     def tapLinkContact(self):
         #
@@ -358,9 +377,12 @@ class AppContacts(GaiaTestCase):
         
         #
         # NOTE: there is more than one button with this ID, so make sure we use the right one!
+        # (One of them isn't visible, so we need to check for visibility this way or the
+        # 'invisible' one will cause 'getElements()' to fail the test).
         #
         time.sleep(2)
-        x = self.marionette.find_elements(*self.UTILS.verify("DOM.Contacts.link_button"))
+#        x = self.marionette.find_elements(*DOM.Contacts.link_button)
+        x = self.UTILS.getElements(DOM.Contacts.link_button, "Link contact button", False)
         for i in x:
             if i.is_displayed():
                 self.marionette.tap(i)
@@ -381,7 +403,7 @@ class AppContacts(GaiaTestCase):
         #
         # Wait for the fb friends page to start.
         #
-        self.wait_for_element_displayed(*self.UTILS.verify("DOM.Facebook.friends_header"))
+        self.UTILS.waitForElements(DOM.Facebook.friends_header, "Facebook friends screen header")
         time.sleep(2)
         
     def enableFBImport(self):
@@ -390,7 +412,7 @@ class AppContacts(GaiaTestCase):
         #
 
         self.tapSettingsButton()
-        x = self.UTILS.get_element(*DOM.Contacts.settings_fb_enable)        
+        x = self.UTILS.getElement(DOM.Contacts.settings_fb_enable, "Enable facebook button")        
         self.marionette.tap(x)
         
         #
@@ -399,12 +421,14 @@ class AppContacts(GaiaTestCase):
         try:
             self.marionette.switch_to_frame()
             self.UTILS.switchToFrame(*DOM.Contacts.frame_locator)
-            x = self.marionette.find_element('xpath', "//button[text()='Remove']")
 
             #
             # If we get to here, we're already logged into facebook - remove fb data
             # so we can proceed with this part of the test from sratch.
             #
+            # (You don't want this to validate properly - if it's not there it's okay so use
+            # 'marionette.find_element' or the test will fail if the button's absent.)
+            x = self.marionette.find_element('xpath', "//button[text()='Remove']")
             self.marionette.tap(x)
             time.sleep(5)
             
@@ -423,7 +447,7 @@ class AppContacts(GaiaTestCase):
             self.marionette.switch_to_frame()
             self.UTILS.switchToFrame(*DOM.Contacts.frame_locator)
             
-            x = self.UTILS.get_element(*DOM.Contacts.settings_fb_enable)
+            x = self.UTILS.getElement(DOM.Contacts.settings_fb_enable, "Enable facebook button")
             self.marionette.tap(x)
             
         except:

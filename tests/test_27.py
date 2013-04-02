@@ -89,7 +89,7 @@ class test_27(GaiaTestCase):
         #
         # Skip the import contacts / privacy / etc... screens until you get to the Tour.
         #
-        tourStartBtn = self.marionette.find_element(*self.UTILS.verify("DOM.FTU.tour_start_btn"))
+        tourStartBtn = self.marionette.find_element(*DOM.FTU.tour_start_btn)
 
         while not tourStartBtn.is_displayed():
             self.FTU.nextScreen()
@@ -102,7 +102,7 @@ class test_27(GaiaTestCase):
         #
         # Move through the tour until we hit the end.
         #
-        tourEndBtn = self.marionette.find_element(*self.UTILS.verify("DOM.FTU.tour_finished_btn"))
+        tourEndBtn = self.marionette.find_element(*DOM.FTU.tour_finished_btn)
         
         while not tourEndBtn.is_displayed():
             self.FTU.nextTourScreen()

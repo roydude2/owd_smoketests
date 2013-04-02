@@ -80,13 +80,13 @@ class test_40(GaiaTestCase):
         #
         friend_count = self.facebook.importAll()
 
-        x = self.marionette.find_elements(*self.UTILS.verify("DOM.Contacts.social_network_contacts"))
+        x = self.UTILS.getElements(DOM.Contacts.social_network_contacts, "Social network contact list", True, 30, False)
         self.UTILS.TEST(len(x) == friend_count, 
                         str(friend_count) + " social network friends listed (there were " + str(len(x)) + ").")
         
         self.contacts.tapSettingsButton()
                 
-        x = self.UTILS.get_element(*self.UTILS.verify("DOM.Facebook.totals"))
+        x = self.UTILS.getElement(DOM.Facebook.totals, "Facebook totals")
         y = str(friend_count) + "/" + str(friend_count) + " friends imported"
         self.UTILS.TEST(x.text == y, "After import, import details = '" + y + "' (it was '" + x.text + "').")
         

@@ -25,16 +25,15 @@ class AppVideo(GaiaTestCase):
     def launch(self):
         self.apps.kill_all()
         self.app = self.apps.launch('Video')
-        self.UTILS.waitForNotDisplayed(20, "Loading overlay stops being displayed", False, DOM.GLOBAL.loading_overlay);
+        self.UTILS.waitForNotElements(DOM.GLOBAL.loading_overlay, "Loading overlay");
         
     def checkThumbDuration(self, p_thumb_num, p_length_str_MMSS, p_errorMargin_SS):
         #
         # NOTE: p_length_str_MMSS needs to be in the format "MM:SS"
         #
-        self.UTILS.waitForDisplayed(20, "Video thumbnail duration appears.", False, self.UTILS.verify("DOM.Video.thumb_durations"))
-#        self.wait_for_element_present(*self.UTILS.verify("DOM.Video.thumb_durations"))
+        self.UTILS.waitForElements(DOM.Video.thumb_durations, "Video thumbnail duration appears.", True, 20, False)
 
-        durations = self.UTILS.get_elements(*self.UTILS.verify("DOM.Video.thumb_durations"))
+        durations = self.UTILS.getElements(DOM.Video.thumb_durations, "Thumbnail durations")
         
         myDur = durations[p_thumb_num].text
         
@@ -67,19 +66,14 @@ class AppVideo(GaiaTestCase):
         #
         # Get the list of video items and click the 'p_num' one.
         #
-        self.UTILS.waitForDisplayed(20, "Video items appear.", False, self.UTILS.verify("DOM.Video.items"))
-#        self.wait_for_element_displayed(*self.UTILS.verify("DOM.Video.items"))
-
-        all_videos = self.UTILS.get_elements(*self.UTILS.verify("DOM.Video.items"))
+        all_videos = self.UTILS.getElements(DOM.Video.items, "Videos")
         my_video = all_videos[p_num]
-        
         self.marionette.tap(my_video)
 
         #
         # Wait for the video to start playing before returning.
         #
-        self.UTILS.waitForDisplayed(20, "Video loads.", False, DOM.Video.video_loaded)
-#        self.wait_for_element_displayed(*DOM.Video.video_loaded)
+        self.UTILS.waitForElements(DOM.Video.video_loaded, "Loaded video", True, 20, False)
 
         
     def checkVideoLength(self, p_vid_num, p_from_SS, p_to_SS):
@@ -101,7 +95,7 @@ class AppVideo(GaiaTestCase):
         # Stop the timer.
         #
 #        self.wait_for_element_not_displayed(*DOM.Video.video_frame)
-        self.UTILS.waitForNotDisplayed(20, "Video frame stops being displayed", False, DOM.Video.video_frame);
+        self.UTILS.waitForNotElements(DOM.Video.video_frame, "Video frame", True, 20, False);
         elapsed_time = int(time.time() - start_time)
         
         #

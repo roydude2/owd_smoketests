@@ -25,7 +25,9 @@ class AppFacebook(GaiaTestCase):
         #
         # After clicking the link contact button, use this to click on a contact.
         #
-        x = self.marionette.find_elements(*self.UTILS.verify("DOM.Facebook.link_friends_list"))
+        # (For some reason this only works if I get all matching elements regardless of visibility,
+        # THEN check for visibility. There must be a matching element that never becomes visible.)
+        x = self.UTILS.getElements(DOM.Facebook.link_friends_list, "facebook friends list", False, 20)
         
         email = False
         
@@ -57,7 +59,7 @@ class AppFacebook(GaiaTestCase):
         #
         # Tap 'Update imported friends' button.
         #
-        x = self.UTILS.get_element(*self.UTILS.verify("DOM.Contacts.settings_import_fb"))        
+        x = self.UTILS.getElement(DOM.Contacts.settings_import_fb, "Import facebook contacts button")        
         self.marionette.tap(x)
         
 
@@ -76,26 +78,25 @@ class AppFacebook(GaiaTestCase):
         #
         # Wait for the fb friends page to start.
         #
-        self.UTILS.waitForDisplayed(20, "facebook friends header displayed.", True, DOM.Facebook.friends_header)
-#        self.wait_for_element_displayed(*self.UTILS.verify("DOM.Facebook.friends_header"))
+        self.UTILS.waitForElements(DOM.Facebook.friends_header, "facebook friends header")
         time.sleep(2)
         
         #
         # Get the count of friends that will be imported.
         #
-        x = self.UTILS.get_elements(*self.UTILS.verify("DOM.Facebook.friends_list"))
+        x = self.UTILS.getElements(DOM.Facebook.friends_list, "Facebook friends list")
         friend_count = len(x)
         
         #
         # Tap "Select all".
         #
-        x = self.UTILS.get_element(*self.UTILS.verify("DOM.Facebook.friends_select_all"))
+        x = self.UTILS.getElement(DOM.Facebook.friends_select_all, "'Select all' button")
         self.marionette.tap(x)
         
         #
         # Tap "Import".
         #
-        x = self.UTILS.get_element(*self.UTILS.verify("DOM.Facebook.friends_import"))
+        x = self.UTILS.getElement(DOM.Facebook.friends_import, "Import button")
         self.marionette.tap(x)
         
         #
@@ -125,13 +126,13 @@ class AppFacebook(GaiaTestCase):
         self.marionette.switch_to_frame()
         self.UTILS.switchToFrame(*DOM.Facebook.import_frame)
         
-        x = self.UTILS.get_element(*self.UTILS.verify("DOM.Facebook.email"))
+        x = self.UTILS.getElement(DOM.Facebook.email, "User field")
         x.send_keys(p_user)
         
-        x = self.UTILS.get_element(*self.UTILS.verify("DOM.Facebook.password"))
+        x = self.UTILS.getElement(DOM.Facebook.password, "Password field")
         x.send_keys(p_pass)
         
-        x = self.UTILS.get_element(*self.UTILS.verify("DOM.Facebook.login_button"))
+        x = self.UTILS.getElement(DOM.Facebook.login_button, "Login button")
         self.marionette.tap(x)
         
         time.sleep(3)

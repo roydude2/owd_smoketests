@@ -2,6 +2,7 @@ import DOM, time
 from gaiatest   import GaiaTestCase
 from tools      import TestUtils
 from marionette import Marionette
+from marionette.keys import Keys
 
 class AppMarket(GaiaTestCase):
     
@@ -27,13 +28,13 @@ class AppMarket(GaiaTestCase):
         #
         self.apps.kill_all()
         self.app = self.apps.launch('Marketplace')
-        self.UTILS.waitForNotDisplayed(20, "Loading overlay stops being displayed", False, DOM.GLOBAL.loading_overlay);
+        self.UTILS.waitForNotElements(DOM.GLOBAL.loading_overlay, "Loading overlay");
 
     def launch(self):
         self.launchMe()
         
         try:
-            self.wait_for_element_present(*DOM.Market.search_query)
+            self.UTILS.waitForElements(DOM.Market.search_query, "Search field")
         except:
             self.launchMe()
             
@@ -49,7 +50,7 @@ class AppMarket(GaiaTestCase):
         #
         self.marionette.execute_script('window.scrollTo(0, 10)')        
         
-        x = self.marionette.find_element(*self.UTILS.verify("DOM.Market.search_query"))
+        x = self.UTILS.getElement(DOM.Market.search_query, "Search field")
         x.send_keys(p_app)
         x.send_keys(Keys.RETURN)
 
@@ -58,8 +59,8 @@ class AppMarket(GaiaTestCase):
         # Select the application we want from the list returned by
         # self.searchForApp().
         #
-        self.UTILS.waitForDisplayed(20, "Search results displayed.", True, DOM.Market.search_results_area)
-        results = self.UTILS.get_elements(*DOM.Market.search_results)
+        self.UTILS.waitForElements(DOM.Market.search_results_area, "Search results displayed.")
+        results = self.UTILS.getElements(DOM.Market.search_results, "Search results")
         
         if len(results) <= 0:
             return False
@@ -87,10 +88,10 @@ class AppMarket(GaiaTestCase):
         #
         # Click to install the app.
         #
-        x = self.UTILS.get_element(*self.UTILS.verify("DOM.Market.app_details_header"))
+        x = self.UTILS.getElement(DOM.Market.app_details_header, "App details header")
         self.UTILS.TEST(x.text == p_app, "Title in app details matches '" + p_app + "' (it was '" + x.text + "').")
         
-        x = self.UTILS.get_element(*self.UTILS.verify("DOM.Market.install_button"))
+        x = self.UTILS.getElement(DOM.Market.install_button, "Install button")
         
         # Sometimes this needs to be clicked ... sometimes tapped ... just do 'everything'!
         x.click()
@@ -101,11 +102,10 @@ class AppMarket(GaiaTestCase):
         #
         self.marionette.switch_to_frame()
 
-        yes_button = self.UTILS.get_element(*self.UTILS.verify("DOM.Market.confirm_install_button"))
+        yes_button = self.UTILS.getElement(DOM.Market.confirm_install_button, "Confirm install button")
         self.marionette.tap(yes_button)
 
-#        self.wait_for_element_not_displayed(*DOM.Market.confirm_install_button)
-        self.UTILS.waitForNotDisplayed(20, "Confirm install button stops being displayed", False, DOM.Market.confirm_install_button);
+        self.UTILS.waitForNotElements(DOM.Market.confirm_install_button, "Confirm install button stops being displayed");
         
         return True
 

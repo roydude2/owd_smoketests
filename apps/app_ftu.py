@@ -32,7 +32,7 @@ class AppFTU(GaiaTestCase):
         self.data_layer.disable_cell_data()
 
         self.app = self.apps.launch('FTU')
-        self.UTILS.waitForNotDisplayed(20, "Loading overlay stops being displayed", False, DOM.GLOBAL.loading_overlay);
+        self.UTILS.waitForNotElements(DOM.GLOBAL.loading_overlay, "Loading overlay");
 
     def _select(self, match_string):
         #
@@ -48,15 +48,13 @@ class AppFTU(GaiaTestCase):
         # This won't be around for too long hopefully, so just leave these
         # DOM defs here.
         #
-        options = self.marionette.find_elements('css selector', '#value-selector-container li')
-        close_button = self.marionette.find_element('css selector', 'button.value-option-confirm')
+        options = self.UTILS.getElements(('css selector', '#value-selector-container li'), "Item list", False, 20, False)
+        close_button = self.UTILS.getElement(('css selector', 'button.value-option-confirm'), "Confirm selection button", False, 20, False)
 
         #
         # Is the scroller visible?
         #
-        if len(options) <= 0:
-            self.UTILS.logResult(False, "The '" + match_string + "' scroller is displayed when the button is tapped.")
-        else:
+        if len(options) > 0:
             # Loop options until we find the match
             for li in options:
                 if li.text == match_string:
@@ -70,13 +68,13 @@ class AppFTU(GaiaTestCase):
 
     def setLanguage(self, p_lang):
         time.sleep(1)
-        x = self.UTILS.get_elements(*self.UTILS.verify("DOM.FTU.language_list"))
-        self.UTILS.TEST(len(x) > 0, "SOME languages are listed.")
+        x = self.UTILS.getElements(DOM.FTU.language_list, "Language list", True, 20, False)
         
-        for i in x:
-            if i.text == p_lang:
-                self.marionette.tap(i)
-                return True
+        if len(x) > 0:
+            for i in x:
+                if i.text == p_lang:
+                    self.marionette.tap(i)
+                    return True
         
         return False
         
@@ -84,7 +82,7 @@ class AppFTU(GaiaTestCase):
         #
         # Click to the next screen (works until you get to the tour).
         #
-        x = self.UTILS.get_element(*self.UTILS.verify("DOM.FTU.next_button"))
+        x = self.UTILS.getElement(DOM.FTU.next_button, "Next button")
         self.marionette.tap(x)
         time.sleep(1)
         
@@ -92,7 +90,7 @@ class AppFTU(GaiaTestCase):
         #
         # Click to start the Tour.
         #
-        x = self.UTILS.get_element(*self.UTILS.verify("DOM.FTU.tour_start_btn"))
+        x = self.UTILS.getElement(DOM.FTU.tour_start_btn, "Start tour button")
         self.marionette.tap(x)
         time.sleep(1)
 
@@ -100,7 +98,7 @@ class AppFTU(GaiaTestCase):
         #
         # Click to skip the Tour.
         #
-        x = self.UTILS.get_element(*self.UTILS.verify("DOM.FTU.tour_skip_btn"))
+        x = self.UTILS.getElement(DOM.FTU.tour_skip_btn, "Skipt tour button")
         self.marionette.tap(x)
         time.sleep(1)
 
@@ -108,7 +106,7 @@ class AppFTU(GaiaTestCase):
         #
         # Click to next page of the Tour.
         #
-        x = self.UTILS.get_element(*self.UTILS.verify("DOM.FTU.tour_next_btn"))
+        x = self.UTILS.getElement(DOM.FTU.tour_next_btn, "Tour 'next' button")
         self.marionette.tap(x)
         time.sleep(1)
 
@@ -116,7 +114,7 @@ class AppFTU(GaiaTestCase):
         #
         # Click to end the Tour.
         #
-        x = self.UTILS.get_element(*self.UTILS.verify("DOM.FTU.tour_finished_btn"))
+        x = self.UTILS.getElement(DOM.FTU.tour_finished_btn, "Finish tour button")
         self.marionette.tap(x)
         time.sleep(1)
 
@@ -125,9 +123,9 @@ class AppFTU(GaiaTestCase):
         # Enable data.
         # (the switch has an "id", but if you use that it never becomes 'visible'!)
         #
-        self.UTILS.waitForDisplayed(20, "Cellular data connection section appears.", True, DOM.FTU.section_cell_data)
-#        self.wait_for_element_displayed(*self.UTILS.verify("DOM.FTU.section_cell_data"))
-        x = self.UTILS.get_element(*DOM.FTU.dataconn_switch)
+        self.UTILS.waitForElements(DOM.FTU.section_cell_data, "Cellular data connection section")
+
+        x = self.UTILS.getElement(DOM.FTU.dataconn_switch, "Data connection switch")
         self.marionette.tap(x)
         
         # Wait a moment, then check data conn is on.
@@ -141,54 +139,41 @@ class AppFTU(GaiaTestCase):
         # Join a wifi network.
         #
         time.sleep(5)
-        try:
-            x = self.UTILS.get_elements(*self.UTILS.verify("DOM.FTU.wifi_networks_list"))
-        except:
-            self.UTILS.logResult(False, "SOME networks are found in wifi screen.")
-        else:
-            self.UTILS.logComment("(Found " + str(len(x)) + " wifi networks.)")
+        x = self.UTILS.getElements(DOM.FTU.wifi_networks_list, "Wifi network list")
+
+        #
+        # Pick the one we chose.
+        #
+        x= self.UTILS.getElement(('id', p_wifiName), "Wifi network '" + p_wifiName + "'")
+        self.marionette.tap(x)
             
-            #
-            # Pick the one we chose.
-            #
-            try:
-                x= self.UTILS.get_element('id', p_wifiName)
-            except:
-                self.UTILS.logResult(False, "Wifi network '" + p_wifiName + "' is found.")
-            else:
-                self.marionette.tap(x)
-                
-                #
-                # In case we are asked for a username and password ...
-                #
-                time.sleep(2)
-                wifi_login_user = self.marionette.find_element(*self.UTILS.verify("DOM.FTU.wifi_login_user"))
-                wifi_login_pass = self.marionette.find_element(*self.UTILS.verify("DOM.FTU.wifi_login_pass"))
-                wifi_login_join = self.marionette.find_element(*self.UTILS.verify("DOM.FTU.wifi_login_join"))
-                if wifi_login_user.is_displayed():
-                    wifi_login_user.send_keys(p_userName)
-                    wifi_login_pass.send_keys(p_password)
-                    self.marionette.tap(wifi_login_join)
+        #
+        # In case we are asked for a username and password ...
+        #
+        time.sleep(2)
+        wifi_login_user = self.marionette.find_element(*DOM.FTU.wifi_login_user)
+        if wifi_login_user.is_displayed():
+            wifi_login_pass = self.marionette.find_element(*DOM.FTU.wifi_login_pass)
+            wifi_login_join = self.marionette.find_element(*DOM.FTU.wifi_login_join)
+            wifi_login_user.send_keys(p_userName)
+            wifi_login_pass.send_keys(p_password)
+            self.marionette.tap(wifi_login_join)
         
     def setTimezone(self, p_continent, p_city):
         
         #
         # Set the timezone.
         #
-        self.UTILS.waitForDisplayed(20, "Timezone area appears.", True, DOM.FTU.timezone)
+        self.UTILS.waitForElements(DOM.FTU.timezone, "Timezone area")
 
-        continent_select = self.marionette.find_element(*self.UTILS.verify("DOM.FTU.timezone_continent"))
-
-        # Click to activate the b2g select element
-        continent_select.click()
+        continent_select = self.UTILS.getElement(DOM.FTU.timezone_continent, "Continent button", False)
+        continent_select.click() # Must be 'clicked' not 'tapped'
         self._select(p_continent)
 
-        city_select = self.marionette.find_element(*self.UTILS.verify("DOM.FTU.timezone_city"))
-        
-        # Click to activate the b2g select element
-        city_select.click()
+        city_select = self.UTILS.getElement(DOM.FTU.timezone_city, "City button", False)
+        city_select.click() # Must be 'clicked' not 'tapped'
         self._select(p_city)
 
         self.UTILS.TEST(
-            p_continent + "/" + p_city in self.UTILS.get_element(*self.UTILS.verify("DOM.FTU.timezone_title")).text,
+            p_continent + "/" + p_city in self.UTILS.getElement(DOM.FTU.timezone_title, "Timezone title").text,
             "Locality is set up correctly")

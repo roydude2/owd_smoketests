@@ -43,6 +43,8 @@ fi
 # If there is an 'error' in the marionette output but we think our tests
 # passed, this indicates a possible error with our test code.
 #
+# (uncomment this to stop it trying failed tests twice.)
+#RUNONCE="Y"
 cat $SUM_FILE | while read line
 do
 

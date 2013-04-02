@@ -67,7 +67,7 @@ class test_9(GaiaTestCase):
         #
         # Tap the sms button in the view details screen to go to the sms page.
         #
-        smsBTN = self.UTILS.get_element(*DOM.Contacts.sms_button)
+        smsBTN = self.UTILS.getElement(DOM.Contacts.sms_button, "Send SMS button")
         self.marionette.tap(smsBTN)
 
         #

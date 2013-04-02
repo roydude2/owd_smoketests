@@ -104,7 +104,7 @@ class test_41(GaiaTestCase):
         #
         # Check that our contact is now listed as a facebook contact (icon by the name in 'all contacts' screen).
         #
-        x = self.marionette.find_elements(*self.UTILS.verify("DOM.Contacts.social_network_contacts"))
+        x = self.UTILS.getElements(DOM.Contacts.social_network_contacts, "Social network contacts")
         self.UTILS.TEST(len(x) > 0, "Contact is listed as a facebook contact after linking.")
         
 
@@ -123,7 +123,8 @@ class test_41(GaiaTestCase):
         boolWallpost        = False
         boolLinkedEmail     = False
         boolUnLink          = False
-        x = self.marionette.find_elements("tag name", "button")
+#        x = self.marionette.find_elements("tag name", "button")
+        x = self.UTILS.getElements(("tag name", "button"), "All buttons on this page")
         for i in x:
             if i.text == "View Facebook profile": boolViewFbProfile = True
             if i.text == "Wall post"            : boolWallPost      = True

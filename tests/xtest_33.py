@@ -37,20 +37,20 @@ class test_33(GaiaTestCase):
         # Launch calculator app.
         #
         self.Calc.launch()
-
-        btn3 = self.UTILS.get_element(*self.UTILS.verify("DOM.Calculator.button_3"))
+        
+        btn3 = self.UTILS.get_element(DOM.Calculator.button_3, "Calculator button 3")
         self.marionette.tap(btn3)
         
-        btnX = self.UTILS.get_element(*self.UTILS.verify("DOM.Calculator.button_mutiply"))
+        btnX = self.UTILS.get_element(DOM.Calculator.button_mutiply, "Calculator button X")
         self.marionette.tap(btnX)
         
-        btn5 = self.UTILS.get_element(*self.UTILS.verify("DOM.Calculator.button_5"))
+        btn5 = self.UTILS.get_element(DOM.Calculator.button_5, "Calculator button 5")
         self.marionette.tap(btn5)
         
-        btnEQ = self.UTILS.get_element(*self.UTILS.verify("DOM.Calculator.button_equals"))
+        btnEQ = self.UTILS.get_element(DOM.Calculator.button_equals, "Calculator button =")
         self.marionette.tap(btnEQ)
         
-        Answer = self.UTILS.get_element(*self.UTILS.verify("DOM.Calculator.display"))
+        Answer = self.UTILS.get_element(DOM.Calculator.display, "Calculator display")
         
         self.UTILS.TEST(Answer.text == "15", "Answer is 15 (it was " + Answer.text + ").")
         

@@ -12,6 +12,7 @@ wifi_login_join     = ('id', 'wifi-join-button')
 
 timezone            = ('id', 'date_and_time')
 timezone_continent  = ('id', 'tz-region')
+
 timezone_city       = ('id', 'tz-city')
 timezone_title      = ('id', 'time-zone-title')
 

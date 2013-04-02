@@ -59,7 +59,7 @@ class test_39(GaiaTestCase):
         #
         # Launch the 'everything.me' app.
         #
-        self.UTILS.TEST(self.EME.launch(), "Applications icons are found in EverythingME.", True)
+        self.EME.launch()
         
         #
         # Pick a group.

@@ -107,7 +107,7 @@ class main():
         self.Email.openMailFolder(self.sentFolderName)
         time.sleep(10)
         self.UTILS.TEST(self.Email.emailIsInFolder(self.subject),
-            "Email is found in the Sent folder after being sent.")
+            "Email '" + self.subject + "' found in the Sent folder.")
         
         #
         # Give the email time to arrive.
@@ -137,15 +137,15 @@ class main():
         #
         # Verify the contents.
         #
-        x = self.UTILS.get_element(*self.UTILS.verify("DOM.Email.open_email_from"))
+        x = self.UTILS.getElement(DOM.Email.open_email_from, "'From' field")
         self.UTILS.TEST(x.text == self.EMAIL1, 
             "'From' field = '" + self.EMAIL1 + "' (it was '" + x.text + "').")
 
-        x = self.UTILS.get_element(*self.UTILS.verify("DOM.Email.open_email_to"))
+        x = self.UTILS.getElement(DOM.Email.open_email_to, "'To' field")
         self.UTILS.TEST(x.text == self.EMAIL2, 
             "'To' field = '" + self.EMAIL2 + "', (it was '" + x.text + "').")
 
-        x = self.UTILS.get_element(*self.UTILS.verify("DOM.Email.open_email_subject"))
+        x = self.UTILS.getElement(DOM.Email.open_email_subject, "'Subject' field")
         self.UTILS.TEST(x.text == self.subject, 
             "'From' field = '" + self.subject + "', (it was '" + x.text + "').")
         

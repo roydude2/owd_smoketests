@@ -25,7 +25,7 @@ class AppClock(GaiaTestCase):
     def launch(self):
         self.apps.kill_all()
         self.app = self.apps.launch('Clock')
-        self.UTILS.waitForNotDisplayed(20, "Loading overlay stops being displayed", False, DOM.GLOBAL.loading_overlay);
+        self.UTILS.waitForNotElements(DOM.GLOBAL.loading_overlay, "Loading overlay");
 
     def deleteAllAlarms(self):
         #
@@ -50,7 +50,7 @@ class AppClock(GaiaTestCase):
                 # an alarm).
                 #
                 self.marionette.tap(x[0])
-                x = self.UTILS.get_element(*DOM.Clock.alarm_delete_button)
+                x = self.UTILS.getElement(DOM.Clock.alarm_delete_button, "Alarm delete button")
                 self.marionette.tap(x)
                 time.sleep(1)
         
@@ -78,7 +78,7 @@ class AppClock(GaiaTestCase):
         #
         # Click the new alarm button.
         #
-        x = self.UTILS.get_element(*self.UTILS.verify("DOM.Clock.new_alarm_btn"))
+        x = self.UTILS.getElement(DOM.Clock.new_alarm_btn, "New alarm button")
         self.marionette.tap(x)
         
         #
@@ -103,8 +103,8 @@ class AppClock(GaiaTestCase):
         #
         # Set the AM / PM.
         #
-        scroller = self.UTILS.get_element(*self.UTILS.verify("DOM.Clock.time_picker_ampm"))
-        currVal  = scroller.find_element(*self.UTILS.verify("DOM.Clock.time_picker_curr_val")).text
+        scroller = self.UTILS.getElement(DOM.Clock.time_picker_ampm, "AM/PM picker")
+        currVal  = scroller.find_element(*DOM.Clock.time_picker_curr_val).text
         
         if t_ampm != currVal:
             if currVal == "AM":
@@ -115,7 +115,7 @@ class AppClock(GaiaTestCase):
         #
         # Set the label.
         #
-        x = self.UTILS.get_element(*self.UTILS.verify("DOM.Clock.alarm_label"))
+        x = self.UTILS.getElement(DOM.Clock.alarm_label, "Alarm label field")
         x.clear()
         x.send_keys(p_label)
         
@@ -126,7 +126,7 @@ class AppClock(GaiaTestCase):
         #
         # Save the alarm.
         #
-        x = self.UTILS.get_element(*self.UTILS.verify("DOM.Clock.alarm_done"))
+        x = self.UTILS.getElement(DOM.Clock.alarm_done, "Done button")
         self.marionette.tap(x)
         
         #
@@ -144,14 +144,14 @@ class AppClock(GaiaTestCase):
         #
         p_time = str(p_hour) + ":" + str(p_min).zfill(2)
         
-        alarms = self.UTILS.get_elements(*self.UTILS.verify("DOM.Clock.alarm_preview_alarms"))
+        alarms = self.UTILS.getElements(DOM.Clock.alarm_preview_alarms, "Alarm preview list")
         
         foundBool = False
         for alarm in alarms:
-            alarm_time   = alarm.find_element(*self.UTILS.verify("DOM.Clock.alarm_preview_time")).text
-            alarm_ampm   = alarm.find_element(*self.UTILS.verify("DOM.Clock.alarm_preview_ampm")).text
-            alarm_label  = alarm.find_element(*self.UTILS.verify("DOM.Clock.alarm_preview_label")).text
-            alarm_repeat = alarm.find_element(*self.UTILS.verify("DOM.Clock.alarm_preview_repeat")).text
+            alarm_time   = alarm.find_element(*DOM.Clock.alarm_preview_time).text
+            alarm_ampm   = alarm.find_element(*DOM.Clock.alarm_preview_ampm).text
+            alarm_label  = alarm.find_element(*DOM.Clock.alarm_preview_label).text
+            alarm_repeat = alarm.find_element(*DOM.Clock.alarm_preview_repeat).text
             
             if  p_time      == alarm_time   and \
                 p_ampm      == alarm_ampm:
@@ -172,7 +172,7 @@ class AppClock(GaiaTestCase):
         self.marionette.switch_to_frame()
         boolOK = True
         try:
-            self.wait_for_element_displayed(*DOM.Clock.alarm_notifier)
+            self.UTILS.waitForElements(DOM.Clock.alarm_notifier, "Alarm notification", True, 20, False)
         except:
             boolOK = False
         
@@ -218,19 +218,19 @@ class AppClock(GaiaTestCase):
         # Put the time in a format we can compare easily with.
         p_time = str(t_hour) + ":" + str(p_min).zfill(2)
         
-        x = self.UTILS.get_element(*self.UTILS.verify("DOM.Clock.alarm_alert_time")).text
+        x = self.UTILS.getElement(DOM.Clock.alarm_alert_time, "Alarm alert time").text
         self.UTILS.TEST(x == p_time, "Correct alarm time is shown when alarm is ringing (expected '" + p_time + "', it was '" + x + "').")
         
-        x = self.UTILS.get_element(*self.UTILS.verify("DOM.Clock.alarm_alert_ampm")).text
+        x = self.UTILS.getElement(DOM.Clock.alarm_alert_ampm, "Alarm alert AM/PM").text
         self.UTILS.TEST(x == t_ampm, "Correct AM / PM shown when alarm is ringing (expected '" + t_ampm + "', it was '" + x + "').")
         
-        x = self.UTILS.get_element(*self.UTILS.verify("DOM.Clock.alarm_alert_label")).text
+        x = self.UTILS.getElement(DOM.Clock.alarm_alert_label, "Alarm alert label").text
         self.UTILS.TEST(x == p_label, "Correct label shown when alarm is ringing (expected '" + p_label + "', it was '" + x + "').")
         
         #
         # Stop the alarm.
         #
-        x = self.UTILS.get_element(*self.UTILS.verify("DOM.Clock.alarm_alert_close"))
+        x = self.UTILS.getElement(DOM.Clock.alarm_alert_close, "Close alert button")
         self.marionette.tap(x)
 
     def _calcStep(self, p_scroller):
@@ -281,9 +281,10 @@ class AppClock(GaiaTestCase):
         time.sleep(0.5)
         
     def _select(self, p_component, p_number):
-        scroller = self.UTILS.get_element(
-            DOM.Clock.time_picker_column[0], 
-            DOM.Clock.time_picker_column[1] % p_component)
+        scroller = self.UTILS.getElement(
+            (DOM.Clock.time_picker_column[0],DOM.Clock.time_picker_column[1] % p_component),
+            "Scroller '" + p_component + "'")
+        
         #
         # Set the time using the scroller.
         # Marionette flick() works a treat here, woop!
@@ -292,7 +293,7 @@ class AppClock(GaiaTestCase):
         #
         # Get the current setting for this scroller.
         #
-        currVal = scroller.find_element(*self.UTILS.verify("DOM.Clock.time_picker_curr_val")).text
+        currVal = scroller.find_element(*DOM.Clock.time_picker_curr_val).text
         
         #
         # Now flick the scroller as many times as required 
@@ -306,6 +307,6 @@ class AppClock(GaiaTestCase):
                 self._scrollBackward(scroller)
                 
             # Get the new 'currVal'.
-            currVal = scroller.find_element(*self.UTILS.verify("DOM.Clock.time_picker_curr_val")).text
+            currVal = scroller.find_element(*DOM.Clock.time_picker_curr_val).text
                 
 
