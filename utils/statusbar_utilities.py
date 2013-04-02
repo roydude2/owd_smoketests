@@ -4,7 +4,7 @@ from gaiatest import GaiaTestCase
 class main(GaiaTestCase):
     def isIconInStatusBar(self, p_dom, p_returnFrame=False):
         #
-        # Wait for a statusbar setting to be displayed, then return to the
+        # Check an icon is in the statusbar, then return to the
         # given frame (doesn't wait, just expects it to be there).
         #
         self.marionette.switch_to_frame()

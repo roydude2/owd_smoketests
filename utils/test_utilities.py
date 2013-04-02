@@ -31,7 +31,7 @@ class main(GaiaTestCase):
         self.logResult("info", " ")
         self.logResult("info", " ")
         if not p_msg:
-            msg = "CANNOT CONTINUE PAST THIS ERROR - ABORTING THIS TEST!"
+            msg = "CANNOT CONTINUE PAST THIS ERROR - ABORTING THIS TEST CASE!"
         else:
             msg = p_msg
 
