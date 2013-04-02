@@ -135,14 +135,16 @@ class main():
             "Found an email with the subject '" + self.subject + "'", True)
         
         #
-        # Verify the contents.
+        # Verify the contents - the email address is shortened to just the name (sometimes!).
         #
+        email1_name = self.EMAIL1.split("@")[0]
+        email2_name = self.EMAIL2.split("@")[0]
         x = self.UTILS.getElement(DOM.Email.open_email_from, "'From' field")
-        self.UTILS.TEST(x.text == self.EMAIL1, 
+        self.UTILS.TEST((x.text == self.EMAIL1 or x.text == email1_name), 
             "'From' field = '" + self.EMAIL1 + "' (it was '" + x.text + "').")
 
         x = self.UTILS.getElement(DOM.Email.open_email_to, "'To' field")
-        self.UTILS.TEST(x.text == self.EMAIL2, 
+        self.UTILS.TEST((x.text == self.EMAIL2 or x.text == email2_name), 
             "'To' field = '" + self.EMAIL2 + "', (it was '" + x.text + "').")
 
         x = self.UTILS.getElement(DOM.Email.open_email_subject, "'Subject' field")

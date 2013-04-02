@@ -5,6 +5,7 @@ password                = ('class name', 'sup-info-password')
 login_next_btn          = ('class name', 'sup-info-next-btn')
 sup_header              = ('class name', 'sup-account-header-label')
 sup_continue_btn        = ('class name', 'sup-show-mail-btn sup-form-btn recommend')
+email_accounts_list     = ('class name', 'tng-account-item-label list-text')
 
 compose_msg_btn         = ('class name', 'msg-compose-btn')
 compose_to              = ('class name', 'cmp-to-text cmp-addr-text')

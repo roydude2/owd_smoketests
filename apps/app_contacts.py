@@ -142,26 +142,15 @@ class AppContacts(GaiaTestCase):
         self.UTILS.switchToFrame(*DOM.Gallery.frame_locator)
         
         # Select the thumbnail (assume it's the only one).
-        #ROY - replace this with DOM spec.
-        x = self.UTILS.getElement(("xpath", "//*[@id='thumbnails']/li[1]"), "Thumbnail for picture")
+        x = self.UTILS.getElement(DOM.Contacts.picture_thumbnail, "Thumbnail for picture")
         self.marionette.tap(x)
-#        boolOK = True
-#        try:
-#            x = self.marionette.find_element("xpath", "//*[@id='thumbnails']/li[1]")
-#            self.marionette.tap(x)
-#        except:
-#            boolOK = False
-#
-#        self.UTILS.TEST(boolOK, "Can select picture in Gallery app.")
             
         time.sleep(1)
         
         # Tap 'crop done' button.
         boolOK = True
         try:
-#            x = self.marionette.find_element("id", "crop-done-button")
-            #ROY - replace this with DOM spec.
-            x = self.UTILS.getElement(("id", "crop-done-button"), "Crop 'done' button")
+            x = self.UTILS.getElement(DOM.Contacts.picture_crop_done_btn, "Crop 'done' button")
             self.marionette.tap(x)
         except:
             boolOK = False
@@ -172,8 +161,7 @@ class AppContacts(GaiaTestCase):
         
         # Back to contacts app iframe.
         self.marionette.switch_to_frame()
-        #ROY - replace this with DOM spec?????
-        self.UTILS.switchToFrame("srC", "app://communications.gaiamobile.org/contacts/index.html")
+        self.UTILS.switchToFrame(*DOM.Contacts.frame_locator)
 
          
 
@@ -185,7 +173,8 @@ class AppContacts(GaiaTestCase):
         #
         # First make sure we're in the right place.
         #
-        viewAllHeader = self.marionette.find_element(*DOM.Contacts.view_all_header)
+#        viewAllHeader = self.marionette.find_element(*DOM.Contacts.view_all_header)
+        viewAllHeader = self.UTILS.getElement(DOM.Contacts.view_all_header, "'View all contacts' header", False)
         if not viewAllHeader.is_displayed():
             #
             # Header isn't present, so we're not running yet.
@@ -227,9 +216,7 @@ class AppContacts(GaiaTestCase):
             #
             # Verify that the contact's image is displayed.
             #
-            #ROY - put all these in the DOM spec!
-#            x = self.marionette.find_elements("xpath", "//li[@class='contact-item']")
-            x = self.UTILS.getElements(("xpath", "//li[@class='contact-item']"), "Contact list", False)
+            x = self.UTILS.getElements(DOM.Contacts.view_all_contact_list, "Contact list", False)
             for i in x:
                 try:
                     i.find_element("xpath", "//p[@data-order='%s']" % p_contact['name'].replace(" ",""))
@@ -272,13 +259,6 @@ class AppContacts(GaiaTestCase):
         contact_found = self.UTILS.getElement(x, "Contact '" + p_contact['name'] + "'")
         self.marionette.tap(contact_found)
         
-#        try:
-#            self.marionette.tap(contact_found)
-#        except:
-#            self.UTILS.logResult(False, "Able to tap on '" + p_contact['name'] + "' in contacts list!")
-#            return 0 # (leave the function)
-        
-        #ROY - do you need to check this AND the name in the age header?
         self.UTILS.waitForElements(DOM.Contacts.view_details_title, "'View contact details' title")
 
         # 

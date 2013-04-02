@@ -100,8 +100,7 @@ class AppEmail(GaiaTestCase):
         #
         # Remove each email address listed ...
         #
-        #ROY - put in DOM spec.
-        x = self.UTILS.getElements(('class name', 'tng-account-item-label list-text'),
+        x = self.UTILS.getElements(DOM.Email.email_accounts_list,
                                    "Email accounts list", False, 20, False)
         for i in x:
             if i.text != "":

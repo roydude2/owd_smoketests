@@ -3,6 +3,7 @@ import GLOBAL
 frame_locator          = ("src","app://communications.gaiamobile.org/contacts/index.html")
 view_all_header        = ('xpath', GLOBAL.app_head_specific % 'Contacts')
 view_all_contact_xpath = '//*[@data-order="%s"]'
+view_all_contact_list  = ("xpath", "//li[@class='contact-item']")
 social_network_contacts= ('class name', "icon-social icon-fb notorg")
 settings_button        = ('id', 'settings-button')
 settings_header        = ('xpath', GLOBAL.app_head_specific % 'Settings')
@@ -18,6 +19,8 @@ edit_update_button     = ('id', 'save-button')
 edit_details_button    = ('id', 'edit-contact-button')
 done_button            = ('id', 'save-button')
 
+picture_thumbnail      = ("xpath", "//*[@id='thumbnails']/li[1]")
+picture_crop_done_btn  = ("id", "crop-done-button")
 given_name_field       = ('id', 'givenName')
 family_name_field      = ('id', 'familyName')
 email_field            = ('id', "email_0")
