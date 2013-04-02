@@ -105,7 +105,7 @@ class AppMarket(GaiaTestCase):
         yes_button = self.UTILS.getElement(DOM.Market.confirm_install_button, "Confirm install button")
         self.marionette.tap(yes_button)
 
-        self.UTILS.waitForNotElements(DOM.Market.confirm_install_button, "Confirm install button stops being displayed");
+        self.UTILS.waitForNotElements(DOM.Market.confirm_install_button, "Confirm install button");
         
         return True
 

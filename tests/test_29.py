@@ -78,6 +78,6 @@ class test_29(GaiaTestCase):
             x = self.UTILS.getElement(self.test_apps[i]["close_button"], "Close button on '" + self.test_apps[i]["name"] + "' card")
             self.marionette.tap(x)
 
-            self.UTILS.waitForNotElements(self.test_apps[i]["card"], "Cared for '" + self.test_apps[i]["name"] + "'", True, 5, False)
+            self.UTILS.waitForNotElements(self.test_apps[i]["card"], "Card for '" + self.test_apps[i]["name"] + "'", True, 5, False)
             i = i + 1
 
