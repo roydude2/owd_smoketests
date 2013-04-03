@@ -59,7 +59,7 @@ class main(GaiaTestCase):
         boolOK = False
         if self.findAppIcon(p_appName):
             time.sleep(1)
-            x = ('css selector', DOM.GLOBAL.app_icon_css % p_appName)
+            x = ('css selector', DOM.Home.app_icon_css % p_appName)
             myApp = self.getElement(x, "App icon")
             self.marionette.tap(myApp)
             boolOK = True
@@ -73,9 +73,9 @@ class main(GaiaTestCase):
         # Return whether an app is present on the homescreen (i.e. 'installed').
         #
         self.marionette.switch_to_frame()
-        self.switchToFrame(*DOM.GLOBAL.homescreen_iframe)
+        self.switchToFrame(*DOM.Home.homescreen_iframe)
 
-        x = ('css selector', DOM.GLOBAL.app_icon_css % p_appName)
+        x = ('css selector', DOM.Home.app_icon_css % p_appName)
         try:
             self.marionette.find_element(*x)
             return True
@@ -112,7 +112,7 @@ class main(GaiaTestCase):
         myApp = self.findAppIcon(p_appName, False)
         if not myApp: return False
         
-        delete_button = myApp.find_element(*DOM.GLOBAL.app_delete_icon)
+        delete_button = myApp.find_element(*DOM.Home.app_delete_icon)
         
         if not delete_button: return False
         
@@ -121,7 +121,7 @@ class main(GaiaTestCase):
         #
         # Confirm deletion.
         #
-        delete = self.getElement(DOM.GLOBAL.app_confirm_delete, "Confirm app delete button")
+        delete = self.getElement(DOM.Home.app_confirm_delete, "Confirm app delete button")
         self.marionette.tap(delete)
 
         #

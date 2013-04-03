@@ -36,7 +36,7 @@ class main(GaiaTestCase):
         #
         self.apps.kill_all()
         self.marionette.switch_to_frame()
-        self.switchToFrame(*DOM.GLOBAL.homescreen_iframe, p_quitOnError=False)
+        self.switchToFrame(*DOM.Home.homescreen_iframe, p_quitOnError=False)
         time.sleep(1)
 
     def activateHomeEditMode(self):

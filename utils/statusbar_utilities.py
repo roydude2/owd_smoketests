@@ -25,7 +25,7 @@ class main(GaiaTestCase):
         #
         self.marionette.execute_script("window.wrappedJSObject.UtilityTray.show()")
         
-    def waitForStatusBarNew(self, p_dom=DOM.GLOBAL.status_bar_new, p_time=20):
+    def waitForStatusBarNew(self, p_dom=DOM.Statusbar.status_bar_new, p_time=20):
         #
         # Waits for a new notification in the status bar (20s timeout by default).
         #
