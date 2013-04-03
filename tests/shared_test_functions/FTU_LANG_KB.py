@@ -30,8 +30,11 @@ class main():
         self.parent     = p_parent
         self.marionette = self.parent.marionette
         
-        self.UTILS      = self.parent.UTILS
         self.FTU        = AppFTU(self.parent)
+        
+        # (just to get autocomplete to work in my IDE!)
+        self.UTILS      = UTILS(self.parent)
+        if True: self.UTILS = self.parent.UTILS
         
         self.marionette.set_search_timeout(50)
         self.parent.lockscreen.unlock()
@@ -93,6 +96,7 @@ class main():
         # Click the email area to display the keyboard.
         x = self.UTILS.getElement(DOM.FTU.privacy_email, "Privacy policy email address")
         x.click()
+        self.parent.keyboard._switch_to_keyboard()
         
         #
         # Take a screenshot of each view and check the size.

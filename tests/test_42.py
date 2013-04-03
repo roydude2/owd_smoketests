@@ -18,7 +18,7 @@ class test_42(GaiaTestCase):
     _LANG           = "English (US)"
 #    _SCREEN_SIZES   = (45132, 21224, 21359, 20615)
 #    _SCREEN_SIZES   = (45132, 21285, 20594, 20641)
-    _SCREEN_SIZES   = (44017, 21285, 20594, 20641)
+    _SCREEN_SIZES   = (20763, 21285, 20594, 20641)
     
     def setUp(self):
         #

@@ -36,6 +36,13 @@ RUNNING THE TESTS:
 ... and hopefully that's all you need to do. The device should run through some tests, at the end you'll get a response in the terminal for the test results.
 
 
+To see details of the test run for a particular test case:
+
+<pre>
+./bin/show_details_file <number>
+</pre>
+
+
 Some notes on running "run_tests" ...
 -------------------------------------
 

@@ -78,7 +78,7 @@ class test_27(GaiaTestCase):
         #
         # WIFI CONNECTIVITY.
         #
-#        self.FTU.setNetwork(self.wifi_name, self.wifi_user, self.wifi_pass)
+        self.FTU.setNetwork(self.wifi_name, self.wifi_user, self.wifi_pass)
         self.FTU.nextScreen()
         
         #

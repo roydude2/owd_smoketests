@@ -16,7 +16,7 @@ class AppFTU(GaiaTestCase):
 
         # Just so I get 'autocomplete' in my IDE!
         self.marionette = Marionette()
-        self.UTILS      = UTILS(self)        
+        self.UTILS      = UTILS(p_parent)        
         if True:
             self.marionette = p_parent.marionette
             self.UTILS      = p_parent.UTILS
@@ -34,7 +34,7 @@ class AppFTU(GaiaTestCase):
         self.app = self.apps.launch('FTU')
         self.UTILS.waitForNotElements(DOM.GLOBAL.loading_overlay, "Loading overlay");
 
-    def _select(self, match_string):
+    def _select(self, p_match_string):
         #
         # Selects an item from a select box (lifted directly from gaiatest).
         #
@@ -48,20 +48,44 @@ class AppFTU(GaiaTestCase):
         # This won't be around for too long hopefully, so just leave these
         # DOM defs here.
         #
-        options = self.UTILS.getElements(('css selector', '#value-selector-container li'), "Item list", False, 20, False)
-        close_button = self.UTILS.getElement(('css selector', 'button.value-option-confirm'), "Confirm selection button", False, 20, False)
+        options   = self.UTILS.getElements(('css selector', '#value-selector-container li'), "Item list", False, 20, False)
+        ok_button = self.UTILS.getElement(('css selector', 'button.value-option-confirm'), "Confirm selection button", False, 20, False)
 
         #
         # Is the scroller visible?
-        #
+        #                
+        boolOK = False
         if len(options) > 0:
             # Loop options until we find the match
+            pos    = 0
             for li in options:
-                if li.text == match_string:
+                if li.text == p_match_string:
+                    #
+                    # Move the screen up to expose this element - a pretty brutal hack, 
+                    # but until I can get marionette.flick() to do it it'll have to do.
+                    #
+                    self.marionette.execute_script("document.getElementsByTagName('li')[" + str(pos) + "].scrollIntoView();")
+                    boolOK = True
                     li.click()
                     break
-    
-            close_button.click()
+
+                pos = pos + 1
+
+        #
+        # Did we find it?
+        #    
+        self.UTILS.TEST(boolOK, "'" + p_match_string + "' found in selector", False)
+
+        #
+        # Pull the window back down again (or we end up with several
+        # other B2G elements off the top of the screen!).
+        #
+        self.marionette.execute_script("document.getElementById('statusbar').scrollIntoView();")
+
+        #
+        # Click the OK button.
+        #
+        ok_button.click()
 
         # Now back to app
         self.marionette.switch_to_frame(self.app.frame)
@@ -84,7 +108,7 @@ class AppFTU(GaiaTestCase):
         #
         x = self.UTILS.getElement(DOM.FTU.next_button, "Next button")
         self.marionette.tap(x)
-        time.sleep(1)
+        time.sleep(0.5)
         
     def startTour(self):
         #
@@ -92,7 +116,7 @@ class AppFTU(GaiaTestCase):
         #
         x = self.UTILS.getElement(DOM.FTU.tour_start_btn, "Start tour button")
         self.marionette.tap(x)
-        time.sleep(1)
+        time.sleep(0.5)
 
     def skipTour(self):
         #
@@ -165,13 +189,15 @@ class AppFTU(GaiaTestCase):
         # Set the timezone.
         #
         self.UTILS.waitForElements(DOM.FTU.timezone, "Timezone area")
-
-        continent_select = self.UTILS.getElement(DOM.FTU.timezone_continent, "Continent button", False)
-        continent_select.click() # Must be 'clicked' not 'tapped'
+        
+        # Continent.
+        tz_buttons = self.UTILS.getElements(DOM.FTU.timezone_buttons, "Timezone buttons (for continent)")
+        tz_buttons[0].click() # Must be 'clicked' not 'tapped'
         self._select(p_continent)
 
-        city_select = self.UTILS.getElement(DOM.FTU.timezone_city, "City button", False)
-        city_select.click() # Must be 'clicked' not 'tapped'
+        # City.
+        tz_buttons = self.UTILS.getElements(DOM.FTU.timezone_buttons, "Timezone buttons (for city)")
+        tz_buttons[1].click() # Must be 'clicked' not 'tapped'
         self._select(p_city)
 
         self.UTILS.TEST(
