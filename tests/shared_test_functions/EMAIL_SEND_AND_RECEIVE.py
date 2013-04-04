@@ -95,7 +95,7 @@ class main():
         # Return to the Inbox.
         #
         self.Email.openMailFolder("Inbox")
-        
+                
         #
         # At the inbox, compose a new email.
         #

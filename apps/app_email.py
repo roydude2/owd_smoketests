@@ -268,10 +268,10 @@ class AppEmail(GaiaTestCase):
         #
 
         #
-        # Because this can take a while, try to "wait_for_element..." 10 times.
+        # Because this can take a while, try to "wait_for_element..." several times.
         #
         loops = 15
-        while loops >= 0:
+        while loops > 0:
             try:
                 #
                 # Look through any entries found in the folder ...

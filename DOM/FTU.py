@@ -5,7 +5,7 @@ next_button         = ('id', 'forward')
 section_cell_data   = ('id', 'data_3g')
 dataconn_switch     = ('xpath', '//li/aside[ starts-with( descendant-or-self::*/@id,"data-connection-switch" ) ]')
 
-wifi_networks_list  = ('css selector', 'ul#networks li')
+wifi_networks_list  = ('css selector', 'ul#networks-list li')
 wifi_login_user     = ('id', 'wifi_user')
 wifi_login_pass     = ('id', 'wifi_password')
 wifi_login_join     = ('id', 'wifi-join-button')
