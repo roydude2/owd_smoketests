@@ -41,9 +41,6 @@ class test_35(GaiaTestCase):
         #        
         # Make sure the date and timezone are correct before setting alarms.
         #
-        _continent  = self.UTILS.get_os_variable("YOUR_CONTINENT", "YOUR continent (for setting timezone).")
-        _city       = self.UTILS.get_os_variable("YOUR_CITY", "YOUR city (for setting timezone).")
-        self.data_layer.set_setting('time.timezone', _continent + "/" + _city)
         self.UTILS.setTimeToNow()
 
 

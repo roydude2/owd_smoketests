@@ -11,6 +11,7 @@ import DOM
 # Imports particular to this test case.
 #
 from apps.app_calendar import *
+from apps.app_settings import *
 from datetime import datetime
 
 class test_34(GaiaTestCase):
@@ -23,6 +24,7 @@ class test_34(GaiaTestCase):
         GaiaTestCase.setUp(self)
         self.UTILS      = UTILS(self)
         self.calendar   = AppCalendar(self)
+        self.settings   = AppSettings(self)
         self.titleStr   = "Test event " + str(datetime.now().time())
         self.locatStr   = "Right here"
         
@@ -32,6 +34,11 @@ class test_34(GaiaTestCase):
         #
         self.marionette.set_search_timeout(50)
         self.lockscreen.unlock()
+        
+        #
+        # Make sure we have the correct time.
+        #
+        self.UTILS.setTimeToNow()
 
     def tearDown(self):
         self.UTILS.reportResults()

@@ -12,10 +12,10 @@ class main(GaiaTestCase):
         boolOK = True
         try:
             if p_displayed:
-                p_msg = p_msg + " no longer displayed."
+                p_msg = p_msg + " no longer displayed.|" + str(p_element)
                 self.wait_for_element_not_displayed(*p_element, timeout=p_timeout)
             else:
-                p_msg = p_msg + " no longer present."
+                p_msg = p_msg + " no longer present.|" + str(p_element)
                 self.wait_for_element_not_present(*p_element, timeout=p_timeout)
         except:
             boolOK = False
@@ -31,10 +31,10 @@ class main(GaiaTestCase):
         boolOK = True
         try:
             if p_displayed:
-                p_msg = p_msg + " displayed."
+                p_msg = p_msg + " displayed.|" + str(p_element)
                 self.wait_for_element_displayed(*p_element, timeout=p_timeout)
             else:
-                p_msg = p_msg + " present."
+                p_msg = p_msg + " present.|" + str(p_element)
                 self.wait_for_element_present(*p_element, timeout=p_timeout)
         except:
             boolOK = False

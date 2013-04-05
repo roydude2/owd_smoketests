@@ -229,3 +229,54 @@ class AppSettings(GaiaTestCase):
         self.launch()
         x = self.UTILS.getElement(DOM.Settings.sound, "Sound setting link")
         self.marionette.tap(x)
+
+
+    def _getPickerSpinnerElement(self, p_DOM, p_msg):
+        #
+        # Returns the element for the spinner in a picker
+        # (done this way because we need to figure out which one is
+        # visible and it was getting messy repeating this!).
+        # 
+        # Get the elements that match this one.
+        els = self.UTILS.getElements(p_DOM, p_msg, False, 20, True)
+        
+        # Get the one that's not hidden (the 'hidden'
+        # attribute here has no 'value', so we need to just
+        # check if it's been set to "".
+        boolOK = False
+        el     = False
+        for i in els:
+            if str(i.get_attribute("hidden")) == "false":
+                boolOK = True
+                el = i
+                break
+        
+        self.UTILS.TEST(boolOK, "... one of them is visible|('hidden' attribute is not set)", True)
+        return el
+
+    def setTimeToNow(self):
+        #
+        # Set date and time to 'now'.
+        # DOES NOT WORK YET (marionette.flick() not working here)!!
+        self.launch()
+        
+        x = ("id", "menuItem-dateAndTime")
+        el = self.UTILS.getElement(x, "Date & Time setting")
+        self.marionette.tap(el)
+        
+        x = ("id", "clock-date")
+        el = self.UTILS.getElement(x, "Date setting")
+        el.click()
+        
+        time.sleep(2)        
+        self.marionette.switch_to_frame()
+        
+        x = ("class name", "value-picker-date animation-on")
+        eld = self._getPickerSpinnerElement(x, "Day spinners in date picker")
+                
+        x_pos   = eld.size['width']  / 2
+        y_start = eld.size['height'] / 2
+        y_end   = y_start * 0.2
+
+        self.marionette.flick(eld, x_pos, y_start, x_pos, y_end, 270)
+        

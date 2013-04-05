@@ -69,13 +69,6 @@ export USERNAME_27=		# Wifi username
 export PASSWORD_27=		# Wifi password
 
 #
-# Test number: 35
-# Test desc. :  "Add an alarm (will pause for < 1 minute while waiting for alarm to start)."
-#
-export YOUR_CONTINENT=		# YOUR continent (for setting timezone).
-export YOUR_CITY=		# YOUR city (for setting timezone).
-
-#
 # Test number: 40
 # Test desc. :  "Import Facebook contacts from contacts app settings."
 #

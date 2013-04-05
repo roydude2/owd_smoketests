@@ -2,23 +2,31 @@ from global_imports import *
 from gaiatest import GaiaTestCase
 
 class main(GaiaTestCase):
+    
+    _subnote = "  |__ ";
 
     def logResult(self, p_result, p_msg, p_fnam=False):
         #
         # Add a test result to the result array.
+        # Everything after the first "|" is a 'note' line for this message
+        # (will be put on a separate line with _subnote prefixed).
         #
-        logMsg = p_msg
         
+        # If we have filename details then add them to the message as note lines.
+        if p_fnam:
+            p_msg = p_msg + "|current html source = " + p_fnam[0]
+            p_msg = p_msg + "|current screenshot  = " + p_fnam[1]
+
         #
         # The double brackets is intentional (add a 2 part
-        # array: true/false + message).
+        # array: true/false/info + message).
         #
-        self._resultArray.append((p_result, logMsg))
+        msgArr = p_msg.split("|")        
+        self._resultArray.append(("info"," "))          # (blank newline)
+        self._resultArray.append((p_result, msgArr[0])) # (the main message)
+        for i in range(1, len(msgArr)):                 # (any 'notes' for this message)
+            self._resultArray.append(("info", self._subnote + msgArr[i]))
         
-        if p_fnam:
-            self._resultArray.append(("info", "  |__ [current html source = " + p_fnam[0] + "]"))
-            self._resultArray.append(("info", "  |__ [current screenshot  = " + p_fnam[1] + "]"))
-
     
     def logComment(self, p_str):
         #
@@ -83,7 +91,7 @@ class main(GaiaTestCase):
             for i in self._resultArray:
                 try:
                     if i[0] == "info":
-                        DET_FILE.write("           - ")
+                        DET_FILE.write("             ")
                     elif i[0]:
                         DET_FILE.write("   pass    - ")
                     else:
