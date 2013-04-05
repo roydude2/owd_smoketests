@@ -1,6 +1,8 @@
 #!/bin/bash
 
 paramFile="./tests_parameters/parameters"
+TMPFILE="/tmp/params.tmp"
+cp /dev/null $TMPFILE
 
 if [ -f "$paramFile" ]
 then
@@ -21,7 +23,9 @@ echo "##########################################################################
 #
 " > $paramFile
 
-ls tests/test_[0-9]*.py | while read testfile
+GENERAL_VARS=""
+#ls tests/test_[0-9]*.py | while read testfile
+find tests apps utils -name "*.py" | grep -v utils.py | while read testfile
 do
 	NUM=$(echo $testfile | sed -e "s/^.*test_\([^\.]*\).py/\1/")
 	DESC=$(grep "_Description" $testfile | sed -e "s/^.*=//")
@@ -44,10 +48,15 @@ do
 
 		if [ "$VARNAME" ]
 		then
-			EXT_VARS="${EXT_VARS}export $VARNAME=\t\t# $VARDESC\n"
+			if [ "$NUM" != "$testfile" ]
+			then
+				EXT_VARS="${EXT_VARS}export $VARNAME=\t\t# $VARDESC\n"
+			else
+				printf "${EXT_VARS}export $VARNAME=\t\t# (GLOBAL) $VARDESC\n" >>$TMPFILE
+			fi
 		fi
 	done << EOF
-	$(grep ".get_os_variable" $testfile | sed -e "s/^[ ]*//" | egrep -v "#")
+	$(grep ".get_os_variable" $testfile | grep -v "def get_os_variable" | sed -e "s/^[ ]*//" | egrep -v "#")
 EOF
 
 	if [ "$EXT_VARS" ]
@@ -60,3 +69,9 @@ EOF
 		printf "$EXT_VARS"
 	fi
 done >> $paramFile
+
+echo "
+#
+# Global variables (used by many tests).
+#
+$(cat $TMPFILE)" >> $paramFile

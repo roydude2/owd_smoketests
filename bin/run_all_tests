@@ -153,6 +153,23 @@ do
 EOF
 done
 
+#
+# Get 'globals' (if they're not set yet).
+#
+while read line
+do
+	VARNAM=$(echo $line | awk '{print $2}' | awk 'BEGIN{FS="="}{print $1}')
+	VARSTR=$(echo $line | awk 'BEGIN{FS="#"}{print $2}' | sed -e "s/^.*(GLOBAL) //")
+        env_set=$(eval echo $`echo $VARNAM`)
+        if [ ! "$env_set" ]
+	then
+            QUESTION=("${QUESTION[@]}" "$VARSTR")
+            VARIABLE=("${VARIABLE[@]}" "$VARNAM")
+	fi
+done << EOF
+$(grep "# (GLOBAL)" $PARAM_FILE | egrep -v "^#")
+EOF
+
 for ((i=0; i<=${#QUESTION[@]}; ++i))
 do
     if [ "${QUESTION[$i]}" ]

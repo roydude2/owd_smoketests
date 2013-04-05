@@ -12,31 +12,15 @@
 
 
 #
-# Test number: 09
-# Test desc. :  "Send an SMS to a contact from the contacts app."
+# Test number: 24
+# Test desc. :  "Combination of 24 and 25 - Send and receive an email between gmail accounts."
 #
-export TEST_SMS_NUM=		# Mobile number for SMS tests (test 9)
-
-#
-# Test number: 10
-# Test desc. :  "Send and receive an SMS via the messaging app."
-#
-export TEST_SMS_NUM=		# Mobile number for SMS tests (test 10)
-
-#
-# Test number: 16
-# Test desc. :  "Load a website via Wifi."
-#
-export WIFI_TEST_16=		# Name of wifi to connect to (case sensitive!)
-export URL_TEST_16=		# URL to test wifi with
-export USERNAME_16=		# Wifi username
-export PASSWORD_16=		# Wifi password
-
-#
-# Test number: 17
-# Test desc. :  "Load a website via Cellular Data."
-#
-export URL_TEST_17=		# URL to test data connection with
+export GMAIL_1_USER=		# Gmail 1 username
+export GMAIL_1_EMAIL=		# Gmail 1 email
+export GMAIL_1_PASS=		# Gmail 1 password
+export GMAIL_2_USER=		# Gmail 2 username
+export GMAIL_2_EMAIL=		# Gmail 2 email
+export GMAIL_2_PASS=		# Gmail 2 password
 
 #
 # Test number: 22
@@ -50,15 +34,16 @@ export HOTMAIL_2_EMAIL=		# Hotmail 2 email
 export HOTMAIL_2_PASS=		# Hotmail 2 password
 
 #
-# Test number: 24
-# Test desc. :  "Combination of 24 and 25 - Send and receive an email between gmail accounts."
+# Test number: 09
+# Test desc. :  "Send an SMS to a contact from the contacts app."
 #
-export GMAIL_1_USER=		# Gmail 1 username
-export GMAIL_1_EMAIL=		# Gmail 1 email
-export GMAIL_1_PASS=		# Gmail 1 password
-export GMAIL_2_USER=		# Gmail 2 username
-export GMAIL_2_EMAIL=		# Gmail 2 email
-export GMAIL_2_PASS=		# Gmail 2 password
+export TEST_SMS_NUM=		# Mobile number for SMS tests (test 9)
+
+#
+# Test number: 17
+# Test desc. :  "Load a website via Cellular Data."
+#
+export URL_TEST_17=		# URL to test data connection with
 
 #
 # Test number: 27
@@ -69,6 +54,18 @@ export USERNAME_27=		# Wifi username
 export PASSWORD_27=		# Wifi password
 
 #
+# Test number: 41
+# Test desc. :  "Link a facebook contact."
+#
+export LINK_EMAIL_ADDRESS=		# Email address of facebook account to link.
+
+#
+# Test number: 10
+# Test desc. :  "Send and receive an SMS via the messaging app."
+#
+export TEST_SMS_NUM=		# Mobile number for SMS tests (test 10)
+
+#
 # Test number: 40
 # Test desc. :  "Import Facebook contacts from contacts app settings."
 #
@@ -76,7 +73,16 @@ export FB_USERNAME=		# Username to connect you to facebook.
 export FB_PASSWORD=		# Password to connect you to facebook.
 
 #
-# Test number: 41
-# Test desc. :  "Link a facebook contact."
+# Test number: 16
+# Test desc. :  "Load a website via Wifi."
 #
-export LINK_EMAIL_ADDRESS=		# Email address of facebook account to link.
+export WIFI_TEST_16=		# Name of wifi to connect to (case sensitive!)
+export URL_TEST_16=		# URL to test wifi with
+export USERNAME_16=		# Wifi username
+export PASSWORD_16=		# Wifi password
+
+#
+# Global variables (used by many tests).
+#
+export YOUR_CONTINENT=		# (GLOBAL) YOUR continent (for setting timezone).
+export YOUR_CITY=		# (GLOBAL) YOUR city (for setting timezone).
