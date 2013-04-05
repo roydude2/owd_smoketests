@@ -28,18 +28,15 @@ class main(GaiaTestCase):
         # Because this is only meant as a dev aid (and shouldn't be in any released test
         # scripts), it reports to ERROR instead of COMMENT.
         #
-        self.logResult("info", " ")
         self.logResult("info", "(FOR DEBUGGING:) All current iframes (screenshots + html source) ...")
 
-        self.marionette.switch_to_frame()
         time.sleep(1)
 
-        iframes = self.marionette.execute_script("return document.getElementsByTagName('iframe')")
-        for idx in range(0,iframes['length']):
-            iframe = iframes[str(idx)]
+        self.marionette.switch_to_frame()
+        iframes = self.marionette.find_elements("tag name", "iframe")
+        for iframe in iframes:
             iframe_src = iframe.get_attribute("src")
             iframe_x   = str(iframe.get_attribute("data-frame-origin"))
-            self.marionette.switch_to_frame()
             self.marionette.switch_to_frame(iframe)
             time.sleep(1)
 
@@ -48,6 +45,7 @@ class main(GaiaTestCase):
 
             fnam = self.screenShotOnErr()
 
-            self.logResult("info", " ")
             self.logResult("info", log_msg, fnam)
+            
+            self.marionette.switch_to_frame()
         

@@ -28,8 +28,6 @@ class main(GaiaTestCase):
         #
         # Quit this test suite.
         #
-        self.logResult("info", " ")
-        self.logResult("info", " ")
         if not p_msg:
             msg = "CANNOT CONTINUE PAST THIS ERROR - ABORTING THIS TEST CASE!"
         else:

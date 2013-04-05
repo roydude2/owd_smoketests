@@ -85,7 +85,7 @@ class main():
         # Launch Email app.
         #
         self.Email.launch()
-        
+                
         #
         # Login.
         #
@@ -132,14 +132,16 @@ class main():
         # Open the email.
         #
         self.UTILS.TEST(self.Email.openMsg(self.subject),
-            "Found an email with the subject '" + self.subject + "'", True)
+            "Email was opened successfully.", True)
         
         #
         # Verify the contents - the email address is shortened to just the name (sometimes!).
         #
         email1_name = self.EMAIL1.split("@")[0]
         email2_name = self.EMAIL2.split("@")[0]
+        
         x = self.UTILS.getElement(DOM.Email.open_email_from, "'From' field")
+        
         self.UTILS.TEST((x.text == self.EMAIL1 or x.text == email1_name), 
             "'From' field = '" + self.EMAIL1 + "' (it was '" + x.text + "').")
 

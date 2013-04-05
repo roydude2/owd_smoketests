@@ -250,15 +250,24 @@ class AppEmail(GaiaTestCase):
         #
 
         myEmail = self.emailIsInFolder(p_subject)
+        self.UTILS.TEST(myEmail, "Found email with subject '" + p_subject + "'.")
         if myEmail:
             #
             # We found it - open the email.
             #
             myEmail.click()
-            return True
+            
+            #
+            # Check it opened.
+            #
+            boolOK = True
+            try:
+                self.wait_for_element_displayed(*DOM.Email.open_email_from)
+                return True
+            except:
+                return False
             
         else:
-            self.UTILS.logResult(False, "Able to find and open the message with subject '"  + p_subject + "' in this folder.")
             return False
 
     
@@ -292,7 +301,7 @@ class AppEmail(GaiaTestCase):
             #
             # Either the folder is still empty, or none of the items in it match our
             # subject yet.
-            # Wait a couple fo seconds and try again.
+            # Wait a couple for seconds and try again.
             # 
             x = self.UTILS.getElement(DOM.Email.folder_refresh_button, "Refresh button")
             self.marionette.tap(x)

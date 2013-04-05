@@ -257,7 +257,10 @@ class AppSettings(GaiaTestCase):
     def setTimeToNow(self):
         #
         # Set date and time to 'now'.
-        # DOES NOT WORK YET (marionette.flick() not working here)!!
+        # WARNING: DOES NOT WORK YET!!! ...
+        #   1. Marionette.flick() not working here.
+        #   2. Cannot figure out how to tell what the current value is (no 'active' setting here),
+        #
         self.launch()
         
         x = ("id", "menuItem-dateAndTime")
