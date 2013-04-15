@@ -1,5 +1,6 @@
 *.pyc
 .bak/*
+docs/.bak/*
 nohup.out
 .gaiatest_installed
 .metadata
