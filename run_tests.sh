@@ -1,5 +1,5 @@
 #!/bin/bash
 
-OWDToolkit=../OWD_TEST_TOOLKIT
+. $HOME/.OWD_TEST_TOOLKIT_LOCATION
 
-$OWDToolkit/bin/run_all_tests.sh $@
+$OWD_TEST_TOOLKIT_DIR/bin/run_all_tests.sh $@
