@@ -1,3 +1,5 @@
 #!/bin/bash
 
-../OWD_TEST_TOOLKIT/bin/run_all_tests.sh $@
+OWDToolkit=../OWD_TEST_TOOLKIT
+
+$OWDToolkit/bin/run_all_tests.sh $@
