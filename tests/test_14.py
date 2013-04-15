@@ -3,14 +3,12 @@
 #
 import sys
 sys.path.insert(1, "./")
-from utils      import UTILS
 from gaiatest   import GaiaTestCase
-import DOM
+from OWDTestToolkit import *
 
 #
 # Imports particular to this test case.
 #
-from apps.app_gallery import *
 import os, time
 
 class test_14(GaiaTestCase):
@@ -37,7 +35,7 @@ class test_14(GaiaTestCase):
         # Load sample images into the gallery.
         #
         for i in self._img_list:
-            self.push_resource(i, destination='DCIM/100MZLLA')
+            self.UTILS.addFileToDevice('./tests/resources/' + i, destination='DCIM/100MZLLA')
             
     def tearDown(self):
         self.UTILS.reportResults()

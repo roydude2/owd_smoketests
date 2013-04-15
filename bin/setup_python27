@@ -1,7 +1,0 @@
-#!/bin/bash
-
-printf "Making sure python 2.7 is up to date ...\n\n"
-
-sudo add-apt-repository ppa:fkrull/deadsnakes
-sudo apt-get update
-sudo apt-get install python2.7

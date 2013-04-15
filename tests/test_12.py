@@ -3,15 +3,12 @@
 #
 import sys
 sys.path.insert(1, "./")
-from utils      import UTILS
 from gaiatest   import GaiaTestCase
-import DOM
+from OWDTestToolkit import *
 
 #
 # Imports particular to this test case.
 #
-from apps.app_gallery import *
-from apps.app_camera import *
 
 class test_12(GaiaTestCase):
     _Description = "Record a video and view it in the gallery app."
@@ -46,6 +43,7 @@ class test_12(GaiaTestCase):
         #
         # Open the gallery application.
         #
+        self.UTILS.goHome()
         self.gallery.launch()
         
         #

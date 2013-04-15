@@ -3,15 +3,12 @@
 #
 import sys
 sys.path.insert(1, "./")
-from utils      import UTILS
 from gaiatest   import GaiaTestCase
-import DOM
+from OWDTestToolkit import *
 
 #
 # Imports particular to this test case.
 #
-from apps.app_camera import *
-from apps.app_video import *
 
 class test_13(GaiaTestCase):
     _Description = "Play recorded video in the video player app."
@@ -42,7 +39,9 @@ class test_13(GaiaTestCase):
         #
         # Open the video player application.
         #
+        self.apps.kill_all()
         self.video.launch()
+        time.sleep(5)
         
         #
         # the first thumbnail should be our video.

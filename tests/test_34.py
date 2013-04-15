@@ -3,19 +3,16 @@
 #
 import sys
 sys.path.insert(1, "./")
-from utils      import UTILS
 from gaiatest   import GaiaTestCase
-import DOM
+from OWDTestToolkit import *
 
 #
 # Imports particular to this test case.
 #
-from apps.app_calendar import *
-from apps.app_settings import *
 from datetime import datetime
 
 class test_34(GaiaTestCase):
-    _Description = "Add and view an event to an offline calendar in each calendar view."
+    _Description = "Add + view event to an offline calendar in each calendar view."
  
     def setUp(self):
         #

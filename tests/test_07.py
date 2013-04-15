@@ -3,14 +3,13 @@
 #
 import sys
 sys.path.insert(1, "./")
-from utils      import UTILS
-from gaiatest   import GaiaTestCase
-import DOM
+
+from gaiatest import GaiaTestCase
+from OWDTestToolkit import *
 
 #
 # Imports particular to this test case.
 #
-from apps.app_contacts import *
 from tests.mock_data.contacts import MockContacts
 
 class test_7(GaiaTestCase):
@@ -49,7 +48,7 @@ class test_7(GaiaTestCase):
         #
         # Create new contact.
         #
-        self.contacts.createNewContact(self.Contact_1, True)
+        self.contacts.createNewContact(self.Contact_1, './tests/resources/contact_face.jpg')
         
         #
         # TEST: The 'view contact' page shows the correct details for this new contact.

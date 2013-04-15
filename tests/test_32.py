@@ -3,15 +3,12 @@
 #
 import sys
 sys.path.insert(1, "./")
-from utils      import UTILS
 from gaiatest   import GaiaTestCase
-import DOM
+from OWDTestToolkit import *
 
 #
 # Imports particular to this test case.
 #
-from apps.app_settings import *
-from apps.app_browser import *
 
 class test_32(GaiaTestCase):
     _Description = "Delete a packaged app."

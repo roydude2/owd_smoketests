@@ -3,14 +3,12 @@
 #
 import sys
 sys.path.insert(1, "./")
-from utils      import UTILS
 from gaiatest   import GaiaTestCase
-import DOM
+from OWDTestToolkit import *
 
 #
 # Imports particular to this test case.
 #
-from apps.app_contacts import *
 from tests.mock_data.contacts import MockContacts
 
 class test_29(GaiaTestCase):
@@ -31,7 +29,7 @@ class test_29(GaiaTestCase):
         # Load a couple of images into the gallery.
         #
         for i in self._img_list:
-            self.push_resource(i, destination='DCIM/100MZLLA')
+            self.UTILS.addFileToDevice('./tests/resources/' + i, destination='DCIM/100MZLLA')
     
     def tearDown(self):
         self.UTILS.reportResults()

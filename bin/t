@@ -1,7 +1,0 @@
-#!/bin/bash
-
-f_a(){
-	echo "helo"
-}
-
-f_a

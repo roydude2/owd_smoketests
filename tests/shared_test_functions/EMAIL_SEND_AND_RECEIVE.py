@@ -17,15 +17,11 @@
 import sys
 sys.path.insert(1, "./")
 from marionette import Marionette
-from utils      import UTILS
 from gaiatest   import GaiaTestCase
-import DOM
-
+from OWDTestToolkit import *
 #
 # Imports particular to this test case.
 #
-from apps.app_settings import *
-from apps.app_email import *
 import os, time
 
 class main():
@@ -104,6 +100,8 @@ class main():
         #
         # Check our email is in the sent folder.
         #
+        self.UTILS.screenShotOnError()
+        self.UTILS.quitTest()
         self.Email.openMailFolder(self.sentFolderName)
         time.sleep(10)
         self.UTILS.TEST(self.Email.emailIsInFolder(self.subject),

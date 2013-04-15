@@ -3,16 +3,12 @@
 #
 import sys
 sys.path.insert(1, "./")
-from utils      import UTILS
 from gaiatest   import GaiaTestCase
-import DOM
+from OWDTestToolkit import *
 
 #
 # Imports particular to this test case.
 #
-from apps.app_contacts import *
-from apps.app_facebook import *
-from apps.app_settings import *
 from tests.mock_data.contacts import MockContacts
 
 class test_40(GaiaTestCase):

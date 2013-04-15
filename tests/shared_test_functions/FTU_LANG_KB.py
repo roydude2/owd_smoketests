@@ -12,14 +12,11 @@
 #
 import sys
 sys.path.insert(1, "./")
-from utils      import UTILS
 from gaiatest   import GaiaTestCase
-import DOM
-
+from OWDTestToolkit import *
 #
 # Imports particular to this test case.
 #
-from apps.app_ftu import *
 import os
 
 class main():

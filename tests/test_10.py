@@ -3,14 +3,12 @@
 #
 import sys
 sys.path.insert(1, "./")
-from utils      import UTILS
 from gaiatest   import GaiaTestCase
-import DOM
+from OWDTestToolkit import *
 
 #
 # Imports particular to this test case.
 #
-from apps.app_messages import *
 
 class test_10(GaiaTestCase):
     _Description = "Send and receive an SMS via the messaging app."

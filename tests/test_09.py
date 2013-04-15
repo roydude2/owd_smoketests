@@ -3,15 +3,13 @@
 #
 import sys
 sys.path.insert(1, "./")
-from utils      import UTILS
 from gaiatest   import GaiaTestCase
-import DOM, time
+from OWDTestToolkit import *
+import time
 
 #
 # Imports particular to this test case.
 #
-from apps.app_contacts import *
-from apps.app_messages import *
 from tests.mock_data.contacts import MockContacts
 
 class test_9(GaiaTestCase):
