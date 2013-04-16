@@ -52,13 +52,8 @@ class main():
         self.Email          = AppEmail(p_parent)
         self.settings       = AppSettings(p_parent)
         self.subject        = "Test " + p_testNum + " - " + str(time.time())
-        
-        # Just so I get 'autocomplete' in my IDE!
-        self.marionette     = Marionette()
-        self.UTILS          = UTILS(self)
-        if True:
-            self.marionette = p_parent.marionette
-            self.UTILS      = p_parent.UTILS
+        self.marionette     = p_parent.marionette
+        self.UTILS          = p_parent.UTILS
 
         self.UTILS.logComment("Using subject \"" + self.subject + "\".")
         
@@ -100,17 +95,13 @@ class main():
         #
         # Check our email is in the sent folder.
         #
-        self.UTILS.screenShotOnError()
+        self.UTILS.screenShotOnErr()
         self.UTILS.quitTest()
         self.Email.openMailFolder(self.sentFolderName)
         time.sleep(10)
         self.UTILS.TEST(self.Email.emailIsInFolder(self.subject),
             "Email '" + self.subject + "' found in the Sent folder.")
         
-        #
-        # Give the email time to arrive.
-        #
-#        time.sleep(180)
 
         ##################################################
         #
