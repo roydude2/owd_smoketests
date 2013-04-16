@@ -3,9 +3,7 @@ Instructions for setting up and running automated smoke tests.
 
 <b>1.</b> Clone and install the OWD_TEST_TOOLKIT repository (https://github.com/roydude/OWD_TEST_TOOLKIT).
 
-<b>2.</b> Clone and install *this* repository, changing the ./run_tests.sh script to point to the location of your OWD_TEST_TOOLKIT installation.
-
-<b>3.</b> Type:
+<b>2.</b> Type:
 
 <pre>
 ./run_tests.sh
@@ -101,7 +99,7 @@ TESTS COVERED
   </tr>
 
   <tr>
-    <td  align=center>34</td><td  align=left>Add and view an event to an offline calendar in each calendar view.</td>
+    <td  align=center>34</td><td  align=left>Add + view event to an offline calendar in each calendar view.</td>
   </tr>
 
   <tr>

@@ -47,13 +47,6 @@ class test_40(GaiaTestCase):
         self.data_layer.disable_wifi()
         self.settings.turn_dataConn_on_if_required()
         
-        #
-        # You must be logged into facebook already to run this test
-        # (cannot automated this because it requires a 'captcha').
-        # So prompt for it before starting.
-        #
-        ignoreme = self.UTILS.get_os_variable("ENTER", "For test 40 please ensure you are logged into facebook on the device, then press")
-        
     def tearDown(self):
         self.UTILS.reportResults()
         
