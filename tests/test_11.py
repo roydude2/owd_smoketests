@@ -73,30 +73,3 @@ class test_11(GaiaTestCase):
         #
         self.gallery.clickThumb(0)
         
-        #
-        # TEST: Thumbnails are not visible when vieweing an image.
-        #
-        thumbs = self.UTILS.getElement(DOM.Gallery.thumbnail_list_section, "Thumbnail list section", False)
-        self.UTILS.TEST( (thumbs.get_attribute("class") == "hidden"), "Thumbnails are not present when vieweing image in gallery.")
-        
-        #
-        # TEST: Image is displayed as expected.
-        #
-        try: 
-            thisIMG = self.UTILS.getElement(DOM.Gallery.current_image_pic, "Current image")
-            try:
-                x = str(thisIMG.get_attribute('src'))
-                self.UTILS.TEST((x != ""), "Image source is not empty in gallery after clicking thumbnail.")
-            except: 
-                self.UTILS.logResult(False, "Image source exists in gallery after clicking thumbnail.")
-        except: self.UTILS.logResult(False, "Image is displayed as expected after clicking icon in gallery.")
-        
-        #
-        # Get a screenshot of the image from the galery thumbnail.
-        #
-        img_gallery_view = self.UTILS.screenShot("_GALLERY_VIEW")
-        
-        self.UTILS.logComment("PLEASE VERIFY THAT THESE ARE THE SAME IMAGE ... ")
-        self.UTILS.logComment("    Before the capture button was pressed   : (unavailable)")
-        self.UTILS.logComment("    Clicking the thumbnail in the camera app: " + img_thumb_view)
-        self.UTILS.logComment("    Clicking the thumbnail in the gallery   : " + img_gallery_view)
