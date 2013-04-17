@@ -60,7 +60,7 @@ class test_9(GaiaTestCase):
         #
         # View the details of our contact.
         #
-        self.contacts.viewContact(self.contact_1)
+        self.contacts.viewContact(self.contact_1['name'])
         
         #
         # Tap the sms button in the view details screen to go to the sms page.

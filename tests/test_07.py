@@ -57,5 +57,5 @@ class test_7(GaiaTestCase):
         #
         # Verify our contact.
         #
-        self.contacts.verifyImageInAllContacts(self.Contact_1)
+        self.contacts.verifyImageInAllContacts(self.Contact_1['name'])
         self.contacts.checkViewContactDetails(self.Contact_1, True)
