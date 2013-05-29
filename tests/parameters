@@ -37,7 +37,7 @@ export HOTMAIL_2_PASS=test123x		# Hotmail 2 password
 # Test number: 09
 # Test desc. :  "Send an SMS to a contact from the contacts app."
 #
-export TEST_SMS_NUM=610504137		# Mobile number for SMS tests (test 9)
+export TEST_SMS_NUM=628842372		# Mobile number for SMS tests (test 9)
 
 #
 # Test number: 17
@@ -63,7 +63,7 @@ export LINK_EMAIL_ADDRESS=roytesterton.2@gmail.com		# Email address of facebook 
 # Test number: 10
 # Test desc. :  "Send and receive an SMS via the messaging app."
 #
-export TEST_SMS_NUM=610504137		# Mobile number for SMS tests (test 10)
+export TEST_SMS_NUM=628842372		# Mobile number for SMS tests (test 10)
 
 #
 # Test number: 40
