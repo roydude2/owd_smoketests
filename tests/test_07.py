@@ -3,11 +3,9 @@
 #
 # RoyNEW
 # Royanothernew
-<<<<<<< HEAD
 # ROYROYROY
-=======
 # ROy what happens now??
->>>>>>> 69a690830eff904d19b5e191dec71a99db7cf239
+# Another roy
 import sys
 sys.path.insert(1, "./")
 
